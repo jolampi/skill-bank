@@ -1,14 +1,26 @@
 services:
+  database:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+
   backend:
     build:
       context: backend
     ports:
       - 5268:5268
+    depends_on:
+      - database
     develop:
       watch:
         - action: sync
           path: ./backend
           target: /app
+
   frontend:
     build:
       context: frontend
