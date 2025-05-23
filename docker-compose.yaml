@@ -9,6 +9,7 @@ services:
   backend:
     build:
       context: backend
+      target: develop
     ports:
       - 5268:5268
     depends_on:
@@ -18,6 +19,13 @@ services:
         - action: sync
           path: ./backend
           target: /app
+
+  migrate:
+    build:
+      context: backend
+      target: migrate
+    depends_on:
+      - database
 
   frontend:
     build:
