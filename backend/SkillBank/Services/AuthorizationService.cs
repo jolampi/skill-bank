@@ -11,9 +11,9 @@ namespace SkillBank.Services;
 
 public class AuthorizationService(ApplicationDbContext context, IConfiguration configuration, IPasswordHasher<User> passwordhasher)
 {
-    public async Task<string?> Login(LoginCredentialsDto credentials)
+    public async Task<TokenResponseDto?> Login(LoginCredentialsDto credentials)
     {
-        var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == credentials.UserName);
+        var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == credentials.Username);
         if (user is null || user.PasswordHash is null)
         {
             return null;
@@ -23,7 +23,7 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         {
             return null;
         }
-        return CreateToken(user);
+        return new TokenResponseDto(CreateToken(user), "Bearer");
     }
 
     private string CreateToken(User user)

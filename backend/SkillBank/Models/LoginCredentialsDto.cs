@@ -1,3 +1,3 @@
 namespace SkillBank.Models;
 
-public record LoginCredentialsDto(string UserName, string Password);
+public record LoginCredentialsDto(string Username, string Password);
