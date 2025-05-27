@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace SkillBank.Models;
+namespace SkillBank.Entities;
 
 public class User : IdentityUser
 {

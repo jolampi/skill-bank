@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using SkillBank.Models;
+using SkillBank.Entities;
 using SkillBank.Services;
 
 var builder = WebApplication.CreateBuilder(args);
