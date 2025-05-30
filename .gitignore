@@ -1,16 +1,2 @@
-# Dotnet
-bin/
-obj/
-
 # Mac
 **/DS_Store
-
-# Next.js
-.next/
-**/next-env.d.ts
-
-# Node
-node_modules/
-
-# Openapi
-**/*.log
