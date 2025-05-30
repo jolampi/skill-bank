@@ -29,8 +29,7 @@ export type PostApiAuthLoginResponses = {
   200: TokenResponseDto;
 };
 
-export type PostApiAuthLoginResponse =
-  PostApiAuthLoginResponses[keyof PostApiAuthLoginResponses];
+export type PostApiAuthLoginResponse = PostApiAuthLoginResponses[keyof PostApiAuthLoginResponses];
 
 export type GetApiUsersCurrentData = {
   body?: never;

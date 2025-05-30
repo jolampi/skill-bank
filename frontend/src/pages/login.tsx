@@ -1,8 +1,4 @@
-import {
-  authenticate,
-  deauthenticate,
-  isAuthenticated,
-} from "@/services/backend";
+import { authenticate, deauthenticate, isAuthenticated } from "@/services/backend";
 import React, { useEffect, useState } from "react";
 
 const LoginPage: React.FC = () => {
@@ -35,21 +31,13 @@ const LoginPage: React.FC = () => {
       <div>
         <label>
           Username
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
         </label>
       </div>
       <div>
         <label>
           Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </label>
       </div>
       <button onClick={handleLogin}>Login</button>
