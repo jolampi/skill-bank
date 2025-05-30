@@ -1,32 +1,32 @@
-import { authenticate, deauthenticate, isAuthenticated } from "@/services/backend";
-import React, { useEffect, useState } from "react";
+"use client";
+
+import AuthContext from "@/contexts/AuthContext";
+import React, { useContext, useState } from "react";
 
 const LoginPage: React.FC = () => {
-  const [authenticated, setAuthenticated] = useState(false);
+  const authContext = useContext(AuthContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    setAuthenticated(isAuthenticated());
-  }, []);
-
   const handleLogin = async () => {
-    const result = await authenticate({ username, password });
-    setAuthenticated(result);
+    await authContext.authenticate(username, password);
     setUsername("");
     setPassword("");
   };
 
-  const handleLogout = async () => {
-    deauthenticate();
-    setAuthenticated(false);
+  const handleLogout = () => {
+    authContext.deauthenticate();
   };
+
+  if (authContext.loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
       <div>
-        Logged in: {authenticated ? "yes" : "no"}
-        {authenticated && <button onClick={handleLogout}>Logout</button>}
+        Logged in: {authContext.authenticated ? "yes" : "no"}
+        {authContext.authenticated && <button onClick={handleLogout}>Logout</button>}
       </div>
       <div>
         <label>
