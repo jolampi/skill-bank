@@ -14,7 +14,8 @@
     "@hey-api/client-next": "^0.4.0",
     "next": "15.3.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "universal-cookie": "^8.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
