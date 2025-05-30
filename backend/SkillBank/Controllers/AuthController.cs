@@ -9,7 +9,7 @@ namespace SkillBank.Controllers;
 public class AuthController(AuthorizationService authorizationService) : ControllerBase
 {
     [HttpPost("login")]
-    public async Task<ActionResult> Login(LoginCredentialsDto payload)
+    public async Task<ActionResult<TokenResponseDto>> Login(LoginCredentialsDto payload)
     {
         var token = await authorizationService.Login(payload);
         if (token is null)

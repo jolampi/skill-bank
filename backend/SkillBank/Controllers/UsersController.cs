@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SkillBank.Models;
 using SkillBank.Services;
 
 namespace SkillBank.Controllers;
@@ -11,7 +12,7 @@ public class UsersController(UserService userService) : ControllerBase
 {
     [HttpGet("current")]
     [Authorize]
-    public async Task<ActionResult> GetCurrent()
+    public async Task<ActionResult<UserDto>> GetCurrent()
     {
         var currentUserId = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
         var user = await userService.GetByIdAsync(currentUserId);
