@@ -1,11 +1,12 @@
 "use client";
 
 import AuthContext from "@/contexts/AuthContext";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useContext, useState } from "react";
 
 const LoginPage: React.FC = () => {
   const authContext = useContext(AuthContext);
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -15,7 +16,7 @@ const LoginPage: React.FC = () => {
     setUsername("");
     setPassword("");
     if (result) {
-      redirect("/");
+      router.push("/");
     }
   };
 

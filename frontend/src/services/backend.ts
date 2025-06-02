@@ -7,13 +7,10 @@ const ACCESS_TOKEN_COOKIE = "access_token";
 const cookies = new Cookies();
 client.interceptors.request.use((options) => {
   const token = cookies.get(ACCESS_TOKEN_COOKIE);
-  if (token && options.headers) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (options.headers as any).set("Authorization", `Bearer ${token}`);
+  if (token) {
+    options.headers.set("Authorization", `Bearer ${token}`);
   }
-});
-client.setConfig({
-  auth: () => cookies.get(ACCESS_TOKEN_COOKIE),
+  return options;
 });
 
 export interface Credentials {

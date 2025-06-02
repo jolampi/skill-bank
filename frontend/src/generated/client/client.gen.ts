@@ -6,7 +6,7 @@ import {
   type ClientOptions as DefaultClientOptions,
   createClient,
   createConfig,
-} from "@hey-api/client-next";
+} from "@hey-api/client-fetch";
 
 /**
  * The `createClientConfig()` function will be called on client initialization
