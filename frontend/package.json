@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@hey-api/openapi-ts": "^0.69.0",
+    "@hey-api/openapi-ts": "^0.69.2",
     "@types/node": "^22.15.29",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19",
