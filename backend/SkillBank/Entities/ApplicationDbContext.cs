@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace SkillBank.Entities;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : IdentityDbContext<User>(options)
+    : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)
 {
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder

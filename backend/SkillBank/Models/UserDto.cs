@@ -1,3 +1,3 @@
 namespace SkillBank.Models;
 
-public record UserDto(string Id, string Username);
+public record UserDto(Guid Id, string Username);
