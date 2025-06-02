@@ -1,9 +1,20 @@
 import { postApiAuthLogin } from "@/generated/client";
 import Cookies from "universal-cookie";
+import { client } from "@/generated/client/client.gen";
 
 const ACCESS_TOKEN_COOKIE = "access_token";
 
 const cookies = new Cookies();
+client.interceptors.request.use((options) => {
+  const token = cookies.get(ACCESS_TOKEN_COOKIE);
+  if (token && options.headers) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (options.headers as any).set("Authorization", `Bearer ${token}`);
+  }
+});
+client.setConfig({
+  auth: () => cookies.get(ACCESS_TOKEN_COOKIE),
+});
 
 export interface Credentials {
   username: string;
