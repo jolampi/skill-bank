@@ -13,7 +13,7 @@ interface StateReady {
 export type AuthStates = StateLoading | StateReady;
 
 interface AuthActions {
-  authenticate(username: string, password: string): Promise<void>;
+  authenticate(username: string, password: string): Promise<boolean>;
   deauthenticate(): void;
 }
 
@@ -24,6 +24,7 @@ export const defaultContext: AuthContextProps = {
   authenticated: false,
   authenticate: async () => {
     console.error("Attempting to authenticate without authentication provider.");
+    return false;
   },
   deauthenticate: () => {
     console.error("Attempting to deauthenticate without authentication provider.");
