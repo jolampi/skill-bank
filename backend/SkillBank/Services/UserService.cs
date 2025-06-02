@@ -8,11 +8,11 @@ public class UserService(ApplicationDbContext context)
 {
     public async Task<UserDto?> GetByIdAsync(String id)
     {
-        var entity = await context.Users.FirstOrDefaultAsync(x => x.Id == id);
+        var entity = await context.Users.FirstOrDefaultAsync(x => x.Id.ToString() == id);
         if (entity is null)
         {
             return null;
         }
-        return new UserDto(entity.Id, entity.UserName!);
+        return new UserDto(entity.Id.ToString(), entity.UserName!);
     }
 }
