@@ -14,7 +14,8 @@ public class UsersController(UserService userService) : ControllerBase
     [Authorize]
     public async Task<ActionResult<UserDto>> GetCurrent()
     {
-        var currentUserId = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+        var claim = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier);
+        var currentUserId = Guid.Parse(claim.Value);
         var user = await userService.GetByIdAsync(currentUserId);
         if (user is null)
         {

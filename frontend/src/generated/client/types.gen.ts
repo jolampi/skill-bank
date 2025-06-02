@@ -11,7 +11,7 @@ export type TokenResponseDto = {
 };
 
 export type UserDto = {
-  id?: string | null;
+  id?: string;
   username?: string | null;
 };
 
