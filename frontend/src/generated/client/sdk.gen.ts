@@ -6,6 +6,8 @@ import type {
   PostApiAuthLoginResponses,
   GetApiUsersCurrentData,
   GetApiUsersCurrentResponses,
+  PutApiUsersCurrentData,
+  PutApiUsersCurrentResponses,
 } from "./types.gen";
 import { client as _heyApiClient } from "./client.gen";
 
@@ -46,6 +48,21 @@ export const getApiUsersCurrent = <ThrowOnError extends boolean = false>(
     {
       url: "/api/Users/current",
       ...options,
+    },
+  );
+};
+
+export const putApiUsersCurrent = <ThrowOnError extends boolean = false>(
+  options?: Options<PutApiUsersCurrentData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).put<PutApiUsersCurrentResponses, unknown, ThrowOnError>(
+    {
+      url: "/api/Users/current",
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
     },
   );
 };

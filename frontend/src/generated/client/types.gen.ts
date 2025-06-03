@@ -10,9 +10,18 @@ export type TokenResponseDto = {
   tokenType?: string | null;
 };
 
+export type UpdateUserDto = {
+  skills?: Array<UserSkillDto> | null;
+};
+
 export type UserDto = {
   id?: string;
   username?: string | null;
+  skills?: Array<UserSkillDto> | null;
+};
+
+export type UserSkillDto = {
+  label?: string | null;
 };
 
 export type PostApiAuthLoginData = {
@@ -47,6 +56,20 @@ export type GetApiUsersCurrentResponses = {
 
 export type GetApiUsersCurrentResponse =
   GetApiUsersCurrentResponses[keyof GetApiUsersCurrentResponses];
+
+export type PutApiUsersCurrentData = {
+  body?: UpdateUserDto;
+  path?: never;
+  query?: never;
+  url: "/api/Users/current";
+};
+
+export type PutApiUsersCurrentResponses = {
+  /**
+   * OK
+   */
+  200: unknown;
+};
 
 export type ClientOptions = {
   baseUrl: "http://localhost:5268" | (string & {});

@@ -22,6 +22,11 @@ const Home: React.FC = () => {
         {authContext.authenticated ? (
           <>
             Welcome!
+            <div className={styles.ctas}>
+              <Link className={styles.primary} href="/skills">
+                Skills
+              </Link>
+            </div>
             <button onClick={handleLogout}>Log out</button>
           </>
         ) : (
