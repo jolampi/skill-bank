@@ -7,6 +7,22 @@ namespace SkillBank.Entities;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)
 {
+    public DbSet<Skill> Skills { get; set; }
+    public DbSet<UserSkill> UserSkills { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        builder.Entity<User>()
+            .HasMany(e => e.Skills)
+            .WithMany(e => e.Users)
+            .UsingEntity<UserSkill>();
+
+        builder.Entity<Skill>()
+            .HasIndex(e => e.Label)
+            .IsUnique();
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder
             .UseSeeding((context, _) =>
