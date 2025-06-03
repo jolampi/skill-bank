@@ -2,10 +2,10 @@ import AuthenticationContext from "@/contexts/AuthContext";
 import { redirect, RedirectType } from "next/navigation";
 import { ComponentType, useContext } from "react";
 
-export default function withauthentication<T>(
-  Component: ComponentType<React.PropsWithChildren<T>>,
-): React.FC<React.PropsWithChildren<T>> {
-  const InnerComponent: React.FC<React.PropsWithChildren<T>> = (props) => {
+export default function withauthentication(
+  Component: ComponentType,
+): React.FC {
+  const InnerComponent: React.FC = () => {
     const authContext = useContext(AuthenticationContext);
 
     if (authContext.loading) {
@@ -16,7 +16,7 @@ export default function withauthentication<T>(
       redirect("/login", RedirectType.replace);
     }
 
-    return <Component {...props} />;
+    return <Component />;
   };
 
   InnerComponent.displayName = `withAuthentication(${Component.displayName || Component.name})`;

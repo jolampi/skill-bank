@@ -4,7 +4,7 @@ import styles from "./page.module.css";
 import { useContext } from "react";
 import AuthContext from "@/contexts/AuthContext";
 import Link from "next/link";
-import withauthentication from "@/components/withAuthentication";
+import withAuthentication from "@/components/withAuthentication";
 
 const Home: React.FC = () => {
   const authContext = useContext(AuthContext);
@@ -28,4 +28,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default withauthentication(Home);
+export default withAuthentication(Home);
