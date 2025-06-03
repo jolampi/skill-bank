@@ -5,3 +5,5 @@ public record UserDto(
     string Username,
     List<UserSkillDto> Skills
 );
+
+public record UpdateUserDto(List<UserSkillDto> Skills);

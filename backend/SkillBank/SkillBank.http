@@ -8,8 +8,8 @@ POST {{SkillBank_HostAddress}}/api/Auth/login
 Content-Type: application/json
 
 {
-  "username": "admin",
-  "password": "admin"
+  "username": "developer",
+  "password": "developer"
 }
 
 ### Get current user details
@@ -18,4 +18,19 @@ GET {{SkillBank_HostAddress}}/api/Users/current
 Accept: application/json
 Authorization: Bearer {{accessToken}}
 
-###
+### Update current user details
+
+PUT {{SkillBank_HostAddress}}/api/Users/current
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "skills": [
+    {
+      "label": ".Net"
+    },
+    {
+      "label": "ASP.NET"
+    }
+  ]
+}
