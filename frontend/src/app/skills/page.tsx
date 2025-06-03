@@ -1,5 +1,6 @@
 "use client";
 
+import withauthentication from "@/components/withAuthentication";
 import { getApiUsersCurrent, putApiUsersCurrent, UserSkillDto } from "@/generated/client";
 import React, { useEffect, useState } from "react";
 
@@ -50,4 +51,4 @@ const SkillsPage: React.FC = () => {
   );
 };
 
-export default SkillsPage;
+export default withauthentication(SkillsPage);

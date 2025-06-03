@@ -4,6 +4,7 @@ import styles from "./page.module.css";
 import { useContext } from "react";
 import AuthContext from "@/contexts/AuthContext";
 import Link from "next/link";
+import withauthentication from "@/components/withAuthentication";
 
 const Home: React.FC = () => {
   const authContext = useContext(AuthContext);
@@ -12,35 +13,19 @@ const Home: React.FC = () => {
     authContext.deauthenticate();
   };
 
-  if (authContext.loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        {authContext.authenticated ? (
-          <>
-            Welcome!
-            <div className={styles.ctas}>
-              <Link className={styles.primary} href="/skills">
-                Skills
-              </Link>
-            </div>
-            <button onClick={handleLogout}>Log out</button>
-          </>
-        ) : (
-          <>
-            <div className={styles.ctas}>
-              <Link className={styles.primary} href="/login">
-                Log in
-              </Link>
-            </div>
-          </>
-        )}
+        Welcome!
+        <div className={styles.ctas}>
+          <Link className={styles.primary} href="/skills">
+            Skills
+          </Link>
+        </div>
+        <button onClick={handleLogout}>Log out</button>
       </main>
     </div>
   );
 };
 
-export default Home;
+export default withauthentication(Home);
