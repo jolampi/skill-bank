@@ -7,11 +7,11 @@ using SkillBank.Services;
 namespace SkillBank.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class UsersController(UserService userService) : ControllerBase
 {
     [HttpGet("current")]
-    [Authorize]
     public async Task<ActionResult<UserDto>> GetCurrent()
     {
         var userId = GetCurrentUserId();

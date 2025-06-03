@@ -7,3 +7,5 @@ public record UserDto(
 );
 
 public record UpdateUserDto(List<UserSkillDto> Skills);
+
+public record UserSkillDto(string Label);
