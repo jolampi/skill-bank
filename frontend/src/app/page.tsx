@@ -1,6 +1,5 @@
 "use client";
 
-import styles from "./page.module.css";
 import { useContext } from "react";
 import AuthContext from "@/contexts/AuthContext";
 import Link from "next/link";
@@ -14,11 +13,11 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
+    <div>
+      <main>
         Welcome!
-        <div className={styles.ctas}>
-          <Link className={styles.primary} href="/skills">
+        <div>
+          <Link href="/skills">
             Skills
           </Link>
         </div>
