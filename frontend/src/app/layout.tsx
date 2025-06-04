@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import BackendAuthProvider from "@/services/BackendAuthProvider";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,7 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <BackendAuthProvider>{children}</BackendAuthProvider>
+        <AppRouterCacheProvider>
+          <BackendAuthProvider>{children}</BackendAuthProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );
