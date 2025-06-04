@@ -2,8 +2,8 @@
 
 import { useContext } from "react";
 import AuthContext from "@/contexts/AuthContext";
-import Link from "next/link";
 import withAuthentication from "@/components/withAuthentication";
+import Navigation from "@/components/Navigation";
 
 const Home: React.FC = () => {
   const authContext = useContext(AuthContext);
@@ -14,13 +14,11 @@ const Home: React.FC = () => {
 
   return (
     <div>
+      <Navigation />
       <main>
-        Welcome!
-        <div>
-          <Link href="/skills">
-            Skills
-          </Link>
-        </div>
+        <h1>
+          Welcome!
+        </h1>
         <button onClick={handleLogout}>Log out</button>
       </main>
     </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Navigation from "@/components/Navigation";
 import withAuthentication from "@/components/withAuthentication";
 import { getApiUsersCurrent, putApiUsersCurrent, UserSkillDto } from "@/generated/client";
 import React, { useEffect, useState } from "react";
@@ -33,20 +34,23 @@ const SkillsPage: React.FC = () => {
 
   return (
     <div>
-      <ul>
-        {skills.map((skill) => (
-          <li key={skill.label}>
-            {skill.label} <button onClick={() => handleRemove(skill.label!)}>Remove</button>
+      <Navigation />
+      <main>
+        <ul>
+          {skills.map((skill) => (
+            <li key={skill.label}>
+              {skill.label} <button onClick={() => handleRemove(skill.label!)}>Remove</button>
+            </li>
+          ))}
+          <li>
+            <input type="text" value={newSkill} onChange={(e) => setNewSkill(e.target.value)} />
+            <button onClick={handleAdd}>Add</button>
           </li>
-        ))}
-        <li>
-          <input type="text" value={newSkill} onChange={(e) => setNewSkill(e.target.value)} />
-          <button onClick={handleAdd}>Add</button>
-        </li>
-      </ul>
-      <div>
-        <button onClick={handleSave}>Save</button>
-      </div>
+        </ul>
+        <div>
+          <button onClick={handleSave}>Save</button>
+        </div>
+      </main>
     </div>
   );
 };

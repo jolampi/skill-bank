@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import BackendAuthProvider from "@/services/BackendAuthProvider";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
-import theme from "../theme";
-import {Roboto} from "next/font/google";
+import theme from "@/theme";
+import { Roboto } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "Skill Bank",
@@ -13,8 +13,8 @@ const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-roboto"
-})
+  variable: "--font-roboto",
+});
 
 export default function RootLayout({
   children,
