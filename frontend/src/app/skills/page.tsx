@@ -34,7 +34,9 @@ const SkillsPage: React.FC = () => {
 
   return (
     <div>
-      <Navigation />
+      <header>
+        <Navigation />
+      </header>
       <main>
         <ul>
           {skills.map((skill) => (

@@ -6,7 +6,9 @@ import Navigation from "@/components/Navigation";
 const Home: React.FC = () => {
   return (
     <div>
-      <Navigation />
+      <header>
+        <Navigation />
+      </header>
       <main>
         <h1>Welcome!</h1>
       </main>

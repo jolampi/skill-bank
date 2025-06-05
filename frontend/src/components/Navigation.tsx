@@ -13,7 +13,7 @@ export default function Navigation(): React.ReactNode {
   };
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box component="nav" sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
           <Button color="inherit" href="/">
