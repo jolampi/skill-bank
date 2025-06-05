@@ -1,18 +1,25 @@
 "use client";
 
 import AuthContext from "@/contexts/AuthContext";
+import useInput from "@/hooks/useInput";
+import theme from "@/theme";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import FormControl from "@mui/material/FormControl";
+import TextField from "@mui/material/TextField";
 import { useRouter } from "next/navigation";
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 
 const LoginPage: React.FC = () => {
   const authContext = useContext(AuthContext);
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useInput("text");
+  const [password, setPassword] = useInput("password");
 
   const handleLogin: React.FormEventHandler = async (event) => {
     event.preventDefault();
-    const result = await authContext.authenticate(username, password);
+    const result = await authContext.authenticate(username.value, password.value);
     setUsername("");
     setPassword("");
     if (result) {
@@ -20,28 +27,37 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const addMargin = {
+    marginBottom: 3,
+  };
+
   if (authContext.loading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>
-            Username
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-          </label>
-        </div>
-        <div>
-          <label>
-            Password
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          </label>
-        </div>
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    <main>
+      <Container
+        maxWidth="sm"
+        sx={{
+          [theme.breakpoints.up("sm")]: {
+            marginTop: 20,
+          },
+        }}
+      >
+        <Box component="form" onSubmit={handleLogin}>
+          <TextField required fullWidth label="Username" {...username} sx={addMargin} />
+          <FormControl fullWidth sx={addMargin}>
+            <TextField required label="Password" {...password} />
+          </FormControl>
+          <FormControl fullWidth>
+            <Button type="submit" variant="contained">
+              Submit
+            </Button>
+          </FormControl>
+        </Box>
+      </Container>
+    </main>
   );
 };
 
