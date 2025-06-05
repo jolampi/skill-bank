@@ -2,12 +2,6 @@
 
 import Navigation from "@/components/Navigation";
 import withAuthentication from "@/components/withAuthentication";
-import {
-  getApiSkills,
-  getApiUsersCurrent,
-  putApiUsersCurrent,
-  UserSkillDto,
-} from "@/generated/client";
 import Table from "@mui/material/Table";
 import TableContainer from "@mui/material/TableContainer";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -26,6 +20,12 @@ import Box from "@mui/material/Box";
 import Autocomplete from "@mui/material/Autocomplete";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import {
+  getAllSkills,
+  getCurrentUserDetails,
+  updateCurrentUserDetails,
+  UserSkill,
+} from "@/services/backend";
 
 const spaceAround: SxProps<Theme> = {
   marginY: 3,
@@ -43,19 +43,18 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const SkillsPage: React.FC = () => {
   const [allSkills, setAllSkills] = useState<Array<string>>([]);
-  const [userSkills, setUserSkills] = useState<Array<UserSkillDto>>([]);
+  const [userSkills, setUserSkills] = useState<Array<UserSkill>>([]);
   const [newSkill, setNewSkill] = useState("");
   const [modified, setModified] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
-    getApiSkills().then((res) => {
-      setAllSkills(res.data?.results?.map((x) => x.label ?? "") ?? []);
+    getCurrentUserDetails().then((details) => {
+      const skills = details.skills.sort((a, b) => a.label.localeCompare(b.label));
+      setUserSkills(skills);
     });
-    getApiUsersCurrent().then((res) => {
-      setUserSkills(res.data?.skills?.sort((a, b) => a.label!.localeCompare(b.label!)) ?? []);
-    });
+    getAllSkills().then(setAllSkills);
   }, []);
 
   const handleAdd = () => {
@@ -75,7 +74,7 @@ const SkillsPage: React.FC = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await putApiUsersCurrent({ body: { skills: userSkills } });
+      await updateCurrentUserDetails({ skills: userSkills });
       setShowNotification(true);
       setModified(false);
     } finally {

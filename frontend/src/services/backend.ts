@@ -1,4 +1,9 @@
-import { postApiAuthLogin } from "@/generated/client";
+import {
+  getApiSkills,
+  getApiUsersCurrent,
+  postApiAuthLogin,
+  putApiUsersCurrent,
+} from "@/generated/client";
 import Cookies from "universal-cookie";
 import { client } from "@/generated/client/client.gen";
 
@@ -34,4 +39,37 @@ export function isAuthenticated() {
 
 export function deauthenticate() {
   cookies.remove(ACCESS_TOKEN_COOKIE);
+}
+
+export interface UserDetails {
+  username: string;
+  skills: UserSkill[];
+}
+
+export interface UserSkill {
+  label: string;
+}
+
+export async function getCurrentUserDetails(): Promise<UserDetails> {
+  const response = await getApiUsersCurrent();
+  return {
+    username: response.data?.username ?? "N/A",
+    skills: response.data?.skills?.map((x) => ({ label: x.label ?? "N/A" })) ?? [],
+  };
+}
+
+export interface UpdateUserDetails {
+  skills: UserSkill[];
+}
+
+export async function updateCurrentUserDetails(
+  data: UpdateUserDetails,
+): Promise<UpdateUserDetails> {
+  await putApiUsersCurrent({ body: data });
+  return getCurrentUserDetails();
+}
+
+export async function getAllSkills(): Promise<string[]> {
+  const response = await getApiSkills();
+  return response.data?.results?.map((x) => x.label ?? "N/A") ?? [];
 }
