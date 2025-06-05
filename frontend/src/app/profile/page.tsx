@@ -41,7 +41,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const SkillsPage: React.FC = () => {
+const ProfilePage: React.FC = () => {
   const [allSkills, setAllSkills] = useState<Array<string>>([]);
   const [userSkills, setUserSkills] = useState<Array<UserSkill>>([]);
   const [newSkill, setNewSkill] = useState("");
@@ -161,4 +161,4 @@ const SkillsPage: React.FC = () => {
   );
 };
 
-export default withAuthentication(SkillsPage);
+export default withAuthentication(ProfilePage);
