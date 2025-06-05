@@ -5,6 +5,16 @@ export type LoginCredentialsDto = {
   password?: string | null;
 };
 
+export type SkillDto = {
+  id: string;
+  label: string | null;
+  developers: number;
+};
+
+export type SkillDtoUnpaged = {
+  results?: Array<SkillDto> | null;
+};
+
 export type TokenResponseDto = {
   accessToken?: string | null;
   tokenType?: string | null;
@@ -39,6 +49,22 @@ export type PostApiAuthLoginResponses = {
 };
 
 export type PostApiAuthLoginResponse = PostApiAuthLoginResponses[keyof PostApiAuthLoginResponses];
+
+export type GetApiSkillsData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/Skills";
+};
+
+export type GetApiSkillsResponses = {
+  /**
+   * OK
+   */
+  200: SkillDtoUnpaged;
+};
+
+export type GetApiSkillsResponse = GetApiSkillsResponses[keyof GetApiSkillsResponses];
 
 export type GetApiUsersCurrentData = {
   body?: never;
