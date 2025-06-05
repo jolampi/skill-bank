@@ -2,12 +2,16 @@
 
 import Navigation from "@/components/Navigation";
 import withAuthentication from "@/components/withAuthentication";
-import { getApiUsersCurrent, putApiUsersCurrent, UserSkillDto } from "@/generated/client";
+import {
+  getApiSkills,
+  getApiUsersCurrent,
+  putApiUsersCurrent,
+  UserSkillDto,
+} from "@/generated/client";
 import Table from "@mui/material/Table";
 import TableContainer from "@mui/material/TableContainer";
 import DeleteIcon from "@mui/icons-material/Delete";
 import React, { useEffect, useState } from "react";
-import useInput from "@/hooks/useInput";
 import AddIcon from "@mui/icons-material/Add";
 import Typography from "@mui/material/Typography";
 import TableRow from "@mui/material/TableRow";
@@ -19,6 +23,7 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import { styled, type SxProps, type Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const spaceAround: SxProps<Theme> = {
   marginY: 3,
@@ -35,30 +40,36 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const SkillsPage: React.FC = () => {
-  const [skills, setSkills] = useState<Array<UserSkillDto>>([]);
-  const [newSkill, setNewSkill] = useInput("text");
+  const [allSkills, setAllSkills] = useState<Array<string>>([]);
+  const [userSkills, setUserSkills] = useState<Array<UserSkillDto>>([]);
+  const [newSkill, setNewSkill] = useState("");
+  const [modified, setModified] = useState(false);
 
   useEffect(() => {
+    getApiSkills().then((res) => {
+      setAllSkills(res.data?.results?.map((x) => x.label ?? "") ?? []);
+    });
     getApiUsersCurrent().then((res) => {
-      setSkills(res.data?.skills?.sort((a, b) => a.label!.localeCompare(b.label!)) ?? []);
+      setUserSkills(res.data?.skills?.sort((a, b) => a.label!.localeCompare(b.label!)) ?? []);
     });
   }, []);
 
   const handleAdd = () => {
-    if (newSkill.value.length === 0 || skills.some((x) => x.label === newSkill.value)) {
+    if (newSkill.length === 0 || userSkills.some((x) => x.label === newSkill)) {
       return;
     }
-
-    setSkills((prev) => [...prev, { label: newSkill.value }]);
+    setUserSkills((prev) => [...prev, { label: newSkill }]);
+    setModified(true);
     setNewSkill("");
   };
 
   const handleRemove = (label: string) => {
-    setSkills((prev) => prev.filter((x) => x.label !== label));
+    setUserSkills((prev) => prev.filter((x) => x.label !== label));
+    setModified(true)
   };
 
   const handleSave = async () => {
-    await putApiUsersCurrent({ body: { skills } });
+    await putApiUsersCurrent({ body: { skills: userSkills } });
   };
 
   return (
@@ -74,7 +85,7 @@ const SkillsPage: React.FC = () => {
           <TableContainer>
             <Table size="small" role="presentation" aria-label="My skills">
               <TableBody>
-                {skills.map((skill) => (
+                {userSkills.map((skill) => (
                   <StyledTableRow key={skill.label}>
                     <TableCell>{skill.label}</TableCell>
                     <TableCell align="right">
@@ -90,7 +101,22 @@ const SkillsPage: React.FC = () => {
                 ))}
                 <StyledTableRow>
                   <TableCell>
-                    <TextField label="New skill" size="small" margin="none" {...newSkill} />
+                    <Autocomplete
+                      freeSolo
+                      selectOnFocus
+                      handleHomeEndKeys
+                      size="small"
+                      options={allSkills}
+                      value={newSkill}
+                      onChange={(_, newValue) => {
+                        if (newValue) {
+                          setNewSkill(newValue);
+                        }
+                      }}
+                      renderInput={(params) => (
+                        <TextField label="Add new" {...params} />
+                      )}
+                    />
                   </TableCell>
                   <TableCell align="right">
                     <Button disableElevation startIcon={<AddIcon />} onClick={handleAdd}>
@@ -102,7 +128,7 @@ const SkillsPage: React.FC = () => {
             </Table>
           </TableContainer>
           <Box sx={spaceAround}>
-            <Button variant="contained" onClick={handleSave}>
+            <Button variant="contained" disabled={!modified} onClick={handleSave}>
               Save
             </Button>
           </Box>
