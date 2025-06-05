@@ -4,6 +4,8 @@ import type { Options as ClientOptions, TDataShape, Client } from "@hey-api/clie
 import type {
   PostApiAuthLoginData,
   PostApiAuthLoginResponses,
+  GetApiSkillsData,
+  GetApiSkillsResponses,
   GetApiUsersCurrentData,
   GetApiUsersCurrentResponses,
   PutApiUsersCurrentData,
@@ -38,6 +40,15 @@ export const postApiAuthLogin = <ThrowOnError extends boolean = false>(
       "Content-Type": "application/json",
       ...options?.headers,
     },
+  });
+};
+
+export const getApiSkills = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiSkillsData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<GetApiSkillsResponses, unknown, ThrowOnError>({
+    url: "/api/Skills",
+    ...options,
   });
 };
 
