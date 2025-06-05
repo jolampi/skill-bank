@@ -24,6 +24,8 @@ import Container from "@mui/material/Container";
 import { styled, type SxProps, type Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Autocomplete from "@mui/material/Autocomplete";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 const spaceAround: SxProps<Theme> = {
   marginY: 3,
@@ -44,6 +46,8 @@ const SkillsPage: React.FC = () => {
   const [userSkills, setUserSkills] = useState<Array<UserSkillDto>>([]);
   const [newSkill, setNewSkill] = useState("");
   const [modified, setModified] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     getApiSkills().then((res) => {
@@ -65,11 +69,22 @@ const SkillsPage: React.FC = () => {
 
   const handleRemove = (label: string) => {
     setUserSkills((prev) => prev.filter((x) => x.label !== label));
-    setModified(true)
+    setModified(true);
   };
 
   const handleSave = async () => {
-    await putApiUsersCurrent({ body: { skills: userSkills } });
+    setSaving(true);
+    try {
+      await putApiUsersCurrent({ body: { skills: userSkills } });
+      setShowNotification(true);
+      setModified(false);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCloseNotification = () => {
+    setShowNotification(false);
   };
 
   return (
@@ -104,18 +119,17 @@ const SkillsPage: React.FC = () => {
                     <Autocomplete
                       freeSolo
                       selectOnFocus
-                      handleHomeEndKeys
+                      disableClearable
+                      disabled={saving}
                       size="small"
                       options={allSkills}
-                      value={newSkill}
-                      onChange={(_, newValue) => {
+                      inputValue={newSkill}
+                      onInputChange={(_, newValue) => {
                         if (newValue) {
                           setNewSkill(newValue);
                         }
                       }}
-                      renderInput={(params) => (
-                        <TextField label="Add new" {...params} />
-                      )}
+                      renderInput={(params) => <TextField label="Add new" {...params} />}
                     />
                   </TableCell>
                   <TableCell align="right">
@@ -128,12 +142,22 @@ const SkillsPage: React.FC = () => {
             </Table>
           </TableContainer>
           <Box sx={spaceAround}>
-            <Button variant="contained" disabled={!modified} onClick={handleSave}>
+            <Button variant="contained" loading={saving} disabled={!modified} onClick={handleSave}>
               Save
             </Button>
           </Box>
         </Container>
       </main>
+      <Snackbar
+        open={showNotification}
+        autoHideDuration={5000}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        onClose={handleCloseNotification}
+      >
+        <Alert onClose={handleCloseNotification} severity="success">
+          Changes saved!
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
