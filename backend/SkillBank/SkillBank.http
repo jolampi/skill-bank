@@ -34,3 +34,9 @@ Authorization: Bearer {{accessToken}}
     }
   ]
 }
+
+### Get all skills
+
+GET {{SkillBank_HostAddress}}/api/Skills
+Accept: application/json
+Authorization: Bearer {{accessToken}}

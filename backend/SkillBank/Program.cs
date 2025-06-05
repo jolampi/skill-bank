@@ -36,6 +36,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<AuthorizationService>();
+builder.Services.AddScoped<SkillService>();
 builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
