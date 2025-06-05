@@ -19,10 +19,10 @@ export default function Navigation(): React.ReactNode {
           <Button color="inherit" href="/">
             Skill Bank
           </Button>
-          <Button color="inherit" href="/skills">
-            My Skills
-          </Button>
           <Box sx={{ flexGrow: 1 }} />
+          <Button color="inherit" href="/profile">
+            My Profile
+          </Button>
           <Button color="inherit" onClick={handleLogout}>
             Logout
           </Button>
