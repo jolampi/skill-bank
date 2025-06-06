@@ -8,8 +8,8 @@ POST {{SkillBank_HostAddress}}/api/Auth/login
 Content-Type: application/json
 
 {
-  "username": "developer",
-  "password": "developer"
+  "username": "consultant",
+  "password": "consultant"
 }
 
 ### Get current user details

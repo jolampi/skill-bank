@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,8 @@ builder.Services.AddScoped<AuthorizationService>();
 builder.Services.AddScoped<SkillService>();
 builder.Services.AddScoped<UserService>();
 
+SetupEnumSerialization(builder);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -54,3 +57,16 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.Run();
+
+static void SetupEnumSerialization(WebApplicationBuilder builder)
+{
+    var enumConverter = new JsonStringEnumConverter();
+    builder.Services.ConfigureHttpJsonOptions(options =>
+    {
+        options.SerializerOptions.Converters.Add(enumConverter);
+    });
+    builder.Services.Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(enumConverter);
+    });
+}

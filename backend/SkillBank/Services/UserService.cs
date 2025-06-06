@@ -18,7 +18,20 @@ public class UserService(ApplicationDbContext context)
         var skills = user.Skills
             .Select(x => new UserSkillDto(x.Label))
             .ToList();
-        return new UserDto(user.Id, user.UserName!, skills);
+        var role = user.Role switch
+        {
+            UserRole.Admin => RoleDto.Admin,
+            UserRole.Consultant => RoleDto.Consultant,
+            UserRole.Sales => RoleDto.Sales,
+            _ => RoleDto.Consultant,
+        };
+        return new UserDto
+        {
+            Id = user.Id,
+            Username = user.UserName ?? "",
+            Role = role,
+            Skills = skills,
+        };
     }
 
     public async Task UpdateUserAsync(Guid id, UpdateUserDto update)
