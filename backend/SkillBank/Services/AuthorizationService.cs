@@ -12,7 +12,7 @@ namespace SkillBank.Services;
 
 public class AuthorizationService(ApplicationDbContext context, IConfiguration configuration, IPasswordHasher<User> passwordhasher)
 {
-    public async Task<TokenResponseDto?> Login(LoginCredentialsDto credentials)
+    public async Task<TokenResponseDto?> LoginAsync(LoginCredentialsDto credentials)
     {
         var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == credentials.Username);
         if (user is null || user.PasswordHash is null)
@@ -24,7 +24,31 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         {
             return null;
         }
+        var token = await CreateAndSaveTokenAsync(user);
+        return token;
+    }
 
+    public async Task<TokenResponseDto?> RefreshAsync(RefreshTokenDto refreshTokenDto)
+    {
+        var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == refreshTokenDto.Username);
+        if (user is null || user.RefreshToken is null)
+        {
+            return null;
+        }
+        if (user.RefreshTokenExpiryTime is null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        {
+            return null;
+        }
+        if (user.RefreshToken != refreshTokenDto.RefreshToken)
+        {
+            return null;
+        }
+        var token = await CreateAndSaveTokenAsync(user);
+        return token;
+    }
+
+    private async Task<TokenResponseDto> CreateAndSaveTokenAsync(User user)
+    {
         var accessToken = CreateToken(user);
         var refreshToken = GenerateRefreshToken();
         user.RefreshToken = refreshToken;
@@ -55,8 +79,8 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
             [ClaimTypes.NameIdentifier] = user.Id,
             [ClaimTypes.Role] = user.Role.ToString(),
         };
-        var authotizationToken = configuration.GetValue<string>("Authorization:Token")!;
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authotizationToken));
+        var authorizationToken = configuration.GetValue<string>("Authorization:Token")!;
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authorizationToken));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
