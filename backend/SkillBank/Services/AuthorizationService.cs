@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,13 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         {
             return null;
         }
+
+        var accessToken = CreateToken(user);
+        var refreshToken = GenerateRefreshToken();
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1);
+        await context.SaveChangesAsync();
+
         var role = user.Role switch
         {
             UserRole.Admin => RoleDto.Admin,
@@ -32,7 +40,8 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         };
         return new TokenResponseDto
         {
-            AccessToken = CreateToken(user),
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
             Role = role,
             TokenType = "Bearer",
         };
@@ -46,7 +55,8 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
             [ClaimTypes.NameIdentifier] = user.Id,
             [ClaimTypes.Role] = user.Role.ToString(),
         };
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("Authorization:Token")!));
+        var authotizationToken = configuration.GetValue<string>("Authorization:Token")!;
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authotizationToken));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -55,7 +65,7 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
             Claims = claims,
             IssuedAt = null,
             NotBefore = null,
-            Expires = DateTime.UtcNow.AddDays(1),
+            Expires = DateTime.UtcNow.AddMinutes(10),
             SigningCredentials = signingCredentials,
         };
         var handler = new JsonWebTokenHandler
@@ -63,5 +73,13 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
             SetDefaultTimesOnTokenCreation = false
         };
         return handler.CreateToken(tokenDescriptor);
+    }
+
+    private static string GenerateRefreshToken()
+    {
+        var random = new byte[32];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(random);
+        return Convert.ToBase64String(random);
     }
 }
