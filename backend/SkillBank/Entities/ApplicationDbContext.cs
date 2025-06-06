@@ -13,10 +13,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
         builder.Entity<User>()
             .HasMany(e => e.Skills)
             .WithMany(e => e.Users)
             .UsingEntity<UserSkill>();
+        builder.Entity<User>()
+            .Property(e => e.Role)
+            .HasConversion<string>();
 
         builder.Entity<Skill>()
             .HasIndex(e => e.Label)
@@ -28,25 +32,29 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .UseSeeding((context, _) =>
             {
                 // Test data for early development
-                EnsureUser(context, "admin", "admin");
-                var developer = EnsureUser(context, "developer", "developer");
-                EnsureUser(context, "sales", "sales");
+                EnsureUser(context, "admin", "admin", UserRole.Admin);
+                var consultant = EnsureUser(context, "consultant", "consultant", UserRole.Consultant);
+                EnsureUser(context, "sales", "sales", UserRole.Sales);
 
                 var dotnet = EnsureSkill(context, ".Net");
                 var react = EnsureSkill(context, "React");
 
-                EnsureUserSkill(context, developer, dotnet);
-                EnsureUserSkill(context, developer, react);
+                EnsureUserSkill(context, consultant, dotnet);
+                EnsureUserSkill(context, consultant, react);
 
                 context.SaveChanges();
             });
 
-    private static User EnsureUser(DbContext context, string username, string password)
+    private static User EnsureUser(DbContext context, string username, string password, UserRole role)
     {
         var user = context.Set<User>().FirstOrDefault(x => x.UserName == username);
         if (user is null)
         {
-            user = new User { UserName = username };
+            user = new User
+            {
+                UserName = username,
+                Role = role
+            };
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, password);
             context.Set<User>().Add(user);
         }

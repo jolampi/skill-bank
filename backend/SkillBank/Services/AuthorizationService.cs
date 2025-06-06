@@ -32,6 +32,7 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         {
             [ClaimTypes.Name] = user.UserName ?? "",
             [ClaimTypes.NameIdentifier] = user.Id,
+            [ClaimTypes.Role] = user.Role.ToString(),
         };
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("Authorization:Token")!));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
