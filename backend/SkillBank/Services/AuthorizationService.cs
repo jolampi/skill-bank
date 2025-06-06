@@ -23,7 +23,19 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         {
             return null;
         }
-        return new TokenResponseDto(CreateToken(user), "Bearer");
+        var role = user.Role switch
+        {
+            UserRole.Admin => RoleDto.Admin,
+            UserRole.Consultant => RoleDto.Consultant,
+            UserRole.Sales => RoleDto.Sales,
+            _ => RoleDto.Consultant,
+        };
+        return new TokenResponseDto
+        {
+            AccessToken = CreateToken(user),
+            Role = role,
+            TokenType = "Bearer",
+        };
     }
 
     private string CreateToken(User user)
