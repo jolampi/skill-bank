@@ -7,7 +7,7 @@ namespace SkillBank.Services;
 
 public class UserService(ApplicationDbContext context, IPasswordHasher<User> passwordHasher)
 {
-    public async Task<UserDto?> CreateAsync(CreateUserDto newUser)
+    public async Task<UserDetailsDto?> CreateAsync(CreateUserDto newUser)
     {
         var user = new User
         {
@@ -17,7 +17,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         user.PasswordHash = passwordHasher.HashPassword(user, newUser.Password);
         context.Set<User>().Add(user);
         await context.SaveChangesAsync();
-        return new UserDto
+        return new UserDetailsDto
         {
             Id = user.Id,
             Username = user.UserName,
@@ -38,10 +38,13 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
                 Skills = user.UserSkills.Count,
             };
         var users = await query.ToListAsync();
-        return new Unpaged<UserListDto>(users);
+        return new Unpaged<UserListDto>
+        {
+            Results = users,
+        };
     }
 
-    public async Task<UserDto?> GetByIdAsync(Guid id)
+    public async Task<UserDetailsDto?> GetByIdAsync(Guid id)
     {
         var user = await context.Users
             .Include(x => x.Skills)
@@ -51,9 +54,12 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             return null;
         }
         var skills = user.Skills
-            .Select(x => new UserSkillDto(x.Label))
+            .Select(x => new UserSkillDto
+            {
+                Label = x.Label,
+            })
             .ToList();
-        return new UserDto
+        return new UserDetailsDto
         {
             Id = user.Id,
             Username = user.UserName ?? "",

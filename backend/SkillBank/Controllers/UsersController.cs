@@ -13,21 +13,21 @@ public class UsersController(UserService userService) : ControllerBase
 {
     [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<ActionResult<UserDto>> Create(CreateUserDto payload)
+    public async Task<ActionResult<UserDetailsDto>> Create(CreateUserDto payload)
     {
         var user = await userService.CreateAsync(payload);
         return Ok(user);
     }
 
     [HttpGet]
-    public async Task<ActionResult<Unpaged<UserDto>>> FindAll()
+    public async Task<ActionResult<Unpaged<UserListDto>>> FindAll()
     {
         var users = await userService.FindAllAsync();
         return Ok(users);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserDto>> GetById(Guid id)
+    public async Task<ActionResult<UserDetailsDto>> GetById(Guid id)
     {
         var user = await userService.GetByIdAsync(id);
         if (user is null)
@@ -38,7 +38,7 @@ public class UsersController(UserService userService) : ControllerBase
     }
 
     [HttpGet("current")]
-    public async Task<ActionResult<UserDto>> GetCurrent()
+    public async Task<ActionResult<UserDetailsDto>> GetCurrent()
     {
         var userId = GetCurrentUserId();
         return await GetById(userId);

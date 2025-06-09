@@ -14,9 +14,12 @@ public class SkillService(ApplicationDbContext context)
             {
                 Id = skill.Id,
                 Label = skill.Label,
-                Developers = skill.UserSkills.Count
+                Users = skill.UserSkills.Count
             };
         var skills = await query.ToListAsync();
-        return new Unpaged<SkillDto>(skills);
+        return new Unpaged<SkillDto>
+        {
+            Results = skills,
+        };
     }
 }

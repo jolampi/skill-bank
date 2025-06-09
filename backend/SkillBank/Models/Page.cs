@@ -5,4 +5,7 @@ namespace SkillBank.Models;
 /// </summary>
 /// <typeparam name="T">Response item type</typeparam>
 /// <param name="Results">The list.</param>
-public record Unpaged<T>(IEnumerable<T> Results);
+public record Unpaged<T>
+{
+    public required IEnumerable<T> Results { get; init; }
+}
