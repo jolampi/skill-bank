@@ -1,11 +1,46 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SkillBank.Entities;
 using SkillBank.Models;
 
 namespace SkillBank.Services;
 
-public class UserService(ApplicationDbContext context)
+public class UserService(ApplicationDbContext context, IPasswordHasher<User> passwordHasher)
 {
+    public async Task<UserDto?> CreateAsync(CreateUserDto newUser)
+    {
+        var user = new User
+        {
+            UserName = newUser.Username,
+            Role = RoleFromDto(newUser.Role),
+        };
+        user.PasswordHash = passwordHasher.HashPassword(user, newUser.Password);
+        context.Set<User>().Add(user);
+        await context.SaveChangesAsync();
+        return new UserDto
+        {
+            Id = user.Id,
+            Username = user.UserName,
+            Role = newUser.Role,
+            Skills = [],
+        };
+    }
+
+    public async Task<Unpaged<UserListDto>> FindAllAsync()
+    {
+        var query =
+            from user in context.Users
+            select new UserListDto
+            {
+                Id = user.Id,
+                Username = user.UserName ?? "",
+                Role = RoleToDto(user.Role),
+                Skills = user.UserSkills.Count,
+            };
+        var users = await query.ToListAsync();
+        return new Unpaged<UserListDto>(users);
+    }
+
     public async Task<UserDto?> GetByIdAsync(Guid id)
     {
         var user = await context.Users
@@ -18,21 +53,30 @@ public class UserService(ApplicationDbContext context)
         var skills = user.Skills
             .Select(x => new UserSkillDto(x.Label))
             .ToList();
-        var role = user.Role switch
-        {
-            UserRole.Admin => RoleDto.Admin,
-            UserRole.Consultant => RoleDto.Consultant,
-            UserRole.Sales => RoleDto.Sales,
-            _ => RoleDto.Consultant,
-        };
         return new UserDto
         {
             Id = user.Id,
             Username = user.UserName ?? "",
-            Role = role,
+            Role = RoleToDto(user.Role),
             Skills = skills,
         };
     }
+
+    private static UserRole RoleFromDto(RoleDto roleDto) => roleDto switch
+    {
+        RoleDto.Admin => UserRole.Admin,
+        RoleDto.Consultant => UserRole.Consultant,
+        RoleDto.Sales => UserRole.Sales,
+        _ => UserRole.Consultant,
+    };
+
+    private static RoleDto RoleToDto(UserRole userRole) => userRole switch
+    {
+        UserRole.Admin => RoleDto.Admin,
+        UserRole.Consultant => RoleDto.Consultant,
+        UserRole.Sales => RoleDto.Sales,
+        _ => RoleDto.Consultant,
+    };
 
     public async Task UpdateUserAsync(Guid id, UpdateUserDto update)
     {
@@ -91,5 +135,16 @@ public class UserService(ApplicationDbContext context)
             }
         }
         return skillsByLabel;
+    }
+
+    public async Task<bool> DeleteAsync(Guid userId)
+    {
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (user is null || user.Role == UserRole.Admin)
+        {
+            return false;
+        }
+        context.Users.Remove(user);
+        return true;
     }
 }

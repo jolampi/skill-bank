@@ -1,6 +1,7 @@
 @SkillBank_HostAddress = http://localhost:5268
 @accessToken = {{login.response.body.$.accessToken}}
 @refreshToken = {{login.response.body.$.refreshToken}}
+@createdUser = {{create.response.body.$.id}}
 
 ### Authenticate
 
@@ -9,8 +10,8 @@ POST {{SkillBank_HostAddress}}/api/Auth/login
 Content-Type: application/json
 
 {
-  "username": "consultant",
-  "password": "consultant"
+  "username": "admin",
+  "password": "admin"
 }
 
 ### Refresh
@@ -24,6 +25,31 @@ Authorization: Bearer {{refreshToken}}
 
 POST {{SkillBank_HostAddress}}/api/Auth/revoke
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### Create user (admin only)
+
+# @name create
+POST {{SkillBank_HostAddress}}/api/Users
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "username": "junior",
+  "password": "junior",
+  "role": "Consultant"
+}
+
+### Get created user details
+
+GET {{SkillBank_HostAddress}}/api/Users/{{createdUser}}
+Accept: application/json
+Authorization: Bearer {{accessToken}}
+
+### Get all users
+
+GET {{SkillBank_HostAddress}}/api/Users
+Accept: application/json
 Authorization: Bearer {{accessToken}}
 
 ### Get current user details
