@@ -20,6 +20,12 @@ POST {{SkillBank_HostAddress}}/api/Auth/refresh
 Content-Type: application/json
 Authorization: Bearer {{refreshToken}}
 
+### Revoke
+
+POST {{SkillBank_HostAddress}}/api/Auth/revoke
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
 ### Get current user details
 
 GET {{SkillBank_HostAddress}}/api/Users/current

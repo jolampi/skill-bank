@@ -34,4 +34,23 @@ public class AuthController(AuthorizationService authorizationService) : Control
         }
         return Ok(token);
     }
+
+    /// <summary>
+    /// Invalidates the refresh token, effectively requiring for user to sign in again.
+    /// </summary>
+    [Authorize]
+    [HttpPost("revoke")]
+    public async Task<ActionResult> Revoke()
+    {
+        var userIdClaim = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier);
+        var result = await authorizationService.RevokeAsync(Guid.Parse(userIdClaim.Value));
+        if (result)
+        {
+            return Ok();
+        }
+        else
+        {
+            return BadRequest();
+        }
+    }
 }

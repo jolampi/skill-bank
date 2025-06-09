@@ -30,7 +30,7 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
     public async Task<TokenResponseDto?> RefreshAsync(Guid userId, Guid refreshTokenId)
     {
         var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
-        if (user is null || user.RefreshTokenIsValid(refreshTokenId, DateTime.UtcNow))
+        if (user is null || !user.RefreshTokenIsValid(refreshTokenId, DateTime.UtcNow))
         {
             return null;
         }
@@ -41,7 +41,7 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
     private async Task<TokenResponseDto> CreateAndSaveTokenAsync(User user)
     {
         var accessToken = CreateAccessToken(user);
-        user.RefreshTokenId = new Guid();
+        user.RefreshTokenId = Guid.CreateVersion7();
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1);
         var refreshToken = CreateRefreshToken(user);
         await context.SaveChangesAsync();
@@ -104,5 +104,18 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
             SetDefaultTimesOnTokenCreation = false
         };
         return handler.CreateToken(tokenDescriptor);
+    }
+
+    public async Task<bool> RevokeAsync(Guid userId)
+    {
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (user is null)
+        {
+            return false;
+        }
+        user.RefreshTokenExpiryTime = null;
+        user.RefreshTokenId = null;
+        await context.SaveChangesAsync();
+        return true;
     }
 }

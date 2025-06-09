@@ -15,7 +15,7 @@ public class User : IdentityUser<Guid>
     {
         return RefreshTokenId is not null
             && RefreshTokenExpiryTime is not null
-            && RefreshTokenExpiryTime <= timestamp
+            && timestamp <= RefreshTokenExpiryTime
             && refreshTokenId == RefreshTokenId;
     }
 }
