@@ -21,6 +21,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         builder.Entity<User>()
             .Property(e => e.Role)
             .HasConversion<string>();
+        builder.Entity<User>()
+            .HasIndex(e => e.UserName)
+            .IsUnique();
 
         builder.Entity<Skill>()
             .HasIndex(e => e.Label)
