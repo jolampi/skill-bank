@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -28,9 +27,9 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         return token;
     }
 
-    public async Task<TokenResponseDto?> RefreshAsync(RefreshTokenDto refreshTokenDto)
+    public async Task<TokenResponseDto?> RefreshAsync(Guid userId, Guid refreshTokenId)
     {
-        var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == refreshTokenDto.Username);
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
         if (user is null || user.RefreshToken is null)
         {
             return null;
@@ -39,7 +38,7 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         {
             return null;
         }
-        if (user.RefreshToken != refreshTokenDto.RefreshToken)
+        if (user.RefreshToken != refreshTokenId.ToString())
         {
             return null;
         }
@@ -49,10 +48,10 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
 
     private async Task<TokenResponseDto> CreateAndSaveTokenAsync(User user)
     {
-        var accessToken = CreateToken(user);
-        var refreshToken = GenerateRefreshToken();
-        user.RefreshToken = refreshToken;
+        var accessToken = CreateAccessToken(user);
+        user.RefreshToken = new Guid().ToString();
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1);
+        var refreshToken = CreateRefreshToken(user);
         await context.SaveChangesAsync();
 
         var role = user.Role switch
@@ -71,7 +70,7 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         };
     }
 
-    private string CreateToken(User user)
+    private string CreateAccessToken(User user)
     {
         var claims = new Dictionary<string, object>
         {
@@ -79,6 +78,22 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
             [ClaimTypes.NameIdentifier] = user.Id,
             [ClaimTypes.Role] = user.Role.ToString(),
         };
+        return CreateToken(claims, DateTime.UtcNow.AddMinutes(10));
+    }
+
+    private string CreateRefreshToken(User user)
+    {
+        var claims = new Dictionary<string, object>
+        {
+            [ClaimTypes.NameIdentifier] = user.Id,
+            [ClaimTypes.Role] = "refresh",
+            ["jti"] = user.RefreshToken!,
+        };
+        return CreateToken(claims, (DateTime)user.RefreshTokenExpiryTime!);
+    }
+
+    private string CreateToken(Dictionary<string, object> claims, DateTime expires)
+    {
         var authorizationToken = configuration.GetValue<string>("Authorization:Token")!;
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authorizationToken));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
@@ -89,7 +104,7 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
             Claims = claims,
             IssuedAt = null,
             NotBefore = null,
-            Expires = DateTime.UtcNow.AddMinutes(10),
+            Expires = expires,
             SigningCredentials = signingCredentials,
         };
         var handler = new JsonWebTokenHandler
@@ -97,13 +112,5 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
             SetDefaultTimesOnTokenCreation = false
         };
         return handler.CreateToken(tokenDescriptor);
-    }
-
-    private static string GenerateRefreshToken()
-    {
-        var random = new byte[32];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(random);
-        return Convert.ToBase64String(random);
     }
 }

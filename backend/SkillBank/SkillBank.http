@@ -18,11 +18,7 @@ Content-Type: application/json
 # @name login
 POST {{SkillBank_HostAddress}}/api/Auth/refresh
 Content-Type: application/json
-
-{
-  "refreshToken": "{{refreshToken}}",
-  "username": "consultant"
-}
+Authorization: Bearer {{refreshToken}}
 
 ### Get current user details
 

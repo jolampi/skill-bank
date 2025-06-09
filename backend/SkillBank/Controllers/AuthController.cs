@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkillBank.Models;
 using SkillBank.Services;
@@ -19,10 +21,13 @@ public class AuthController(AuthorizationService authorizationService) : Control
         return Ok(token);
     }
 
+    [Authorize(Roles = "refresh")]
     [HttpPost("refresh")]
-    public async Task<ActionResult<TokenResponseDto>> Refresh(RefreshTokenDto payload)
+    public async Task<ActionResult<TokenResponseDto>> Refresh()
     {
-        var token = await authorizationService.RefreshAsync(payload);
+        var userIdClaim = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier);
+        var jtiClaim = User.Claims.First(c => c.Type == "jti");
+        var token = await authorizationService.RefreshAsync(Guid.Parse(userIdClaim.Value), Guid.Parse(jtiClaim.Value));
         if (token is null)
         {
             return Forbid();
