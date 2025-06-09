@@ -10,4 +10,12 @@ public class User : IdentityUser<Guid>
 
     public virtual ICollection<Skill> Skills { get; } = [];
     public virtual ICollection<UserSkill> UserSkills { get; } = [];
+
+    public bool RefreshTokenIsValid(Guid refreshTokenId, DateTime timestamp)
+    {
+        return RefreshTokenId is not null
+            && RefreshTokenExpiryTime is not null
+            && RefreshTokenExpiryTime <= timestamp
+            && refreshTokenId == RefreshTokenId;
+    }
 }

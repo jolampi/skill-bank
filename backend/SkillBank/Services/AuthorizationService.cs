@@ -30,15 +30,7 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
     public async Task<TokenResponseDto?> RefreshAsync(Guid userId, Guid refreshTokenId)
     {
         var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
-        if (user is null || user.RefreshTokenId is null)
-        {
-            return null;
-        }
-        if (user.RefreshTokenExpiryTime is null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
-        {
-            return null;
-        }
-        if (user.RefreshTokenId != refreshTokenId)
+        if (user is null || user.RefreshTokenIsValid(refreshTokenId, DateTime.UtcNow))
         {
             return null;
         }
