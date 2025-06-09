@@ -4,8 +4,20 @@ import type { Options as ClientOptions, TDataShape, Client } from "@hey-api/clie
 import type {
   PostApiAuthLoginData,
   PostApiAuthLoginResponses,
+  PostApiAuthRefreshData,
+  PostApiAuthRefreshResponses,
+  PostApiAuthRevokeData,
+  PostApiAuthRevokeResponses,
   GetApiSkillsData,
   GetApiSkillsResponses,
+  GetApiUsersData,
+  GetApiUsersResponses,
+  PostApiUsersData,
+  PostApiUsersResponses,
+  DeleteApiUsersByIdData,
+  DeleteApiUsersByIdResponses,
+  GetApiUsersByIdData,
+  GetApiUsersByIdResponses,
   GetApiUsersCurrentData,
   GetApiUsersCurrentResponses,
   PutApiUsersCurrentData,
@@ -43,11 +55,79 @@ export const postApiAuthLogin = <ThrowOnError extends boolean = false>(
   });
 };
 
+export const postApiAuthRefresh = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiAuthRefreshData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).post<
+    PostApiAuthRefreshResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: "/api/Auth/refresh",
+    ...options,
+  });
+};
+
+export const postApiAuthRevoke = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiAuthRevokeData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).post<PostApiAuthRevokeResponses, unknown, ThrowOnError>(
+    {
+      url: "/api/Auth/revoke",
+      ...options,
+    },
+  );
+};
+
 export const getApiSkills = <ThrowOnError extends boolean = false>(
   options?: Options<GetApiSkillsData, ThrowOnError>,
 ) => {
   return (options?.client ?? _heyApiClient).get<GetApiSkillsResponses, unknown, ThrowOnError>({
     url: "/api/Skills",
+    ...options,
+  });
+};
+
+export const getApiUsers = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiUsersData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<GetApiUsersResponses, unknown, ThrowOnError>({
+    url: "/api/Users",
+    ...options,
+  });
+};
+
+export const postApiUsers = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiUsersData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).post<PostApiUsersResponses, unknown, ThrowOnError>({
+    url: "/api/Users",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  });
+};
+
+export const deleteApiUsersById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiUsersByIdData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    DeleteApiUsersByIdResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: "/api/Users/{id}",
+    ...options,
+  });
+};
+
+export const getApiUsersById = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiUsersByIdData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<GetApiUsersByIdResponses, unknown, ThrowOnError>({
+    url: "/api/Users/{id}",
     ...options,
   });
 };
