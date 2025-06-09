@@ -7,9 +7,14 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import FormControl from "@mui/material/FormControl";
+import { SxProps, Theme } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import { useRouter } from "next/navigation";
 import React, { useContext } from "react";
+
+const addMargin: SxProps<Theme> = {
+    marginBottom: 3,
+  };
 
 const LoginPage: React.FC = () => {
   const authContext = useContext(AuthContext);
@@ -25,10 +30,6 @@ const LoginPage: React.FC = () => {
     if (result) {
       router.push("/");
     }
-  };
-
-  const addMargin = {
-    marginBottom: 3,
   };
 
   if (authContext.loading) {
