@@ -11,16 +11,16 @@ namespace SkillBank.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "RefreshToken",
-                table: "AspNetUsers",
-                type: "text",
-                nullable: true);
-
             migrationBuilder.AddColumn<DateTime>(
                 name: "RefreshTokenExpiryTime",
                 table: "AspNetUsers",
                 type: "timestamp with time zone",
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "RefreshTokenId",
+                table: "AspNetUsers",
+                type: "uuid",
                 nullable: true);
         }
 
@@ -28,11 +28,11 @@ namespace SkillBank.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "RefreshToken",
+                name: "RefreshTokenExpiryTime",
                 table: "AspNetUsers");
 
             migrationBuilder.DropColumn(
-                name: "RefreshTokenExpiryTime",
+                name: "RefreshTokenId",
                 table: "AspNetUsers");
         }
     }

@@ -12,7 +12,7 @@ using SkillBank.Entities;
 namespace SkillBank.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250606114505_AddRefreshTokens")]
+    [Migration("20250609072603_AddRefreshTokens")]
     partial class AddRefreshTokens
     {
         /// <inheritdoc />
@@ -216,11 +216,11 @@ namespace SkillBank.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("text");
-
                     b.Property<DateTime?>("RefreshTokenExpiryTime")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("RefreshTokenId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Role")
                         .IsRequired()

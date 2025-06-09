@@ -30,7 +30,7 @@ public class AuthController(AuthorizationService authorizationService) : Control
         var token = await authorizationService.RefreshAsync(Guid.Parse(userIdClaim.Value), Guid.Parse(jtiClaim.Value));
         if (token is null)
         {
-            return Forbid();
+            return BadRequest();
         }
         return Ok(token);
     }
