@@ -1,5 +1,6 @@
 @SkillBank_HostAddress = http://localhost:5268
 @accessToken = {{login.response.body.$.accessToken}}
+@refreshToken = {{login.response.body.$.refreshToken}}
 
 ### Authenticate
 
@@ -11,6 +12,19 @@ Content-Type: application/json
   "username": "consultant",
   "password": "consultant"
 }
+
+### Refresh
+
+# @name login
+POST {{SkillBank_HostAddress}}/api/Auth/refresh
+Content-Type: application/json
+Authorization: Bearer {{refreshToken}}
+
+### Revoke
+
+POST {{SkillBank_HostAddress}}/api/Auth/revoke
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 ### Get current user details
 
