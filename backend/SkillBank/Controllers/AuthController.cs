@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ public class AuthController(AuthorizationService authorizationService) : Control
     public async Task<ActionResult<TokenResponseDto>> Refresh()
     {
         var userIdClaim = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier);
-        var jtiClaim = User.Claims.First(c => c.Type == "jti");
+        var jtiClaim = User.Claims.First(c => c.Type == JwtRegisteredClaimNames.Jti);
         var token = await authorizationService.RefreshAsync(Guid.Parse(userIdClaim.Value), Guid.Parse(jtiClaim.Value));
         if (token is null)
         {

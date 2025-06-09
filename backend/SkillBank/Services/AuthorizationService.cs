@@ -30,7 +30,7 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
     public async Task<TokenResponseDto?> RefreshAsync(Guid userId, Guid refreshTokenId)
     {
         var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
-        if (user is null || !user.RefreshTokenIsValid(refreshTokenId, DateTime.UtcNow))
+        if (user is null || user.RefreshTokenId is null || user.RefreshTokenId != refreshTokenId)
         {
             return null;
         }
@@ -42,7 +42,6 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
     {
         var accessToken = CreateAccessToken(user);
         user.RefreshTokenId = Guid.CreateVersion7();
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1);
         var refreshToken = CreateRefreshToken(user);
         await context.SaveChangesAsync();
 
@@ -79,9 +78,9 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         {
             [ClaimTypes.NameIdentifier] = user.Id,
             [ClaimTypes.Role] = "refresh",
-            ["jti"] = user.RefreshTokenId!,
+            [JwtRegisteredClaimNames.Jti] = user.RefreshTokenId!,
         };
-        return CreateToken(claims, (DateTime)user.RefreshTokenExpiryTime!);
+        return CreateToken(claims, DateTime.UtcNow.AddDays(1));
     }
 
     private string CreateToken(Dictionary<string, object> claims, DateTime expires)
@@ -94,9 +93,10 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
             Issuer = configuration.GetValue<string>("Authorization:Issuer"),
             Audience = configuration.GetValue<string>("Authorization:Audience"),
             Claims = claims,
-            IssuedAt = null,
+            IssuedAt = DateTime.UtcNow,
             NotBefore = null,
             Expires = expires,
+
             SigningCredentials = signingCredentials,
         };
         var handler = new JsonWebTokenHandler
@@ -113,7 +113,6 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         {
             return false;
         }
-        user.RefreshTokenExpiryTime = null;
         user.RefreshTokenId = null;
         await context.SaveChangesAsync();
         return true;

@@ -6,17 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SkillBank.Migrations
 {
     /// <inheritdoc />
-    public partial class AddRefreshTokens : Migration
+    public partial class AddRefeshTokens : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<DateTime>(
-                name: "RefreshTokenExpiryTime",
-                table: "AspNetUsers",
-                type: "timestamp with time zone",
-                nullable: true);
-
             migrationBuilder.AddColumn<Guid>(
                 name: "RefreshTokenId",
                 table: "AspNetUsers",
@@ -27,10 +21,6 @@ namespace SkillBank.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "RefreshTokenExpiryTime",
-                table: "AspNetUsers");
-
             migrationBuilder.DropColumn(
                 name: "RefreshTokenId",
                 table: "AspNetUsers");

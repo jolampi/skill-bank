@@ -12,8 +12,8 @@ using SkillBank.Entities;
 namespace SkillBank.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250609072603_AddRefreshTokens")]
-    partial class AddRefreshTokens
+    [Migration("20250609085451_AddRefeshTokens")]
+    partial class AddRefeshTokens
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -215,9 +215,6 @@ namespace SkillBank.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("RefreshTokenExpiryTime")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("RefreshTokenId")
                         .HasColumnType("uuid");
