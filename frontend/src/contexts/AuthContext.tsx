@@ -22,7 +22,7 @@ export type AuthStates = StateLoading | StateUnauthenticated | StateAuthenticate
 
 interface AuthActions {
   authenticate(username: string, password: string): Promise<boolean>;
-  deauthenticate(): void;
+  deauthenticate(): Promise<void>;
 }
 
 export type AuthContextProps = AuthStates & AuthActions;
@@ -35,7 +35,7 @@ export const defaultContext: AuthContextProps = {
     console.error("Attempting to authenticate without authentication provider.");
     return false;
   },
-  deauthenticate: () => {
+  deauthenticate: async () => {
     console.error("Attempting to deauthenticate without authentication provider.");
   },
 };

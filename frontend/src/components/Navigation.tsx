@@ -8,8 +8,8 @@ import { useContext } from "react";
 export default function Navigation(): React.ReactNode {
   const authContext = useContext(AuthContext);
 
-  const handleLogout = () => {
-    authContext.deauthenticate();
+  const handleLogout = async () => {
+    await authContext.deauthenticate();
   };
 
   return (

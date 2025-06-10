@@ -4,6 +4,7 @@ import {
   postApiAuthLogin,
   postApiAuthRefresh,
   PostApiAuthRefreshData,
+  postApiAuthRevoke,
   putApiUsersCurrent,
   TokenResponseDto,
 } from "@/generated/client";
@@ -47,6 +48,9 @@ export async function authenticate(credentials: Credentials): Promise<Authentica
 }
 
 export async function refresh(): Promise<Authentication | null> {
+  if (!cookies.get(REFRESH_TOKEN_COOKIE)) {
+    return null;
+  }
   const response = await postApiAuthRefresh();
   if (!response.data) {
     authentication = null;
@@ -78,7 +82,8 @@ export async function getAuthentication(): Promise<Authentication | null> {
   return null;
 }
 
-export function deauthenticate() {
+export async function deauthenticate() {
+  await postApiAuthRevoke();
   authentication = null;
   cookies.remove(REFRESH_TOKEN_COOKIE);
 }

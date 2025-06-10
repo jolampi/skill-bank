@@ -38,9 +38,12 @@ const BackendAuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     }
   };
 
-  const handleDeauthenticate = () => {
-    deauthenticate();
-    setAuthState({ loading: false, authenticated: false, role: null });
+  const handleDeauthenticate = async () => {
+    try {
+      await deauthenticate();
+    } finally {
+      setAuthState({ loading: false, authenticated: false, role: null });
+    }
   };
 
   const value: AuthContextProps = {
