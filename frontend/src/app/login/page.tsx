@@ -13,8 +13,8 @@ import { useRouter } from "next/navigation";
 import React, { useContext } from "react";
 
 const addMargin: SxProps<Theme> = {
-    marginBottom: 3,
-  };
+  marginBottom: 3,
+};
 
 const LoginPage: React.FC = () => {
   const authContext = useContext(AuthContext);

@@ -3,14 +3,22 @@ import React from "react";
 interface StateLoading {
   loading: true;
   authenticated: null;
+  role: null;
 }
 
-interface StateReady {
+interface StateUnauthenticated {
   loading: false;
-  authenticated: boolean;
+  authenticated: false;
+  role: null;
 }
 
-export type AuthStates = StateLoading | StateReady;
+interface StateAuthenticated {
+  loading: false;
+  authenticated: true;
+  role: "Admin" | "Consultant" | "Sales";
+}
+
+export type AuthStates = StateLoading | StateUnauthenticated | StateAuthenticated;
 
 interface AuthActions {
   authenticate(username: string, password: string): Promise<boolean>;
@@ -22,6 +30,7 @@ export type AuthContextProps = AuthStates & AuthActions;
 export const defaultContext: AuthContextProps = {
   loading: false,
   authenticated: false,
+  role: null,
   authenticate: async () => {
     console.error("Attempting to authenticate without authentication provider.");
     return false;
@@ -31,5 +40,5 @@ export const defaultContext: AuthContextProps = {
   },
 };
 
-const AuthenticationContext = React.createContext<AuthContextProps>(defaultContext);
-export default AuthenticationContext;
+const AuthContext = React.createContext<AuthContextProps>(defaultContext);
+export default AuthContext;

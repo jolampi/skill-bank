@@ -1,33 +1,46 @@
 "use client";
 
 import AuthContext, { AuthContextProps, AuthStates } from "@/contexts/AuthContext";
-import React, { useCallback, useEffect, useState } from "react";
-import { authenticate, deauthenticate, isAuthenticated } from "./backend";
+import React, { useEffect, useState } from "react";
+import { authenticate, deauthenticate, getAuthentication } from "./backend";
 
 const initialState: AuthStates = {
   loading: true,
   authenticated: null,
+  role: null,
 };
 
 const BackendAuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthStates>(initialState);
 
-  const refresh = useCallback(() => {
-    const authenticated = isAuthenticated();
-    setAuthState({ loading: false, authenticated });
+  useEffect(() => {
+    async function effect() {
+      const authenticated = await getAuthentication();
+      setAuthState(() => {
+        if (authenticated) {
+          return { loading: false, authenticated: true, role: authenticated.role };
+        } else {
+          return { loading: false, authenticated: false, role: null };
+        }
+      });
+    }
+    effect();
   }, []);
-
-  useEffect(() => refresh(), [refresh]);
 
   const handleAuthenticate: AuthContextProps["authenticate"] = async (username, password) => {
     const result = await authenticate({ username, password });
-    refresh();
-    return result;
+    if (result) {
+      setAuthState({ loading: false, authenticated: true, role: result.role });
+      return true;
+    } else {
+      setAuthState({ loading: false, authenticated: false, role: null });
+      return false;
+    }
   };
 
   const handleDeauthenticate = () => {
     deauthenticate();
-    refresh();
+    setAuthState({ loading: false, authenticated: false, role: null });
   };
 
   const value: AuthContextProps = {
