@@ -2,16 +2,32 @@ import {
   getApiSkills,
   getApiUsersCurrent,
   postApiAuthLogin,
+  postApiAuthRefresh,
+  PostApiAuthRefreshData,
+  postApiAuthRevoke,
   putApiUsersCurrent,
+  TokenResponseDto,
 } from "@/generated/client";
 import Cookies from "universal-cookie";
 import { client } from "@/generated/client/client.gen";
 
-const ACCESS_TOKEN_COOKIE = "access_token";
+const REFRESH_ENDPOINT: PostApiAuthRefreshData["url"] = "/api/Auth/refresh";
+const REFRESH_TOKEN_COOKIE = "refresh_token";
+
+export interface Authentication {
+  role: "Admin" | "Consultant" | "Sales";
+}
+
+let authentication: (Authentication & { accessToken: string }) | null = null;
 
 const cookies = new Cookies();
 client.interceptors.request.use((options) => {
-  const token = cookies.get(ACCESS_TOKEN_COOKIE);
+  let token: string | undefined;
+  if (options.url.endsWith(REFRESH_ENDPOINT)) {
+    token = cookies.get(REFRESH_TOKEN_COOKIE);
+  } else {
+    token = authentication?.accessToken;
+  }
   if (token) {
     options.headers.set("Authorization", `Bearer ${token}`);
   }
@@ -23,22 +39,53 @@ export interface Credentials {
   password: string;
 }
 
-export async function authenticate(credentials: Credentials): Promise<boolean> {
+export async function authenticate(credentials: Credentials): Promise<Authentication | null> {
   const response = await postApiAuthLogin({ body: credentials });
   if (!response.data) {
-    return false;
+    return null;
   }
-  // TODO: Address security concerns properly
-  cookies.set(ACCESS_TOKEN_COOKIE, response.data.accessToken);
-  return true;
+  return handleTokenResponse(response.data);
 }
 
-export function isAuthenticated() {
-  return !!cookies.get(ACCESS_TOKEN_COOKIE);
+export async function refresh(): Promise<Authentication | null> {
+  if (!cookies.get(REFRESH_TOKEN_COOKIE)) {
+    return null;
+  }
+  const response = await postApiAuthRefresh();
+  if (!response.data) {
+    authentication = null;
+    cookies.remove(REFRESH_TOKEN_COOKIE);
+    return null;
+  }
+  return handleTokenResponse(response.data);
 }
 
-export function deauthenticate() {
-  cookies.remove(ACCESS_TOKEN_COOKIE);
+function handleTokenResponse(response: TokenResponseDto): Authentication {
+  authentication = {
+    accessToken: response.accessToken!,
+    role: response.role,
+  };
+  // TODO: HTTP Only
+  cookies.set(REFRESH_TOKEN_COOKIE, response.refreshToken);
+  return {
+    role: authentication.role,
+  };
+}
+
+export async function getAuthentication(): Promise<Authentication | null> {
+  if (authentication === null) {
+    await refresh();
+  }
+  if (authentication !== null) {
+    return { role: authentication.role };
+  }
+  return null;
+}
+
+export async function deauthenticate() {
+  await postApiAuthRevoke();
+  authentication = null;
+  cookies.remove(REFRESH_TOKEN_COOKIE);
 }
 
 export interface UserDetails {
