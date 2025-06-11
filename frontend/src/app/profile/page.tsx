@@ -1,7 +1,7 @@
 "use client";
 
 import Navigation from "@/components/Navigation";
-import withAuthentication from "@/components/withAuthentication";
+import withAuthorization from "@/components/withAuthorization";
 import Table from "@mui/material/Table";
 import TableContainer from "@mui/material/TableContainer";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -161,4 +161,4 @@ const ProfilePage: React.FC = () => {
   );
 };
 
-export default withAuthentication(ProfilePage);
+export default withAuthorization(ProfilePage);

@@ -1,7 +1,7 @@
 "use client";
 
 import Navigation from "@/components/Navigation";
-import withAuthentication from "@/components/withAuthentication";
+import withAuthorization from "@/components/withAuthorization";
 import { createUser, deleteUser, getAllUsers, User } from "@/services/backend";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
@@ -165,4 +165,4 @@ const UsersPage: React.FC = () => {
   );
 };
 
-export default withAuthentication(UsersPage, "Admin");
+export default withAuthorization(UsersPage, "Admin");
