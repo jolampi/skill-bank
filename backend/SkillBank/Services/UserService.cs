@@ -151,6 +151,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             return false;
         }
         context.Users.Remove(user);
+        await context.SaveChangesAsync();
         return true;
     }
 }
