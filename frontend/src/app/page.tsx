@@ -2,6 +2,8 @@
 
 import withAuthentication from "@/components/withAuthentication";
 import Navigation from "@/components/Navigation";
+import RoleOnly from "@/components/RoleOnly";
+import Link from "next/link";
 
 const Home: React.FC = () => {
   return (
@@ -11,6 +13,14 @@ const Home: React.FC = () => {
       </header>
       <main>
         <h1>Welcome!</h1>
+        <RoleOnly role="Admin">
+          <h2>Management</h2>
+          <ul>
+            <li>
+              <Link href="/users">Manage users</Link>
+            </li>
+          </ul>
+        </RoleOnly>
       </main>
     </div>
   );

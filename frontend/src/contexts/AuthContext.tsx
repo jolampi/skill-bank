@@ -1,5 +1,7 @@
 import React from "react";
 
+export type Role = "Admin" | "Consultant" | "Sales";
+
 interface StateLoading {
   loading: true;
   authenticated: null;
@@ -15,7 +17,7 @@ interface StateUnauthenticated {
 interface StateAuthenticated {
   loading: false;
   authenticated: true;
-  role: "Admin" | "Consultant" | "Sales";
+  role: Role;
 }
 
 export type AuthStates = StateLoading | StateUnauthenticated | StateAuthenticated;

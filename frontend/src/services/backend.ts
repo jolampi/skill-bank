@@ -1,21 +1,25 @@
 import {
+  deleteApiUsersById,
   getApiSkills,
+  getApiUsers,
   getApiUsersCurrent,
   postApiAuthLogin,
   postApiAuthRefresh,
   PostApiAuthRefreshData,
   postApiAuthRevoke,
+  postApiUsers,
   putApiUsersCurrent,
   TokenResponseDto,
 } from "@/generated/client";
 import Cookies from "universal-cookie";
 import { client } from "@/generated/client/client.gen";
+import { Role } from "@/contexts/AuthContext";
 
 const REFRESH_ENDPOINT: PostApiAuthRefreshData["url"] = "/api/Auth/refresh";
 const REFRESH_TOKEN_COOKIE = "refresh_token";
 
 export interface Authentication {
-  role: "Admin" | "Consultant" | "Sales";
+  role: Role;
 }
 
 let authentication: (Authentication & { accessToken: string }) | null = null;
@@ -119,4 +123,35 @@ export async function updateCurrentUserDetails(
 export async function getAllSkills(): Promise<string[]> {
   const response = await getApiSkills();
   return response.data?.results?.map((x) => x.label ?? "N/A") ?? [];
+}
+
+export interface User {
+  id: string;
+  username: string;
+  role: Role;
+}
+
+export async function getAllUsers(): Promise<User[]> {
+  const response = await getApiUsers();
+  return (
+    response.data?.results?.map((x) => ({
+      id: x.id,
+      username: x.username!,
+      role: x.role,
+    })) ?? []
+  );
+}
+
+export interface NewUser {
+  username: string;
+  password: string;
+  role: Role;
+}
+
+export async function createUser(newUser: NewUser): Promise<void> {
+  await postApiUsers({ body: newUser });
+}
+
+export async function deleteUser(id: string): Promise<void> {
+  await deleteApiUsersById({ path: { id } });
 }
