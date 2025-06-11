@@ -1,6 +1,6 @@
 "use client";
 
-import withAuthentication from "@/components/withAuthentication";
+import withAuthorization from "@/components/withAuthorization";
 import Navigation from "@/components/Navigation";
 import RoleOnly from "@/components/RoleOnly";
 import Link from "next/link";
@@ -26,4 +26,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default withAuthentication(Home);
+export default withAuthorization(Home);
