@@ -27,8 +27,9 @@ const BackendAuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     effect();
   }, []);
 
-  const handleAuthenticate: AuthContextProps["authenticate"] = async (username, password) => {
-    const result = await authenticate({ username, password });
+  const handleAuthenticate: AuthContextProps["authenticate"] = async (credentials) => {
+    setAuthState({ loading: true, authenticated: null, role: null });
+    const result = await authenticate(credentials);
     if (result) {
       setAuthState({ loading: false, authenticated: true, role: result.role });
       return true;

@@ -22,8 +22,13 @@ interface StateAuthenticated {
 
 export type AuthStates = StateLoading | StateUnauthenticated | StateAuthenticated;
 
+export interface Credentials {
+  username: string;
+  password: string;
+}
+
 interface AuthActions {
-  authenticate(username: string, password: string): Promise<boolean>;
+  authenticate(Credentials: Credentials): Promise<boolean>;
   deauthenticate(): Promise<void>;
 }
 
