@@ -13,7 +13,7 @@ import {
 } from "@/generated/client";
 import Cookies from "universal-cookie";
 import { client } from "@/generated/client/client.gen";
-import { Role } from "@/contexts/AuthContext";
+import { Credentials, Role } from "@/contexts/AuthContext";
 
 const REFRESH_ENDPOINT: PostApiAuthRefreshData["url"] = "/api/Auth/refresh";
 const REFRESH_TOKEN_COOKIE = "refresh_token";
@@ -37,11 +37,6 @@ client.interceptors.request.use((options) => {
   }
   return options;
 });
-
-export interface Credentials {
-  username: string;
-  password: string;
-}
 
 export async function authenticate(credentials: Credentials): Promise<Authentication | null> {
   const response = await postApiAuthLogin({ body: credentials });
