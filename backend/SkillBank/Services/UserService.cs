@@ -91,35 +91,17 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             .Include(x => x.UserSkills)
             .FirstAsync(x => x.Id == id);
         var skillsByLabel = await GetOrCreateSkillsAsync(update.Skills);
-
-        // Remove if no longer on list
-        var labels = update.Skills
-            .Select(x => x.Label)
-            .ToHashSet();
-        foreach (var skill in user.Skills)
+        var diff = Diff(skillsByLabel.Values, user.Skills);
+        foreach (var skill in diff.Added)
         {
-            if (!labels.Contains(skill.Label))
-            {
-                var userSkill = user.UserSkills.FirstOrDefault(x => x.SkillId == skill.Id);
-                if (userSkill is not null)
-                {
-                    context.UserSkills.Remove(userSkill);
-                }
-            }
+            var userSkill = new UserSkill { UserId = user.Id, SkillId = skill.Id };
+            context.UserSkills.Add(userSkill);
         }
-
-        // Add new entries
-        foreach (var skillDto in update.Skills)
+        foreach (var skill in diff.Removed)
         {
-            var skill = skillsByLabel[skillDto.Label];
-            var userSkill = user.UserSkills.FirstOrDefault(x => x.SkillId == skill.Id);
-            if (userSkill is null)
-            {
-                var us = new UserSkill { UserId = user.Id, SkillId = skill.Id };
-                context.UserSkills.Add(us);
-            }
+            var userSkill = user.UserSkills.First(x => x.SkillId == skill.Id);
+            context.UserSkills.Remove(userSkill);
         }
-
         await context.SaveChangesAsync();
     }
 
@@ -143,6 +125,13 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         return skillsByLabel;
     }
 
+    internal static Diff Diff(IEnumerable<Skill> newSkills, IEnumerable<Skill> oldSkills)
+    {
+        var added = newSkills.ExceptBy(oldSkills.Select(x => x.Label), x => x.Label).ToList();
+        var removed = oldSkills.ExceptBy(newSkills.Select(x => x.Label), x => x.Label).ToList();
+        return new Diff(added, removed);
+    }
+
     public async Task<bool> DeleteAsync(Guid userId)
     {
         var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
@@ -155,3 +144,5 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         return true;
     }
 }
+
+internal record Diff(List<Skill> Added, List<Skill> Removed);
