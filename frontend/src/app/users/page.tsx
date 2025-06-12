@@ -2,7 +2,7 @@
 
 import Navigation from "@/components/Navigation";
 import withAuthorization from "@/components/withAuthorization";
-import { createUser, deleteUser, getAllUsers, User } from "@/services/backend";
+import { createUser, deleteUser, getAllUsers, NewUser, User } from "@/services/backend";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Dialog from "@mui/material/Dialog";
@@ -12,36 +12,21 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
-import useInput from "@/hooks/useInput";
-import { Role } from "@/contexts/AuthContext";
-import { SxProps, Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import FormControl from "@mui/material/FormControl";
-import TextField from "@mui/material/TextField";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
-
-const roles: Role[] = ["Admin", "Consultant", "Sales"];
-
-const addMargin: SxProps<Theme> = {
-  marginBottom: 3,
-};
+import NewUserForm, { NewUserFormRef } from "./components/NewUserForm";
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
-
-  const [newUserUsername, setNewUserUsername] = useInput("text");
-  const [newUserPassword, setNewUserPassword] = useInput("password");
-  const [newUserRole, setNewuserRole] = useState<Role | "">("");
+  const newUserFormRef = useRef<NewUserFormRef>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     const users = await getAllUsers();
@@ -52,20 +37,15 @@ const UsersPage: React.FC = () => {
     fetchUsers();
   }, [fetchUsers]);
 
-  const handleCreate: React.FormEventHandler = async (event) => {
-    event.preventDefault();
-    if (newUserRole === "") {
-      return;
+  const handleCreate = async (data: NewUser) => {
+    setSubmitting(true);
+    try {
+      await createUser(data);
+      newUserFormRef.current?.clear();
+      await fetchUsers();
+    } finally {
+      setSubmitting(false);
     }
-    await createUser({
-      username: newUserUsername.value,
-      password: newUserPassword.value,
-      role: newUserRole,
-    });
-    setNewUserUsername("");
-    setNewUserPassword("");
-    setNewuserRole("");
-    await fetchUsers();
   };
 
   const handleDelete = async () => {
@@ -114,36 +94,9 @@ const UsersPage: React.FC = () => {
             </Table>
           </TableContainer>
 
-          <Box component="form" sx={{ marginTop: 12, maxWidth: 500 }}>
-            <Typography variant="h5" sx={addMargin}>
-              Add new
-            </Typography>
-            <FormControl fullWidth sx={addMargin}>
-              <TextField label="Username" required {...newUserUsername} />
-            </FormControl>
-            <FormControl fullWidth sx={addMargin}>
-              <TextField label="Password" required {...newUserPassword} />
-            </FormControl>
-            <FormControl required fullWidth sx={addMargin}>
-              <InputLabel id="select-new-user-role">Role</InputLabel>
-              <Select
-                label="Role"
-                labelId="select-new-user-role"
-                value={newUserRole}
-                onChange={(e) => setNewuserRole(e.target.value)}
-              >
-                {roles.map((role) => (
-                  <MenuItem key={role} value={role}>
-                    {role}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl>
-              <Button type="submit" variant="contained" onClick={handleCreate}>
-                Add new
-              </Button>
-            </FormControl>
+          <Box sx={{ marginTop: 12, maxWidth: 500 }}>
+            <Typography variant="h5">Add new</Typography>
+            <NewUserForm ref={newUserFormRef} onSubmit={handleCreate} disabled={submitting} />
           </Box>
         </Container>
       </main>

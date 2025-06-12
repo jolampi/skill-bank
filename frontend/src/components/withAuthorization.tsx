@@ -21,7 +21,7 @@ export default function withAuthorization(Component: ComponentType, role?: Role)
     return <Component />;
   };
 
-  const displayName = Component.displayName || Component.name || "Component"
+  const displayName = Component.displayName || Component.name || "Component";
   InnerComponent.displayName = `withAuthorization(${displayName})`;
   return InnerComponent;
 }
