@@ -59,7 +59,6 @@ public class UsersController(UserService userService) : ControllerBase
         return Guid.Parse(claim.Value);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(Guid id)
     {
