@@ -8,6 +8,10 @@ import type {
   PostApiAuthRefreshResponses,
   PostApiAuthRevokeData,
   PostApiAuthRevokeResponses,
+  GetApiConsultantsData,
+  GetApiConsultantsResponses,
+  GetApiConsultantsByIdData,
+  GetApiConsultantsByIdResponses,
   GetApiSkillsData,
   GetApiSkillsResponses,
   GetApiUsersData,
@@ -68,6 +72,9 @@ export const postApiAuthRefresh = <ThrowOnError extends boolean = false>(
   });
 };
 
+/**
+ * Invalidates the refresh token, effectively requiring for user to sign in again.
+ */
 export const postApiAuthRevoke = <ThrowOnError extends boolean = false>(
   options?: Options<PostApiAuthRevokeData, ThrowOnError>,
 ) => {
@@ -77,6 +84,28 @@ export const postApiAuthRevoke = <ThrowOnError extends boolean = false>(
       ...options,
     },
   );
+};
+
+export const getApiConsultants = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiConsultantsData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<GetApiConsultantsResponses, unknown, ThrowOnError>({
+    url: "/api/Consultants",
+    ...options,
+  });
+};
+
+export const getApiConsultantsById = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiConsultantsByIdData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetApiConsultantsByIdResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: "/api/Consultants/{id}",
+    ...options,
+  });
 };
 
 export const getApiSkills = <ThrowOnError extends boolean = false>(
