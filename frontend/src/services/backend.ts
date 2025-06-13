@@ -10,6 +10,7 @@ import {
   postApiUsers,
   putApiUsersCurrent,
   TokenResponseDto,
+  UserSkillDto,
 } from "@/generated/client";
 import Cookies from "universal-cookie";
 import { client } from "@/generated/client/client.gen";
@@ -111,7 +112,8 @@ export interface UpdateUserDetails {
 export async function updateCurrentUserDetails(
   data: UpdateUserDetails,
 ): Promise<UpdateUserDetails> {
-  await putApiUsersCurrent({ body: data });
+  const skills = data.skills.map<UserSkillDto>(x => ({ ...x, proficiency: 3 }))
+  await putApiUsersCurrent({ body: { skills } });
   return getCurrentUserDetails();
 }
 
