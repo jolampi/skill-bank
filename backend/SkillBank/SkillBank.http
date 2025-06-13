@@ -52,6 +52,12 @@ GET {{SkillBank_HostAddress}}/api/Users
 Accept: application/json
 Authorization: Bearer {{accessToken}}
 
+### Get all consultants
+
+GET {{SkillBank_HostAddress}}/api/Consultants
+Accept: application/json
+Authorization: Bearer {{accessToken}}
+
 ### Get current user details
 
 GET {{SkillBank_HostAddress}}/api/Users/current

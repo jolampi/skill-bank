@@ -12,7 +12,6 @@ public record UserListDto
     public required Guid Id { get; init; }
     public required string Username { get; init; }
     public required RoleDto Role { get; init; }
-    public required int Skills { get; init; }
 }
 
 public record UserDetailsDto
