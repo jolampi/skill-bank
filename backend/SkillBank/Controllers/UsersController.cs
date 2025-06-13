@@ -7,11 +7,10 @@ using SkillBank.Services;
 namespace SkillBank.Controllers;
 
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "Admin")]
 [ApiController]
 public class UsersController(UserService userService) : ControllerBase
 {
-    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<UserDetailsDto>> Create(CreateUserDto payload)
     {
@@ -37,6 +36,7 @@ public class UsersController(UserService userService) : ControllerBase
         return Ok(user);
     }
 
+    [Authorize(Roles = "Admin,Consultant,Sales")]
     [HttpGet("current")]
     public async Task<ActionResult<UserDetailsDto>> GetCurrent()
     {
@@ -44,6 +44,7 @@ public class UsersController(UserService userService) : ControllerBase
         return await GetById(userId);
     }
 
+    [Authorize(Roles = "Admin,Consultant,Sales")]
     [HttpPut("current")]
     public async Task<ActionResult> UpdateCurrent(UpdateUserDto payload)
     {

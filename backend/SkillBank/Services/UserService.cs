@@ -35,10 +35,27 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
                 Id = user.Id,
                 Username = user.UserName ?? "",
                 Role = RoleToDto(user.Role),
-                Skills = user.UserSkills.Count,
             };
         var users = await query.ToListAsync();
         return new Unpaged<UserListDto>
+        {
+            Results = users,
+        };
+    }
+
+    public async Task<Unpaged<ConsultantListDto>> FindAllConsultantsAsync()
+    {
+        var query =
+            from user in context.Users
+            where user.Role == UserRole.Consultant
+            select new ConsultantListDto
+            {
+                Id = user.Id,
+                Username = user.UserName ?? "",
+                Skills = user.UserSkills.Count,
+            };
+        var users = await query.ToListAsync();
+        return new Unpaged<ConsultantListDto>
         {
             Results = users,
         };
@@ -54,16 +71,33 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             return null;
         }
         var skills = user.Skills
-            .Select(x => new UserSkillDto
-            {
-                Label = x.Label,
-            })
+            .Select(x => new UserSkillDto { Label = x.Label })
             .ToList();
         return new UserDetailsDto
         {
             Id = user.Id,
             Username = user.UserName ?? "",
             Role = RoleToDto(user.Role),
+            Skills = skills,
+        };
+    }
+
+    public async Task<ConsultantDetailsDto?> GetConsultantByIdAsync(Guid id)
+    {
+        var user = await context.Users
+            .Include(x => x.Skills)
+            .FirstOrDefaultAsync(x => x.Id == id && x.Role == UserRole.Consultant);
+        if (user is null)
+        {
+            return null;
+        }
+        var skills = user.Skills
+            .Select(x => new UserSkillDto { Label = x.Label })
+            .ToList();
+        return new ConsultantDetailsDto
+        {
+            Id = user.Id,
+            Username = user.UserName ?? "",
             Skills = skills,
         };
     }
