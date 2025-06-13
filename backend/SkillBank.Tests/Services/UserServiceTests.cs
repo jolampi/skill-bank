@@ -12,13 +12,13 @@ public class UserServiceTests
     [Fact]
     public void DiffHandlesIdentity()
     {
-        CheckDiff([], [], new Diff([], []));
+        CheckDiff([], [], new Diff([], [], []));
     }
 
     [Fact]
     public void DiffHandlesChangedOrder()
     {
-        CheckDiff([CSHARP, REACT], [REACT, CSHARP], new Diff([], []));
+        CheckDiff([CSHARP, REACT], [REACT, CSHARP], new Diff([], [CSHARP, REACT], []));
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class UserServiceTests
     {
         List<Skill> newSkills = [CSHARP, REACT, TYPESCRIPT];
         List<Skill> oldSkills = [CSHARP, REACT];
-        CheckDiff(newSkills, oldSkills, new Diff([TYPESCRIPT], []));
+        CheckDiff(newSkills, oldSkills, new Diff([TYPESCRIPT], [CSHARP, REACT], []));
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class UserServiceTests
     {
         List<Skill> newSkills = [CSHARP];
         List<Skill> oldSkills = [CSHARP, REACT, TYPESCRIPT];
-        CheckDiff(newSkills, oldSkills, new Diff([], [REACT, TYPESCRIPT]));
+        CheckDiff(newSkills, oldSkills, new Diff([], [CSHARP], [REACT, TYPESCRIPT]));
     }
 
     [Fact]
@@ -42,13 +42,14 @@ public class UserServiceTests
     {
         List<Skill> newSkills = [CSHARP, REACT];
         List<Skill> oldSkills = [TYPESCRIPT, CSHARP];
-        CheckDiff(newSkills, oldSkills, new Diff([REACT], [TYPESCRIPT]));
+        CheckDiff(newSkills, oldSkills, new Diff([REACT], [CSHARP], [TYPESCRIPT]));
     }
 
     private static void CheckDiff(List<Skill> newSkills, List<Skill> oldSkills, Diff expectedDiff)
     {
         var result = UserService.Diff(newSkills, oldSkills);
         Assert.Equal(expectedDiff.Removed, result.Removed);
+        Assert.Equal(expectedDiff.Changed, result.Changed);
         Assert.Equal(expectedDiff.Added, result.Added);
     }
 }

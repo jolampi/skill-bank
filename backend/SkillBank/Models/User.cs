@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace SkillBank.Models;
 
 public record CreateUserDto
@@ -30,4 +32,10 @@ public record UpdateUserDto
 public record UserSkillDto
 {
     public required string Label { get; init; }
+
+    /// <summary>
+    /// User's proficiency in the skill, expressed as a number between 1 and 5.
+    /// </summary>
+    [Range(1, 5)]
+    public required int Proficiency { get; init; }
 }

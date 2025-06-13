@@ -80,7 +80,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         var userSkill = context.Set<UserSkill>().FirstOrDefault(x => x.UserId == user.Id && x.SkillId == skill.Id);
         if (userSkill is null)
         {
-            userSkill = new UserSkill { UserId = user.Id, SkillId = skill.Id };
+            userSkill = new UserSkill { UserId = user.Id, SkillId = skill.Id, Proficiency = 3 };
             context.Set<UserSkill>().Add(userSkill);
         }
         return userSkill;

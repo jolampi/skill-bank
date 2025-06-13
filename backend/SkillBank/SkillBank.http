@@ -10,8 +10,8 @@ POST {{SkillBank_HostAddress}}/api/Auth/login
 Content-Type: application/json
 
 {
-  "username": "admin",
-  "password": "admin"
+  "username": "consultant",
+  "password": "consultant"
 }
 
 ### Refresh
@@ -73,10 +73,12 @@ Authorization: Bearer {{accessToken}}
 {
   "skills": [
     {
-      "label": ".Net"
+      "label": ".Net",
+      "proficiency": 4
     },
     {
-      "label": "ASP.NET"
+      "label": "ASP.NET",
+      "proficiency": 3
     }
   ]
 }
