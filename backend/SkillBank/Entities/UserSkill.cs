@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace SkillBank.Entities;
 
 public class UserSkill
@@ -7,4 +9,7 @@ public class UserSkill
 
     public required Guid SkillId { get; set; }
     public virtual Skill Skill { get; set; } = null!;
+
+    [Range(1, 5)]
+    public required int Proficiency { get; set; }
 }

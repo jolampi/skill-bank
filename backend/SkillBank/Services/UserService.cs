@@ -63,15 +63,16 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
 
     public async Task<UserDetailsDto?> GetByIdAsync(Guid id)
     {
-        var user = await context.Users
-            .Include(x => x.Skills)
+        User? user = await context.Users
+            .Include(x => x.UserSkills)
+            .ThenInclude(x => x.Skill)
             .FirstOrDefaultAsync(x => x.Id == id);
         if (user is null)
         {
             return null;
         }
-        var skills = user.Skills
-            .Select(x => new UserSkillDto { Label = x.Label })
+        var skills = user.UserSkills
+            .Select(x => new UserSkillDto { Label = x.Skill.Label, Proficiency = x.Proficiency })
             .ToList();
         return new UserDetailsDto
         {
@@ -85,14 +86,15 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
     public async Task<ConsultantDetailsDto?> GetConsultantByIdAsync(Guid id)
     {
         var user = await context.Users
-            .Include(x => x.Skills)
+            .Include(x => x.UserSkills)
+            .ThenInclude(x => x.Skill)
             .FirstOrDefaultAsync(x => x.Id == id && x.Role == UserRole.Consultant);
         if (user is null)
         {
             return null;
         }
-        var skills = user.Skills
-            .Select(x => new UserSkillDto { Label = x.Label })
+        var skills = user.UserSkills
+            .Select(x => new UserSkillDto { Label = x.Skill.Label, Proficiency = x.Proficiency })
             .ToList();
         return new ConsultantDetailsDto
         {
@@ -124,12 +126,23 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             .Include(x => x.Skills)
             .Include(x => x.UserSkills)
             .FirstAsync(x => x.Id == id);
-        var skillsByLabel = await GetOrCreateSkillsAsync(update.Skills);
-        var diff = Diff(skillsByLabel.Values, user.Skills);
+        var skills = await GetOrCreateSkillsAsync(update.Skills);
+        var asdgg = update.Skills.ToDictionary(x => x.Label);
+        var diff = Diff(skills, user.Skills);
         foreach (var skill in diff.Added)
         {
-            var userSkill = new UserSkill { UserId = user.Id, SkillId = skill.Id };
+            var userSkill = new UserSkill
+            {
+                UserId = user.Id,
+                SkillId = skill.Id,
+                Proficiency = asdgg[skill.Label].Proficiency,
+            };
             context.UserSkills.Add(userSkill);
+        }
+        foreach (var skill in diff.Changed)
+        {
+            var userSkill = user.UserSkills.First(x => x.SkillId == skill.Id);
+            userSkill.Proficiency = asdgg[skill.Label].Proficiency;
         }
         foreach (var skill in diff.Removed)
         {
@@ -139,7 +152,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         await context.SaveChangesAsync();
     }
 
-    private async Task<Dictionary<string, Skill>> GetOrCreateSkillsAsync(List<UserSkillDto> skills)
+    private async Task<List<Skill>> GetOrCreateSkillsAsync(List<UserSkillDto> skills)
     {
         var labels = skills
             .Select(x => x.Label)
@@ -156,14 +169,21 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
                 skillsByLabel.Add(label, skill);
             }
         }
-        return skillsByLabel;
+        return [.. skillsByLabel.Values];
     }
 
     internal static Diff Diff(IEnumerable<Skill> newSkills, IEnumerable<Skill> oldSkills)
     {
-        var added = newSkills.ExceptBy(oldSkills.Select(x => x.Label), x => x.Label).ToList();
+        HashSet<string> oldSet = [.. oldSkills.Select(x => x.Label)];
+        List<Skill> added = [];
+        List<Skill> changed = [];
+        foreach (var skill in newSkills)
+        {
+            var list = oldSet.Contains(skill.Label) ? changed : added;
+            list.Add(skill);
+        }
         var removed = oldSkills.ExceptBy(newSkills.Select(x => x.Label), x => x.Label).ToList();
-        return new Diff(added, removed);
+        return new Diff(added, changed, removed);
     }
 
     public async Task<bool> DeleteAsync(Guid userId)
@@ -179,4 +199,4 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
     }
 }
 
-internal record Diff(List<Skill> Added, List<Skill> Removed);
+internal record Diff(List<Skill> Added, List<Skill> Changed, List<Skill> Removed);
