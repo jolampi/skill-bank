@@ -12,6 +12,18 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Rating from "@mui/material/Rating";
+import LensIcon from "@mui/icons-material/Lens";
+import LensOutlinedIcon from "@mui/icons-material/LensOutlined";
+
+const StyledRating = styled(Rating)(({ theme }) => ({
+  "& .MuiRating-iconFilled": {
+    color: theme.palette.grey[700],
+  },
+  "& .MuiRating-iconHover": {
+    color: theme.palette.primary.main,
+  },
+}));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(even)": {
@@ -27,7 +39,8 @@ export interface UserSkillTableProps {
   disabled?: boolean;
   skills: UserSkill[];
   skillSuggestions: string[];
-  onAdd(label: string): void;
+  onAdd(skill: UserSkill): void;
+  onChange(skill: UserSkill): void;
   onRemove(label: string): void;
 }
 
@@ -36,16 +49,29 @@ const UserSkillTable: React.FC<UserSkillTableProps> = ({
   skills,
   skillSuggestions,
   onAdd,
+  onChange,
   onRemove,
 }) => {
-  const [newSkill, setNewSkill] = useState("");
+  const [newSkillLabel, setNewSkillLabel] = useState("");
+  const [newSkillProficiency, setNewSkillProficiency] = useState<number | null>(null);
 
   const handleAdd = () => {
-    if (newSkill.length === 0 || skills.some((x) => x.label === newSkill)) {
+    if (newSkillLabel.length === 0 || skills.some((x) => x.label === newSkillLabel)) {
       return;
     }
-    onAdd(newSkill);
-    setNewSkill("");
+    if (!newSkillProficiency) {
+      return;
+    }
+    onAdd({ label: newSkillLabel, proficiency: newSkillProficiency });
+    setNewSkillLabel("");
+    setNewSkillProficiency(null);
+  };
+
+  const handleProficiencyChange = (skill: UserSkill, proficiency: number | null) => {
+    if (!proficiency) {
+      return;
+    }
+    onChange({ ...skill, proficiency });
   };
 
   return (
@@ -55,6 +81,14 @@ const UserSkillTable: React.FC<UserSkillTableProps> = ({
           {skills.map((skill) => (
             <StyledTableRow key={skill.label}>
               <TableCell>{skill.label}</TableCell>
+              <TableCell>
+                <StyledRating
+                  value={skill.proficiency}
+                  onChange={(_, proficiency) => handleProficiencyChange(skill, proficiency)}
+                  icon={<LensIcon />}
+                  emptyIcon={<LensOutlinedIcon />}
+                />
+              </TableCell>
               <TableCell align="right">
                 <IconButton aria-label="delete" size="small" onClick={() => onRemove(skill.label!)}>
                   <DeleteIcon />
@@ -71,13 +105,22 @@ const UserSkillTable: React.FC<UserSkillTableProps> = ({
                 disabled={disabled}
                 size="small"
                 options={skillSuggestions}
-                inputValue={newSkill}
+                inputValue={newSkillLabel}
                 onInputChange={(_, newValue) => {
                   if (newValue) {
-                    setNewSkill(newValue);
+                    setNewSkillLabel(newValue);
                   }
                 }}
                 renderInput={(params) => <TextField label="Add new" {...params} />}
+              />
+            </TableCell>
+            <TableCell>
+              <StyledRating
+                value={newSkillProficiency}
+                onChange={(_, newValue) => setNewSkillProficiency(newValue)}
+                defaultValue={3}
+                icon={<LensIcon />}
+                emptyIcon={<LensOutlinedIcon />}
               />
             </TableCell>
             <TableCell align="right">

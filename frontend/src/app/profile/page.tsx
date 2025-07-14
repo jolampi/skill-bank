@@ -37,8 +37,13 @@ const ProfilePage: React.FC = () => {
     getAllSkills().then(setAllSkills);
   }, []);
 
-  const handleAdd = (label: string) => {
-    setUserSkills((prev) => [...prev, { label }]);
+  const handleAdd = (newSkill: UserSkill) => {
+    setUserSkills((prev) => [...prev, newSkill]);
+    setModified(true);
+  };
+
+  const handleChange = (skill: UserSkill) => {
+    setUserSkills((prev) => prev.map((x) => (x.label === skill.label ? skill : x)));
     setModified(true);
   };
 
@@ -77,6 +82,7 @@ const ProfilePage: React.FC = () => {
             skillSuggestions={allSkills}
             skills={userSkills}
             onAdd={handleAdd}
+            onChange={handleChange}
             onRemove={handleRemove}
           />
           <Box sx={spaceAround}>

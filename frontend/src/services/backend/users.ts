@@ -6,7 +6,6 @@ import {
   getApiUsersCurrent,
   postApiUsers,
   putApiUsersCurrent,
-  UserSkillDto,
 } from "@/generated/client";
 
 export interface UserDetails {
@@ -16,13 +15,19 @@ export interface UserDetails {
 
 export interface UserSkill {
   label: string;
+  proficiency: number;
 }
 
 export async function getCurrentUserDetails(): Promise<UserDetails> {
   const response = await getApiUsersCurrent();
+  const skills =
+    response.data?.skills?.map((x) => ({
+      label: x.label ?? "N/A",
+      proficiency: x.proficiency,
+    })) ?? [];
   return {
     username: response.data?.username ?? "N/A",
-    skills: response.data?.skills?.map((x) => ({ label: x.label ?? "N/A" })) ?? [],
+    skills,
   };
 }
 
@@ -33,8 +38,7 @@ export interface UpdateUserDetails {
 export async function updateCurrentUserDetails(
   data: UpdateUserDetails,
 ): Promise<UpdateUserDetails> {
-  const skills = data.skills.map<UserSkillDto>((x) => ({ ...x, proficiency: 3 }));
-  await putApiUsersCurrent({ body: { skills } });
+  await putApiUsersCurrent({ body: data });
   return getCurrentUserDetails();
 }
 
