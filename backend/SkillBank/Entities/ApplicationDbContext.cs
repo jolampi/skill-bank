@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SkillBank.Models;
 
 namespace SkillBank.Entities;
 
@@ -35,9 +36,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .UseSeeding((context, _) =>
             {
                 // Test data for early development
-                EnsureUser(context, "admin", "admin", UserRole.Admin);
-                var consultant = EnsureUser(context, "consultant", "consultant", UserRole.Consultant);
-                EnsureUser(context, "sales", "sales", UserRole.Sales);
+                EnsureUser(context, new SeedUser("Admin Admin", "admin", "admin", UserRole.Admin));
+                var consultant = EnsureUser(context, new SeedUser("John Doe", "consultant", "consultant", UserRole.Consultant));
+                EnsureUser(context, new SeedUser("Sales Guy", "sales", "sales", UserRole.Sales));
 
                 var dotnet = EnsureSkill(context, ".Net");
                 var react = EnsureSkill(context, "React");
@@ -48,17 +49,19 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 context.SaveChanges();
             });
 
-    private static User EnsureUser(DbContext context, string username, string password, UserRole role)
+    private static User EnsureUser(DbContext context, SeedUser seedUser)
     {
-        var user = context.Set<User>().FirstOrDefault(x => x.UserName == username);
+        var user = context.Set<User>().FirstOrDefault(x => x.UserName == seedUser.Username);
         if (user is null)
         {
             user = new User
             {
-                UserName = username,
-                Role = role
+                Description = "",
+                Name = seedUser.Name,
+                UserName = seedUser.Username,
+                Role = seedUser.Role
             };
-            user.PasswordHash = new PasswordHasher<User>().HashPassword(user, password);
+            user.PasswordHash = new PasswordHasher<User>().HashPassword(user, seedUser.Password);
             context.Set<User>().Add(user);
         }
         return user;
@@ -86,3 +89,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         return userSkill;
     }
 }
+
+record SeedUser(string Name, string Username, string Password, UserRole Role);

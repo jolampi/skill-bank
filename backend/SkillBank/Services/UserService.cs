@@ -11,6 +11,8 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
     {
         var user = new User
         {
+            Description = "",
+            Name = newUser.Username,
             UserName = newUser.Username,
             Role = RoleFromDto(newUser.Role),
         };
@@ -20,6 +22,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         return new UserDetailsDto
         {
             Id = user.Id,
+            Name = user.Name,
             Username = user.UserName,
             Role = newUser.Role,
             Skills = [],
@@ -33,6 +36,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             select new UserListDto
             {
                 Id = user.Id,
+                Name = user.Name,
                 Username = user.UserName ?? "",
                 Role = RoleToDto(user.Role),
             };
@@ -51,7 +55,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             select new ConsultantListDto
             {
                 Id = user.Id,
-                Username = user.UserName ?? "",
+                Name = user.Name,
                 Skills = user.UserSkills.Count,
             };
         var users = await query.ToListAsync();
@@ -77,6 +81,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         return new UserDetailsDto
         {
             Id = user.Id,
+            Name = user.Name,
             Username = user.UserName ?? "",
             Role = RoleToDto(user.Role),
             Skills = skills,
@@ -99,7 +104,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         return new ConsultantDetailsDto
         {
             Id = user.Id,
-            Username = user.UserName ?? "",
+            Name = user.Name,
             Skills = skills,
         };
     }
