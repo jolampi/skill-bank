@@ -1,21 +1,23 @@
 "use client";
 
-import withAuthorization from "@/components/withAuthorization";
-import React, { useEffect, useState } from "react";
-import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
-import { type SxProps, type Theme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
 import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
+import { type SxProps, type Theme } from "@mui/material/styles";
+import React, { useEffect, useState } from "react";
+
+import UserSkillTable from "./components/UserSkillTable";
+
+import withAuthorization from "@/components/withAuthorization";
 import {
   getAllSkills,
   getCurrentUserDetails,
   updateCurrentUserDetails,
   UserSkill,
 } from "@/services/backend";
-import UserSkillTable from "./components/UserSkillTable";
 
 const spaceAround: SxProps<Theme> = {
   marginY: 3,

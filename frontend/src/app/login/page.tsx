@@ -1,13 +1,15 @@
 "use client";
 
-import AuthContext, { Credentials } from "@/contexts/AuthContext";
-import theme from "@/theme";
+import { LinearProgress } from "@mui/material";
 import Container from "@mui/material/Container";
 import { SxProps, Theme } from "@mui/material/styles";
 import { useRouter } from "next/navigation";
 import React, { useContext, useRef, useState } from "react";
+
 import LoginForm, { LoginFormRef } from "./components/LoginForm";
-import { LinearProgress } from "@mui/material";
+
+import AuthContext, { Credentials } from "@/contexts/AuthContext";
+import theme from "@/theme";
 
 const margin: SxProps<Theme> = {
   [theme.breakpoints.up("sm")]: {

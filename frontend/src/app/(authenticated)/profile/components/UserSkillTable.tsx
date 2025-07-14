@@ -1,20 +1,21 @@
-import { UserSkill } from "@/services/backend";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import LensIcon from "@mui/icons-material/Lens";
+import LensOutlinedIcon from "@mui/icons-material/LensOutlined";
+import Autocomplete from "@mui/material/Autocomplete";
+import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import { styled } from "@mui/material/styles";
+import Rating from "@mui/material/Rating";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
-import Autocomplete from "@mui/material/Autocomplete";
-import { useState } from "react";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Rating from "@mui/material/Rating";
-import LensIcon from "@mui/icons-material/Lens";
-import LensOutlinedIcon from "@mui/icons-material/LensOutlined";
+import { styled } from "@mui/material/styles";
+import { useState } from "react";
+
+import { UserSkill } from "@/services/backend";
 
 const StyledRating = styled(Rating)(({ theme }) => ({
   "& .MuiRating-iconFilled": {

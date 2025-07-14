@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
-import BackendAuthProvider from "@/services/BackendAuthProvider";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
-import theme from "@/theme";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
+import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
+
+import BackendAuthProvider from "@/services/BackendAuthProvider";
+import theme from "@/theme";
 
 export const metadata: Metadata = {
   title: "Skill Bank",

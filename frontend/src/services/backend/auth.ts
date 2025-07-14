@@ -1,3 +1,5 @@
+import Cookies from "universal-cookie";
+
 import { Credentials, Role } from "@/contexts/AuthContext";
 import {
   postApiAuthLogin,
@@ -7,7 +9,6 @@ import {
   TokenResponseDto,
 } from "@/generated/client";
 import { client } from "@/generated/client/client.gen";
-import Cookies from "universal-cookie";
 
 const REFRESH_ENDPOINT: PostApiAuthRefreshData["url"] = "/api/Auth/refresh";
 const REFRESH_TOKEN_COOKIE = "refresh_token";

@@ -1,14 +1,15 @@
-import { Role } from "@/contexts/AuthContext";
-import useInput from "@/hooks/useInput";
-import { NewUser } from "@/services/backend";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { SxProps, Theme } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
+import { SxProps, Theme } from "@mui/material/styles";
 import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
+
+import { Role } from "@/contexts/AuthContext";
+import useInput from "@/hooks/useInput";
+import { NewUser } from "@/services/backend";
 
 const roles: Role[] = ["Admin", "Consultant", "Sales"];
 

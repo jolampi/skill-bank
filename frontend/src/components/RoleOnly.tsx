@@ -1,5 +1,6 @@
-import AuthContext, { Role } from "@/contexts/AuthContext";
 import React, { useContext } from "react";
+
+import AuthContext, { Role } from "@/contexts/AuthContext";
 
 export interface RoleOnlyProps {
   role: Role;

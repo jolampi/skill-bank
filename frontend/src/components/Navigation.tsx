@@ -1,9 +1,10 @@
-import AuthContext from "@/contexts/AuthContext";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
 import { useContext } from "react";
+
+import AuthContext from "@/contexts/AuthContext";
 
 export default function Navigation(): React.ReactNode {
   const authContext = useContext(AuthContext);
