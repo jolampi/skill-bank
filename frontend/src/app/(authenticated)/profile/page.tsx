@@ -1,6 +1,5 @@
 "use client";
 
-import Navigation from "@/components/Navigation";
 import withAuthorization from "@/components/withAuthorization";
 import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
@@ -69,29 +68,25 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div>
-      <header>
-        <Navigation />
-      </header>
-      <main>
-        <Container maxWidth="md">
-          <Typography component="p" sx={spaceAround}>
-            Here you can add and modify your skills.
-          </Typography>
-          <UserSkillTable
-            disabled={saving}
-            skillSuggestions={allSkills}
-            skills={userSkills}
-            onAdd={handleAdd}
-            onChange={handleChange}
-            onRemove={handleRemove}
-          />
-          <Box sx={spaceAround}>
-            <Button variant="contained" loading={saving} disabled={!modified} onClick={handleSave}>
-              Save
-            </Button>
-          </Box>
-        </Container>
-      </main>
+      <Container maxWidth="md">
+        <Typography component="p" sx={spaceAround}>
+          Here you can add and modify your skills.
+        </Typography>
+        <UserSkillTable
+          disabled={saving}
+          skillSuggestions={allSkills}
+          skills={userSkills}
+          onAdd={handleAdd}
+          onChange={handleChange}
+          onRemove={handleRemove}
+        />
+        <Box sx={spaceAround}>
+          <Button variant="contained" loading={saving} disabled={!modified} onClick={handleSave}>
+            Save
+          </Button>
+        </Box>
+      </Container>
+
       <Snackbar
         open={showNotification}
         autoHideDuration={5000}

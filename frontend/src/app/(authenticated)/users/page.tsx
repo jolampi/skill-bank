@@ -1,6 +1,5 @@
 "use client";
 
-import Navigation from "@/components/Navigation";
 import withAuthorization from "@/components/withAuthorization";
 import { createUser, deleteUser, getAllUsers, NewUser, User } from "@/services/backend";
 import Button from "@mui/material/Button";
@@ -59,47 +58,41 @@ const UsersPage: React.FC = () => {
 
   return (
     <div>
-      <Box component="header" sx={{ marginBottom: 5 }}>
-        <Navigation />
-      </Box>
-
-      <main>
-        <Container maxWidth="md">
-          <TableContainer>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>User</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+      <Container maxWidth="md">
+        <TableContainer>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>User</TableCell>
+                <TableCell>Role</TableCell>
+                <TableCell align="right">Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.role}</TableCell>
+                  <TableCell align="right">
+                    <IconButton
+                      aria-label="delete"
+                      size="small"
+                      onClick={() => setUserToDelete(user)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell>{user.username}</TableCell>
-                    <TableCell>{user.role}</TableCell>
-                    <TableCell align="right">
-                      <IconButton
-                        aria-label="delete"
-                        size="small"
-                        onClick={() => setUserToDelete(user)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-          <Box sx={{ marginTop: 12, maxWidth: 500 }}>
-            <Typography variant="h5">Add new</Typography>
-            <NewUserForm ref={newUserFormRef} onSubmit={handleCreate} disabled={submitting} />
-          </Box>
-        </Container>
-      </main>
+        <Box sx={{ marginTop: 12, maxWidth: 500 }}>
+          <Typography variant="h5">Add new</Typography>
+          <NewUserForm ref={newUserFormRef} onSubmit={handleCreate} disabled={submitting} />
+        </Box>
+      </Container>
 
       <Dialog open={!!userToDelete}>
         <DialogContent>
