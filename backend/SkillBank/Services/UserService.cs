@@ -12,7 +12,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         var user = new User
         {
             Description = "",
-            Name = newUser.Username,
+            Name = newUser.Name,
             UserName = newUser.Username,
             Role = RoleFromDto(newUser.Role),
         };
@@ -131,8 +131,11 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             .Include(x => x.Skills)
             .Include(x => x.UserSkills)
             .FirstAsync(x => x.Id == id);
+        user.Description = update.Description;
+        user.Name = update.Name;
+
         var skills = await GetOrCreateSkillsAsync(update.Skills);
-        var asdgg = update.Skills.ToDictionary(x => x.Label);
+        var skillsByLabel = update.Skills.ToDictionary(x => x.Label);
         var diff = Diff(skills, user.Skills);
         foreach (var skill in diff.Added)
         {
@@ -140,20 +143,21 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             {
                 UserId = user.Id,
                 SkillId = skill.Id,
-                Proficiency = asdgg[skill.Label].Proficiency,
+                Proficiency = skillsByLabel[skill.Label].Proficiency,
             };
             context.UserSkills.Add(userSkill);
         }
         foreach (var skill in diff.Changed)
         {
             var userSkill = user.UserSkills.First(x => x.SkillId == skill.Id);
-            userSkill.Proficiency = asdgg[skill.Label].Proficiency;
+            userSkill.Proficiency = skillsByLabel[skill.Label].Proficiency;
         }
         foreach (var skill in diff.Removed)
         {
             var userSkill = user.UserSkills.First(x => x.SkillId == skill.Id);
             context.UserSkills.Remove(userSkill);
         }
+
         await context.SaveChangesAsync();
     }
 

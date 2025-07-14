@@ -29,6 +29,7 @@ public record UserDetailsDto
 
 public record UpdateUserDto
 {
+    public required string Description { get; set; }
     public required string Name { get; set; }
     public required List<UserSkillDto> Skills { get; init; }
 }
