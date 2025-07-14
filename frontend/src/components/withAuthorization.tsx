@@ -1,6 +1,7 @@
-import AuthContext, { Role } from "@/contexts/AuthContext";
 import { redirect, RedirectType } from "next/navigation";
 import { ComponentType, useContext } from "react";
+
+import AuthContext, { Role } from "@/contexts/AuthContext";
 
 export default function withAuthorization(Component: ComponentType, role?: Role): React.FC {
   const InnerComponent: React.FC = () => {

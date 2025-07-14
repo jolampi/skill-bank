@@ -1,8 +1,9 @@
 "use client";
 
-import Navigation from "@/components/Navigation";
 import { SxProps, Theme } from "@mui/material";
 import Box from "@mui/material/Box";
+
+import Navigation from "@/components/Navigation";
 
 const headerMargin: SxProps<Theme> = {
   marginBottom: 5,

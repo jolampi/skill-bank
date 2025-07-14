@@ -1,8 +1,9 @@
 "use client";
 
-import withAuthorization from "@/components/withAuthorization";
-import RoleOnly from "@/components/RoleOnly";
 import Link from "next/link";
+
+import RoleOnly from "@/components/RoleOnly";
+import withAuthorization from "@/components/withAuthorization";
 
 const Home: React.FC = () => {
   return (

@@ -1,25 +1,27 @@
 "use client";
 
-import withAuthorization from "@/components/withAuthorization";
-import { createUser, deleteUser, getAllUsers, NewUser, User } from "@/services/backend";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import IconButton from "@mui/material/IconButton";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { useCallback, useEffect, useRef, useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogActions from "@mui/material/DialogActions";
+import { useCallback, useEffect, useRef, useState } from "react";
+
 import NewUserForm, { NewUserFormRef } from "./components/NewUserForm";
+
+import withAuthorization from "@/components/withAuthorization";
+import { createUser, deleteUser, getAllUsers, NewUser, User } from "@/services/backend";
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);

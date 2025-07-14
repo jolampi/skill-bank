@@ -1,8 +1,10 @@
 "use client";
 
-import AuthContext, { AuthContextProps, AuthStates } from "@/contexts/AuthContext";
 import React, { useEffect, useState } from "react";
+
 import { authenticate, deauthenticate, getAuthentication } from "./backend";
+
+import AuthContext, { AuthContextProps, AuthStates } from "@/contexts/AuthContext";
 
 const initialState: AuthStates = {
   loading: true,
