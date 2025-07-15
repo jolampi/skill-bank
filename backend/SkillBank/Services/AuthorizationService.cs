@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using SkillBank.Entities;
+using SkillBank.Mappers;
 using SkillBank.Models;
 
 namespace SkillBank.Services;
@@ -44,19 +45,11 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         user.RefreshTokenId = Guid.CreateVersion7();
         var refreshToken = CreateRefreshToken(user);
         await context.SaveChangesAsync();
-
-        var role = user.Role switch
-        {
-            UserRole.Admin => RoleDto.Admin,
-            UserRole.Consultant => RoleDto.Consultant,
-            UserRole.Sales => RoleDto.Sales,
-            _ => RoleDto.Consultant,
-        };
         return new TokenResponseDto
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken,
-            Role = role,
+            Role = RoleMapper.ToDto(user.Role),
             TokenType = "Bearer",
         };
     }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SkillBank.Entities;
+using SkillBank.Mappers;
 using SkillBank.Models;
 
 namespace SkillBank.Services;
@@ -14,7 +15,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             Description = "",
             Name = newUser.Name,
             UserName = newUser.Username,
-            Role = RoleFromDto(newUser.Role),
+            Role = RoleMapper.FromDto(newUser.Role),
         };
         user.PasswordHash = passwordHasher.HashPassword(user, newUser.Password);
         context.Set<User>().Add(user);
@@ -39,7 +40,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
                 Id = user.Id,
                 Name = user.Name,
                 Username = user.UserName ?? "",
-                Role = RoleToDto(user.Role),
+                Role = RoleMapper.ToDto(user.Role),
             };
         var users = await query.ToListAsync();
         return new Unpaged<UserListDto>
@@ -85,7 +86,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             Description = user.Description,
             Name = user.Name,
             Username = user.UserName ?? "",
-            Role = RoleToDto(user.Role),
+            Role = RoleMapper.ToDto(user.Role),
             Skills = skills,
         };
     }
@@ -110,22 +111,6 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             Skills = skills,
         };
     }
-
-    private static UserRole RoleFromDto(RoleDto roleDto) => roleDto switch
-    {
-        RoleDto.Admin => UserRole.Admin,
-        RoleDto.Consultant => UserRole.Consultant,
-        RoleDto.Sales => UserRole.Sales,
-        _ => UserRole.Consultant,
-    };
-
-    private static RoleDto RoleToDto(UserRole userRole) => userRole switch
-    {
-        UserRole.Admin => RoleDto.Admin,
-        UserRole.Consultant => RoleDto.Consultant,
-        UserRole.Sales => RoleDto.Sales,
-        _ => RoleDto.Consultant,
-    };
 
     public async Task UpdateUserAsync(Guid id, UpdateUserDto update)
     {
