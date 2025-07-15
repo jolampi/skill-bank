@@ -1,5 +1,6 @@
 "use client";
 
+import { TextField } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -25,6 +26,8 @@ const spaceAround: SxProps<Theme> = {
 
 const ProfilePage: React.FC = () => {
   const [allSkills, setAllSkills] = useState<Array<string>>([]);
+  const [description, setDescription] = useState("");
+  const [name, setName] = useState("");
   const [userSkills, setUserSkills] = useState<Array<UserSkill>>([]);
   const [modified, setModified] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -33,6 +36,8 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     getCurrentUserDetails().then((details) => {
       const skills = details.skills.sort((a, b) => a.label.localeCompare(b.label));
+      setDescription(details.description);
+      setName(details.name);
       setUserSkills(skills);
     });
     getAllSkills().then(setAllSkills);
@@ -43,7 +48,17 @@ const ProfilePage: React.FC = () => {
     setModified(true);
   };
 
-  const handleChange = (skill: UserSkill) => {
+  const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(event.target.value);
+    setModified(true);
+  };
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+    setModified(true);
+  };
+
+  const handleSkillChange = (skill: UserSkill) => {
     setUserSkills((prev) => prev.map((x) => (x.label === skill.label ? skill : x)));
     setModified(true);
   };
@@ -56,7 +71,7 @@ const ProfilePage: React.FC = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await updateCurrentUserDetails({ skills: userSkills });
+      await updateCurrentUserDetails({ description, name, skills: userSkills });
       setShowNotification(true);
       setModified(false);
     } finally {
@@ -71,6 +86,19 @@ const ProfilePage: React.FC = () => {
   return (
     <div>
       <Container maxWidth="md">
+        <Box sx={spaceAround}>
+          <TextField label="Name" fullWidth value={name} onChange={handleNameChange} />
+        </Box>
+        <Box sx={spaceAround}>
+          <TextField
+            label="Name"
+            fullWidth
+            multiline
+            minRows={5}
+            value={description}
+            onChange={handleDescriptionChange}
+          />
+        </Box>
         <Typography component="p" sx={spaceAround}>
           Here you can add and modify your skills.
         </Typography>
@@ -79,7 +107,7 @@ const ProfilePage: React.FC = () => {
           skillSuggestions={allSkills}
           skills={userSkills}
           onAdd={handleAdd}
-          onChange={handleChange}
+          onChange={handleSkillChange}
           onRemove={handleRemove}
         />
         <Box sx={spaceAround}>

@@ -2,13 +2,13 @@
 
 export type ConsultantDetailsDto = {
   id: string;
-  username: string | null;
+  name: string | null;
   skills: Array<UserSkillDto> | null;
 };
 
 export type ConsultantListDto = {
   id: string;
-  username: string | null;
+  name: string | null;
   skills: number;
 };
 
@@ -20,6 +20,7 @@ export type ConsultantListDtoUnpaged = {
 };
 
 export type CreateUserDto = {
+  name: string | null;
   username: string | null;
   password: string | null;
   role: RoleDto;
@@ -53,11 +54,15 @@ export type TokenResponseDto = {
 };
 
 export type UpdateUserDto = {
+  description: string | null;
+  name: string | null;
   skills: Array<UserSkillDto> | null;
 };
 
 export type UserDetailsDto = {
   id: string;
+  description: string | null;
+  name: string | null;
   username: string | null;
   role: RoleDto;
   skills: Array<UserSkillDto> | null;
@@ -65,6 +70,7 @@ export type UserDetailsDto = {
 
 export type UserListDto = {
   id: string;
+  name: string | null;
   username: string | null;
   role: RoleDto;
 };
