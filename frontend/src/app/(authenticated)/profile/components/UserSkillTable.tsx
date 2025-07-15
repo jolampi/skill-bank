@@ -63,7 +63,13 @@ const UserSkillTable: React.FC<UserSkillTableProps> = ({
     if (!newSkillProficiency) {
       return;
     }
-    onAdd({ label: newSkillLabel, proficiency: newSkillProficiency });
+    const newSkill: UserSkill = {
+      label: newSkillLabel,
+      experienceInYears: 0,
+      hidden: false,
+      proficiency: newSkillProficiency
+    };
+    onAdd(newSkill);
     setNewSkillLabel("");
     setNewSkillProficiency(null);
   };

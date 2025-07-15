@@ -17,14 +17,18 @@ export interface UserDetails {
 
 export interface UserSkill {
   label: string;
+  experienceInYears: number;
+  hidden: boolean;
   proficiency: number;
 }
 
 export async function getCurrentUserDetails(): Promise<UserDetails> {
   const response = await getApiUsersCurrent();
   const data = response.data!;
-  const skills = data.skills!.map((x) => ({
-    label: x.label ?? "N/A",
+  const skills = data.skills!.map<UserSkill>((x) => ({
+    label: x.label!,
+    experienceInYears: x.experienceInYears,
+    hidden: x.hidden,
     proficiency: x.proficiency,
   }));
   return {
