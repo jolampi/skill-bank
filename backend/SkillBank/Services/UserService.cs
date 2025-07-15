@@ -77,9 +77,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         {
             return null;
         }
-        var skills = user.UserSkills
-            .Select(x => new UserSkillDto { Label = x.Skill.Label, Proficiency = x.Proficiency })
-            .ToList();
+        var skills = user.UserSkills.Select(x => x.ToDto()).ToList();
         return new UserDetailsDto
         {
             Id = user.Id,
@@ -101,9 +99,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         {
             return null;
         }
-        var skills = user.UserSkills
-            .Select(x => new UserSkillDto { Label = x.Skill.Label, Proficiency = x.Proficiency })
-            .ToList();
+        var skills = user.UserSkills.Select(x => x.ToDto()).ToList();
         return new ConsultantDetailsDto
         {
             Id = user.Id,
@@ -122,22 +118,28 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         user.Name = update.Name;
 
         var skills = await GetOrCreateSkillsAsync(update.Skills);
-        var skillsByLabel = update.Skills.ToDictionary(x => x.Label);
+        var skillUpdatesByLabel = update.Skills.ToDictionary(x => x.Label);
         var diff = Diff(skills, user.Skills);
         foreach (var skill in diff.Added)
         {
+            var added = skillUpdatesByLabel[skill.Label];
             var userSkill = new UserSkill
             {
                 UserId = user.Id,
                 SkillId = skill.Id,
-                Proficiency = skillsByLabel[skill.Label].Proficiency,
+                ExperienceInYears = added.ExperienceInYears,
+                Hidden = added.Hidden,
+                Proficiency = added.Proficiency,
             };
             context.UserSkills.Add(userSkill);
         }
         foreach (var skill in diff.Changed)
         {
             var userSkill = user.UserSkills.First(x => x.SkillId == skill.Id);
-            userSkill.Proficiency = skillsByLabel[skill.Label].Proficiency;
+            var updated = skillUpdatesByLabel[skill.Label];
+            userSkill.ExperienceInYears = updated.ExperienceInYears;
+            userSkill.Hidden = updated.Hidden;
+            userSkill.Proficiency = updated.Proficiency;
         }
         foreach (var skill in diff.Removed)
         {
