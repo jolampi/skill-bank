@@ -88,6 +88,8 @@ export type UserSkillDto = {
    * User's proficiency in the skill, expressed as a number between 1 and 5.
    */
   proficiency: number;
+  experienceInYears: number;
+  hidden: boolean;
 };
 
 export type PostApiAuthLoginData = {
