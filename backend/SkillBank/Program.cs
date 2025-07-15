@@ -40,7 +40,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Database")));
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<AuthorizationService>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<SkillService>();
 builder.Services.AddScoped<UserService>();
 

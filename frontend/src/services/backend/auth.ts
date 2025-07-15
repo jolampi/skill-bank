@@ -6,7 +6,7 @@ import {
   postApiAuthRefresh,
   PostApiAuthRefreshData,
   postApiAuthRevoke,
-  TokenResponseDto,
+  TokenDto,
 } from "@/generated/client";
 import { client } from "@/generated/client/client.gen";
 
@@ -54,7 +54,7 @@ export async function refresh(): Promise<Authentication | null> {
   return handleTokenResponse(response.data);
 }
 
-function handleTokenResponse(response: TokenResponseDto): Authentication {
+function handleTokenResponse(response: TokenDto): Authentication {
   authentication = {
     accessToken: response.accessToken!,
     role: response.role,

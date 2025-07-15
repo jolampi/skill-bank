@@ -9,12 +9,12 @@ namespace SkillBank.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(AuthorizationService authorizationService) : ControllerBase
+public class AuthController(AuthService authService) : ControllerBase
 {
     [HttpPost("login")]
-    public async Task<ActionResult<TokenResponseDto>> Login(LoginCredentialsDto payload)
+    public async Task<ActionResult<TokenDto>> Login(CredentialsDto payload)
     {
-        var token = await authorizationService.LoginAsync(payload);
+        var token = await authService.LoginAsync(payload);
         if (token is null)
         {
             return BadRequest("Wrong username or password.");
@@ -24,11 +24,11 @@ public class AuthController(AuthorizationService authorizationService) : Control
 
     [Authorize(Roles = "refresh")]
     [HttpPost("refresh")]
-    public async Task<ActionResult<TokenResponseDto>> Refresh()
+    public async Task<ActionResult<TokenDto>> Refresh()
     {
         var userIdClaim = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier);
         var jtiClaim = User.Claims.First(c => c.Type == JwtRegisteredClaimNames.Jti);
-        var token = await authorizationService.RefreshAsync(Guid.Parse(userIdClaim.Value), Guid.Parse(jtiClaim.Value));
+        var token = await authService.RefreshAsync(Guid.Parse(userIdClaim.Value), Guid.Parse(jtiClaim.Value));
         if (token is null)
         {
             return BadRequest();
@@ -44,7 +44,7 @@ public class AuthController(AuthorizationService authorizationService) : Control
     public async Task<ActionResult> Revoke()
     {
         var userIdClaim = User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier);
-        var result = await authorizationService.RevokeAsync(Guid.Parse(userIdClaim.Value));
+        var result = await authService.RevokeAsync(Guid.Parse(userIdClaim.Value));
         if (result)
         {
             return Ok();
