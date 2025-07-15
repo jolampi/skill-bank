@@ -39,6 +39,10 @@ public record UserSkillDto
 {
     public required string Label { get; init; }
 
+    public required uint ExperienceInYears { get; init; }
+
+    public required bool Hidden { get; set; }
+
     /// <summary>
     /// User's proficiency in the skill, expressed as a number between 1 and 5.
     /// </summary>
