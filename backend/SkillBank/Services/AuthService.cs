@@ -10,9 +10,9 @@ using SkillBank.Models;
 
 namespace SkillBank.Services;
 
-public class AuthorizationService(ApplicationDbContext context, IConfiguration configuration, IPasswordHasher<User> passwordhasher)
+public class AuthService(ApplicationDbContext context, IConfiguration configuration, IPasswordHasher<User> passwordhasher)
 {
-    public async Task<TokenResponseDto?> LoginAsync(LoginCredentialsDto credentials)
+    public async Task<TokenDto?> LoginAsync(CredentialsDto credentials)
     {
         var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == credentials.Username);
         if (user is null || user.PasswordHash is null)
@@ -28,7 +28,7 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         return token;
     }
 
-    public async Task<TokenResponseDto?> RefreshAsync(Guid userId, Guid refreshTokenId)
+    public async Task<TokenDto?> RefreshAsync(Guid userId, Guid refreshTokenId)
     {
         var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
         if (user is null || user.RefreshTokenId is null || user.RefreshTokenId != refreshTokenId)
@@ -39,13 +39,13 @@ public class AuthorizationService(ApplicationDbContext context, IConfiguration c
         return token;
     }
 
-    private async Task<TokenResponseDto> CreateAndSaveTokenAsync(User user)
+    private async Task<TokenDto> CreateAndSaveTokenAsync(User user)
     {
         var accessToken = CreateAccessToken(user);
         user.RefreshTokenId = Guid.CreateVersion7();
         var refreshToken = CreateRefreshToken(user);
         await context.SaveChangesAsync();
-        return new TokenResponseDto
+        return new TokenDto
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken,

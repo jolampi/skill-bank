@@ -26,7 +26,7 @@ export type CreateUserDto = {
   role: RoleDto;
 };
 
-export type LoginCredentialsDto = {
+export type CredentialsDto = {
   username: string | null;
   password: string | null;
 };
@@ -46,7 +46,7 @@ export type SkillDtoUnpaged = {
   results: Array<SkillDto> | null;
 };
 
-export type TokenResponseDto = {
+export type TokenDto = {
   accessToken: string | null;
   refreshToken: string | null;
   role: RoleDto;
@@ -91,7 +91,7 @@ export type UserSkillDto = {
 };
 
 export type PostApiAuthLoginData = {
-  body?: LoginCredentialsDto;
+  body?: CredentialsDto;
   path?: never;
   query?: never;
   url: "/api/Auth/login";
@@ -101,7 +101,7 @@ export type PostApiAuthLoginResponses = {
   /**
    * OK
    */
-  200: TokenResponseDto;
+  200: TokenDto;
 };
 
 export type PostApiAuthLoginResponse = PostApiAuthLoginResponses[keyof PostApiAuthLoginResponses];
@@ -117,7 +117,7 @@ export type PostApiAuthRefreshResponses = {
   /**
    * OK
    */
-  200: TokenResponseDto;
+  200: TokenDto;
 };
 
 export type PostApiAuthRefreshResponse =
