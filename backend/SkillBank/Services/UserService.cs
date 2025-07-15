@@ -22,6 +22,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         return new UserDetailsDto
         {
             Id = user.Id,
+            Description = user.Description,
             Name = user.Name,
             Username = user.UserName,
             Role = newUser.Role,
@@ -81,6 +82,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         return new UserDetailsDto
         {
             Id = user.Id,
+            Description = user.Description,
             Name = user.Name,
             Username = user.UserName ?? "",
             Role = RoleToDto(user.Role),

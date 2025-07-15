@@ -28,15 +28,17 @@ export interface NewUserFormProps {
 
 const NewUserForm = forwardRef<NewUserFormRef, NewUserFormProps>(function NewUserForm(props, ref) {
   const { disabled, onSubmit } = props;
+  const [name, setName] = useInput("text");
   const [username, setUsername] = useInput("text");
   const [password, setPassword] = useInput("password");
   const [role, setRole] = useState<Role | "">("");
 
   const clear = useCallback(() => {
+    setName("");
     setUsername("");
     setPassword("");
     setRole("");
-  }, [setUsername, setPassword]);
+  }, [setName, setUsername, setPassword]);
 
   useImperativeHandle(ref, () => {
     return { clear };
@@ -49,6 +51,7 @@ const NewUserForm = forwardRef<NewUserFormRef, NewUserFormProps>(function NewUse
       return;
     }
     const data: NewUser = {
+      name: name.value,
       username: username.value,
       password: password.value,
       role,
@@ -58,6 +61,7 @@ const NewUserForm = forwardRef<NewUserFormRef, NewUserFormProps>(function NewUse
 
   return (
     <form>
+      <TextField label="Name" required fullWidth disabled={disabled} {...name} sx={margin} />
       <TextField
         label="Username"
         required

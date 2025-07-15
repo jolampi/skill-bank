@@ -66,6 +66,7 @@ const UsersPage: React.FC = () => {
             <TableHead>
               <TableRow>
                 <TableCell>User</TableCell>
+                <TableCell>Name</TableCell>
                 <TableCell>Role</TableCell>
                 <TableCell align="right">Actions</TableCell>
               </TableRow>
@@ -74,6 +75,7 @@ const UsersPage: React.FC = () => {
               {users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.name}</TableCell>
                   <TableCell>{user.role}</TableCell>
                   <TableCell align="right">
                     <IconButton

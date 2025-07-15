@@ -54,13 +54,14 @@ export type TokenResponseDto = {
 };
 
 export type UpdateUserDto = {
+  description: string | null;
   name: string | null;
   skills: Array<UserSkillDto> | null;
-  description: string | null;
 };
 
 export type UserDetailsDto = {
   id: string;
+  description: string | null;
   name: string | null;
   username: string | null;
   role: RoleDto;

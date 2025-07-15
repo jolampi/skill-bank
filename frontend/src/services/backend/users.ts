@@ -9,6 +9,8 @@ import {
 } from "@/generated/client";
 
 export interface UserDetails {
+  description: string;
+  name: string;
   username: string;
   skills: UserSkill[];
 }
@@ -20,18 +22,22 @@ export interface UserSkill {
 
 export async function getCurrentUserDetails(): Promise<UserDetails> {
   const response = await getApiUsersCurrent();
-  const skills =
-    response.data?.skills?.map((x) => ({
-      label: x.label ?? "N/A",
-      proficiency: x.proficiency,
-    })) ?? [];
+  const data = response.data!;
+  const skills = data.skills!.map((x) => ({
+    label: x.label ?? "N/A",
+    proficiency: x.proficiency,
+  }));
   return {
-    username: response.data?.username ?? "N/A",
+    description: data.description!,
+    name: data.name!,
+    username: data.username!,
     skills,
   };
 }
 
 export interface UpdateUserDetails {
+  description: string;
+  name: string;
   skills: UserSkill[];
 }
 
@@ -49,22 +55,23 @@ export async function getAllSkills(): Promise<string[]> {
 
 export interface User {
   id: string;
+  name: string;
   username: string;
   role: Role;
 }
 
 export async function getAllUsers(): Promise<User[]> {
   const response = await getApiUsers();
-  return (
-    response.data?.results?.map((x) => ({
-      id: x.id,
-      username: x.username!,
-      role: x.role,
-    })) ?? []
-  );
+  return response.data!.results!.map((x) => ({
+    id: x.id,
+    name: x.name!,
+    username: x.username!,
+    role: x.role,
+  }));
 }
 
 export interface NewUser {
+  name: string;
   username: string;
   password: string;
   role: Role;
