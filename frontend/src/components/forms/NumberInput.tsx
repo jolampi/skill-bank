@@ -24,7 +24,6 @@ export default function NumberInput(props: NumberInputProps): React.ReactNode {
       disabled={disabled}
       inputMode="numeric"
       value={value}
-      size="small"
       sx={{ maxWidth }}
       type="number"
       onChange={handleChange}
