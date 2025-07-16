@@ -1,37 +1,34 @@
 "use client";
 
-import { TextField } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Snackbar from "@mui/material/Snackbar";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { type SxProps, type Theme } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 
-import UserSkillTable from "./components/UserSkillTable";
+import SkillForm from "./components/SkillForm";
+import SkillTable from "./components/SkillTable";
 
+import Modal from "@/components/Modal";
 import withAuthorization from "@/components/withAuthorization";
-import {
-  getAllSkills,
-  getCurrentUserDetails,
-  updateCurrentUserDetails,
-  UserSkill,
-} from "@/services/backend";
+import { getCurrentUserDetails, updateCurrentUserDetails, UserSkill } from "@/services/backend";
 
 const spaceAround: SxProps<Theme> = {
   marginY: 3,
 };
 
 const ProfilePage: React.FC = () => {
-  const [allSkills, setAllSkills] = useState<Array<string>>([]);
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
   const [userSkills, setUserSkills] = useState<Array<UserSkill>>([]);
   const [modified, setModified] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     getCurrentUserDetails().then((details) => {
@@ -40,11 +37,11 @@ const ProfilePage: React.FC = () => {
       setName(details.name);
       setUserSkills(skills);
     });
-    getAllSkills().then(setAllSkills);
   }, []);
 
   const handleAdd = (newSkill: UserSkill) => {
     setUserSkills((prev) => [...prev, newSkill]);
+    setModalOpen(false);
     setModified(true);
   };
 
@@ -91,7 +88,7 @@ const ProfilePage: React.FC = () => {
         </Box>
         <Box sx={spaceAround}>
           <TextField
-            label="Name"
+            label="Tell something about yourself"
             fullWidth
             multiline
             minRows={5}
@@ -102,20 +99,25 @@ const ProfilePage: React.FC = () => {
         <Typography component="p" sx={spaceAround}>
           Here you can add and modify your skills.
         </Typography>
-        <UserSkillTable
+        <SkillTable
           disabled={saving}
-          skillSuggestions={allSkills}
           skills={userSkills}
-          onAdd={handleAdd}
           onChange={handleSkillChange}
           onRemove={handleRemove}
         />
+        <Button fullWidth onClick={() => setModalOpen(true)}>
+          Add New
+        </Button>
         <Box sx={spaceAround}>
           <Button variant="contained" loading={saving} disabled={!modified} onClick={handleSave}>
             Save
           </Button>
         </Box>
       </Container>
+
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <SkillForm onSubmit={handleAdd} />
+      </Modal>
 
       <Snackbar
         open={showNotification}

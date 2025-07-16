@@ -22,10 +22,10 @@ export default function Autocomplete(props: AutocompleteProps): React.ReactNode 
   return (
     <MuiAutocomplete
       freeSolo
+      fullWidth
       selectOnFocus
       disableClearable
       disabled={disabled}
-      size="small"
       options={suggestions}
       inputValue={value}
       onInputChange={handleChange}
