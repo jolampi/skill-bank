@@ -74,3 +74,9 @@ static void SetupEnumSerialization(WebApplicationBuilder builder)
         options.JsonSerializerOptions.Converters.Add(enumConverter);
     });
 }
+
+// Workaround to make class visible for integration tests
+// https://stackoverflow.com/a/69483450
+public partial class Program
+{
+}
