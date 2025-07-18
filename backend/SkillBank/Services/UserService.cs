@@ -67,6 +67,34 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         };
     }
 
+    public async Task<Unpaged<ConsultantListDto>> FindConsultantsAsync(ConsultantSearchParamsDto dto)
+    {
+        var query =
+            from user in context.Users
+            join userSkill in context.UserSkills
+                on user.Id equals userSkill.UserId
+            join skill in context.Skills
+                on userSkill.SkillId equals skill.Id
+            where
+                user.Role == UserRole.Consultant
+                && (dto.Skills.Count == 0 || dto.Skills.Contains(skill.Label))
+                && dto.MinimumProficiency <= userSkill.Proficiency
+                && dto.MinimumExperience <= userSkill.ExperienceInYears
+            group user by user.Id into asd
+            where dto.Skills.Count == 0 || asd.Count() == dto.Skills.Count
+            select new ConsultantListDto
+            {
+                Id = asd.Key,
+                Name = asd.First().Name,
+                Skills = asd.First().UserSkills.Count,
+            };
+        var results = await query.Distinct().ToListAsync();
+        return new Unpaged<ConsultantListDto>
+        {
+            Results = results,
+        };
+    }
+
     public async Task<UserDetailsDto?> GetByIdAsync(Guid id)
     {
         User? user = await context.Users

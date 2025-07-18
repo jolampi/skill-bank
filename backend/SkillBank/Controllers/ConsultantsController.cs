@@ -18,6 +18,16 @@ public class ConsultantsController(UserService userService) : ControllerBase
         return Ok(consultants);
     }
 
+    [HttpGet("new")]
+    public async Task<ActionResult<Unpaged<ConsultantListDto>>> Find([FromQuery] ConsultantSearchParamsDto payload)
+    {
+        Console.WriteLine(payload.Skills.Count);
+        Console.WriteLine(payload.Skills.FirstOrDefault());
+        Console.WriteLine(payload.MinimumExperience);
+        var consultants = await userService.FindConsultantsAsync(payload);
+        return Ok(consultants);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<ConsultantDetailsDto>> GetById(Guid id)
     {

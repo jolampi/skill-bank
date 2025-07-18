@@ -1,5 +1,12 @@
 namespace SkillBank.Models;
 
+public record ConsultantSearchParamsDto
+{
+    public int MinimumExperience { get; init; }
+    public int MinimumProficiency { get; init; } = 0;
+    public List<string> Skills { get; init; } = [];
+}
+
 public record ConsultantListDto
 {
     public required Guid Id { get; init; }

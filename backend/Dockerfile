@@ -8,4 +8,4 @@ RUN dotnet restore \
     && dotnet tool install --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
 
-CMD ["dotnet", "watch", "run", "--project", "SkillBank"]
+CMD ["dotnet", "watch", "run", "--non-interactive", "--project", "SkillBank"]

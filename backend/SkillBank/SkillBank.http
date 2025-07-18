@@ -54,7 +54,7 @@ Authorization: Bearer {{accessToken}}
 
 ### Get all consultants
 
-GET {{SkillBank_HostAddress}}/api/Consultants
+GET {{SkillBank_HostAddress}}/api/Consultants/new?Skills=JavaScript&Skills=React&MinimumExperience=2
 Accept: application/json
 Authorization: Bearer {{accessToken}}
 
