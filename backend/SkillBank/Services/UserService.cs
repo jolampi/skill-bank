@@ -69,18 +69,18 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
 
     public async Task<Unpaged<ConsultantListDto>> FindConsultantsAsync(ConsultantSearchParamsDto searchParams)
     {
-        var query2 = context.Users
+        var query = context.Users
             .Where(user => user.Role == UserRole.Consultant)
             .AsQueryable();
         foreach (var skill in searchParams.Skills)
         {
-            query2 = query2.Where(user => user.UserSkills.Any(x =>
+            query = query.Where(user => user.UserSkills.Any(x =>
                 x.Skill.Label == skill.Label
                     && x.Proficiency >= skill.MinimumProficiency
                     && x.ExperienceInYears >= skill.MinimumExperience
             ));
         }
-        var results = await query2.Select(x => new ConsultantListDto()
+        var results = await query.Select(x => new ConsultantListDto()
         {
             Id = x.Id,
             Name = x.Name,

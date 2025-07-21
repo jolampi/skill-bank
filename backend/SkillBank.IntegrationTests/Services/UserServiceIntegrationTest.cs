@@ -69,6 +69,40 @@ public class UserServiceIntegrationTest : IntegrationTestBase
         Assert.Empty(noResults);
     }
 
+    [Fact]
+    public async Task FindConsultantsAsync_FindsConsultantWithMultipleFilters()
+    {
+        // Arrange
+        var user = await CreateConsultant("React Guy");
+        await AddSkillForUser(user, await CreateSkill("React"), 3, 0);
+        await AddSkillForUser(user, await CreateSkill("JavaScript"), 1, 5);
+        await Context.SaveChangesAsync();
+
+        // Act
+        ConsultantSearchParamsDto matchingParams = new()
+        {
+            Skills = [
+                CreateProficiencyFilter("React", 3),
+                CreateExperienceFilter("JavaScript", 5),
+            ],
+        };
+        var oneResult = (await _userService.FindConsultantsAsync(matchingParams)).Results;
+
+        ConsultantSearchParamsDto missingParams = new()
+        {
+            Skills = [
+                CreateProficiencyFilter("React", 8),
+                CreateExperienceFilter("JavaScript", 10)
+            ]
+        };
+        var noResults = (await _userService.FindConsultantsAsync(missingParams)).Results;
+
+        // Assert
+        Assert.Single(oneResult);
+        Assert.Equal("React Guy", oneResult.First().Name);
+        Assert.Empty(noResults);
+    }
+
     private async Task<User> CreateConsultant(string name)
     {
         User user = new()

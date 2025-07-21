@@ -27,13 +27,13 @@ public class AuthControllerIntegrationTest(IntegrationTestApplicationFactory fac
 
     private async Task CreateUser(string userName, string password, RoleDto role)
     {
-        var asd = new CreateUserDto
+        var user = new CreateUserDto
         {
             Name = userName,
             Username = userName,
             Password = password,
             Role = role,
         };
-        await GetService<UserService>().CreateAsync(asd);
+        await GetService<UserService>().CreateAsync(user);
     }
 }
