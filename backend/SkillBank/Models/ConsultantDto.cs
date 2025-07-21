@@ -2,9 +2,14 @@ namespace SkillBank.Models;
 
 public record ConsultantSearchParamsDto
 {
+    public List<UserSkillFilterDto> Skills { get; init; } = [];
+}
+
+public record UserSkillFilterDto
+{
+    public required string Label { get; init; }
     public int MinimumExperience { get; init; }
-    public int MinimumProficiency { get; init; } = 0;
-    public List<string> Skills { get; init; } = [];
+    public int MinimumProficiency { get; init; }
 }
 
 public record ConsultantListDto
