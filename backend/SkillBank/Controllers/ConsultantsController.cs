@@ -11,10 +11,10 @@ namespace SkillBank.Controllers;
 [Route("api/[controller]")]
 public class ConsultantsController(UserService userService) : ControllerBase
 {
-    [HttpGet]
-    public async Task<ActionResult<Unpaged<ConsultantListDto>>> FindAll()
+    [HttpPost]
+    public async Task<ActionResult<Unpaged<ConsultantListDto>>> Find(ConsultantSearchParamsDto payload)
     {
-        var consultants = await userService.FindAllConsultantsAsync();
+        var consultants = await userService.FindConsultantsAsync(payload);
         return Ok(consultants);
     }
 
