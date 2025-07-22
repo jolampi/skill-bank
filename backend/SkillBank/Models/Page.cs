@@ -4,7 +4,4 @@ namespace SkillBank.Models;
 /// Wrapper around a full list of results that will be aligned with paged responses.
 /// </summary>
 /// <typeparam name="T">Response item type</typeparam>
-public record Unpaged<T>
-{
-    public required IEnumerable<T> Results { get; init; }
-}
+public record Unpaged<T>(IEnumerable<T> Results);

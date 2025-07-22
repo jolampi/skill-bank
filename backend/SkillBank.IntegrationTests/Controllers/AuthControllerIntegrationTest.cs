@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using SkillBank.Entities;
 using SkillBank.Models;
 using SkillBank.Services;
 
@@ -11,7 +12,7 @@ public class AuthControllerIntegrationTest(IntegrationTestApplicationFactory fac
     {
         // Arrange
         await CreateUser("admin", "admin", RoleDto.Admin);
-        await Context.SaveChangesAsync();
+        await GetService<ApplicationDbContext>().SaveChangesAsync();
 
         // Act
         CredentialsDto payload = new()
@@ -19,7 +20,8 @@ public class AuthControllerIntegrationTest(IntegrationTestApplicationFactory fac
             Username = "admin",
             Password = "admin",
         };
-        var response = await Client.PostAsJsonAsync("/api/Auth/login", payload);
+        var client = CreateClient();
+        var response = await client.PostAsJsonAsync("/api/Auth/login", payload);
 
         // Assert
         response.EnsureSuccessStatusCode();

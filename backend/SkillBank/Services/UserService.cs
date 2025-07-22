@@ -33,38 +33,16 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
 
     public async Task<Unpaged<UserListDto>> FindAllAsync()
     {
-        var query =
-            from user in context.Users
-            select new UserListDto
+        var users = await context.Users
+            .Select(user => new UserListDto
             {
                 Id = user.Id,
                 Name = user.Name,
                 Username = user.UserName ?? "",
                 Role = RoleMapper.ToDto(user.Role),
-            };
-        var users = await query.ToListAsync();
-        return new Unpaged<UserListDto>
-        {
-            Results = users,
-        };
-    }
-
-    public async Task<Unpaged<ConsultantListDto>> FindAllConsultantsAsync()
-    {
-        var query =
-            from user in context.Users
-            where user.Role == UserRole.Consultant
-            select new ConsultantListDto
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Skills = user.UserSkills.Count,
-            };
-        var users = await query.ToListAsync();
-        return new Unpaged<ConsultantListDto>
-        {
-            Results = users,
-        };
+            })
+            .ToListAsync();
+        return new Unpaged<UserListDto>(users);
     }
 
     public async Task<Unpaged<ConsultantListDto>> FindConsultantsAsync(ConsultantSearchParamsDto searchParams)
@@ -80,16 +58,15 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
                     && x.ExperienceInYears >= skill.MinimumExperience
             ));
         }
-        var results = await query.Select(x => new ConsultantListDto()
-        {
-            Id = x.Id,
-            Name = x.Name,
-            Skills = x.UserSkills.Count
-        }).ToListAsync();
-        return new Unpaged<ConsultantListDto>
-        {
-            Results = results,
-        };
+        var results = await query
+            .Select(x => new ConsultantListDto()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Skills = x.UserSkills.Count
+            })
+            .ToListAsync();
+        return new Unpaged<ConsultantListDto>(results);
     }
 
     public async Task<UserDetailsDto?> GetByIdAsync(Guid id)
