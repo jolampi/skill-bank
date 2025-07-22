@@ -1,8 +1,9 @@
+using System.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SkillBank.Entities;
 
-namespace SkillBank.IntegrationTests;
+namespace SkillBank.IntegrationTests.Helpers;
 
 public abstract class IntegrationTestBase : IClassFixture<IntegrationTestApplicationFactory>
 {
@@ -30,6 +31,13 @@ public abstract class IntegrationTestBase : IClassFixture<IntegrationTestApplica
     }
 
     public HttpClient CreateClient() => _factory.CreateClient();
+
+    public HttpClient CreateClient(TestClaimsProvider testClaimsProvider)
+    {
+        var client = _factory.ConfigureAuth(testClaimsProvider).CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
+        return client;
+    }
 
     public T GetService<T>()
         where T : notnull
