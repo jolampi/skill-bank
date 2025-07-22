@@ -6,26 +6,30 @@ namespace SkillBank.IntegrationTests;
 
 public abstract class IntegrationTestBase : IClassFixture<IntegrationTestApplicationFactory>
 {
-    protected ApplicationDbContext Context { get; }
-    protected HttpClient Client { get; }
-
+    private readonly IntegrationTestApplicationFactory _factory;
     private readonly IServiceScope _scope;
 
     public IntegrationTestBase(IntegrationTestApplicationFactory factory)
     {
-        Client = factory.CreateClient();
-
+        _factory = factory;
         _scope = factory.Services.CreateScope();
-        Context = _scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        if (Context.Database.GetPendingMigrations().Any())
+        HandleMigrations();
+    }
+
+    private void HandleMigrations()
+    {
+        var context = GetService<ApplicationDbContext>();
+        if (context.Database.GetPendingMigrations().Any())
         {
-            Context.Database.Migrate();
+            context.Database.Migrate();
         }
         // TODO: Figure out how to disable seeding
-        Context.UserSkills.ExecuteDelete();
-        Context.Skills.ExecuteDelete();
-        Context.Users.ExecuteDelete();
+        context.UserSkills.ExecuteDelete();
+        context.Skills.ExecuteDelete();
+        context.Users.ExecuteDelete();
     }
+
+    public HttpClient CreateClient() => _factory.CreateClient();
 
     public T GetService<T>()
         where T : notnull

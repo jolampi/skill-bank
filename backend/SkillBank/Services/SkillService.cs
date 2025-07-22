@@ -8,18 +8,14 @@ public class SkillService(ApplicationDbContext context)
 {
     public async Task<Unpaged<SkillDto>> FindAllAsync()
     {
-        var query =
-            from skill in context.Skills
-            select new SkillDto
+        var skills = await context.Skills
+            .Select(skill => new SkillDto
             {
                 Id = skill.Id,
                 Label = skill.Label,
-                Users = skill.UserSkills.Count
-            };
-        var skills = await query.ToListAsync();
-        return new Unpaged<SkillDto>
-        {
-            Results = skills,
-        };
+                Users = skill.UserSkills.Count,
+            })
+            .ToListAsync();
+        return new Unpaged<SkillDto>(skills);
     }
 }

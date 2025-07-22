@@ -6,10 +6,12 @@ namespace SkillBank.IntegrationTests.Services;
 
 public class UserServiceIntegrationTest : IntegrationTestBase
 {
+    private readonly ApplicationDbContext _context;
     private readonly UserService _userService;
 
     public UserServiceIntegrationTest(IntegrationTestApplicationFactory factory) : base(factory)
     {
+        _context = GetService<ApplicationDbContext>();
         _userService = GetService<UserService>();
     }
 
@@ -20,7 +22,7 @@ public class UserServiceIntegrationTest : IntegrationTestBase
         var user = await CreateConsultant("React Guy");
         var react = await CreateSkill("React");
         await AddSkillForUser(user, react, 1, 5);
-        await Context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         // Act
         ConsultantSearchParamsDto matchingParams = new()
@@ -48,7 +50,7 @@ public class UserServiceIntegrationTest : IntegrationTestBase
         var user = await CreateConsultant("React Guy");
         var react = await CreateSkill("React");
         await AddSkillForUser(user, react, 3, 0);
-        await Context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         // Act
         ConsultantSearchParamsDto matchingParams = new()
@@ -76,7 +78,7 @@ public class UserServiceIntegrationTest : IntegrationTestBase
         var user = await CreateConsultant("React Guy");
         await AddSkillForUser(user, await CreateSkill("React"), 3, 0);
         await AddSkillForUser(user, await CreateSkill("JavaScript"), 1, 5);
-        await Context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         // Act
         ConsultantSearchParamsDto matchingParams = new()
@@ -112,14 +114,14 @@ public class UserServiceIntegrationTest : IntegrationTestBase
             Description = "",
             Role = UserRole.Consultant,
         };
-        await Context.Users.AddAsync(user);
+        await _context.Users.AddAsync(user);
         return user;
     }
 
     private async Task<Skill> CreateSkill(string label)
     {
         var skill = new Skill { Label = label };
-        await Context.Skills.AddAsync(skill);
+        await _context.Skills.AddAsync(skill);
         return skill;
     }
 
@@ -133,7 +135,7 @@ public class UserServiceIntegrationTest : IntegrationTestBase
             ExperienceInYears = experience,
             Hidden = false,
         };
-        await Context.UserSkills.AddAsync(userSkill);
+        await _context.UserSkills.AddAsync(userSkill);
     }
 
     private static UserSkillFilterDto CreateExperienceFilter(string label, int experience) => new()
