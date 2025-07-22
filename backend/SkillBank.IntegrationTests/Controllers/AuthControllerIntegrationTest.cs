@@ -1,11 +1,13 @@
 ﻿using System.Net.Http.Json;
 using SkillBank.Entities;
+using SkillBank.IntegrationTests.Helpers;
 using SkillBank.Models;
 using SkillBank.Services;
 
 namespace SkillBank.IntegrationTests.Controllers;
 
-public class AuthControllerIntegrationTest(IntegrationTestApplicationFactory factory) : IntegrationTestBase(factory)
+public class AuthControllerIntegrationTest(IntegrationTestApplicationFactory factory)
+    : IntegrationTestBase(factory)
 {
     [Fact]
     public async Task Login_ShouldAuthenticateWithCorrectCredentials()

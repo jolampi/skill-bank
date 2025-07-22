@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -7,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using SkillBank.Entities;
 using Testcontainers.PostgreSql;
 
-namespace SkillBank.IntegrationTests;
+namespace SkillBank.IntegrationTests.Helpers;
 
 public class IntegrationTestApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
@@ -26,6 +27,19 @@ public class IntegrationTestApplicationFactory : WebApplicationFactory<Program>,
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseNpgsql(_dbContainer.GetConnectionString());
+            });
+        });
+    }
+
+    public WebApplicationFactory<Program> ConfigureAuth(TestClaimsProvider testClaimsProvider)
+    {
+        return WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureTestServices(services =>
+            {
+                services.AddAuthentication("TestScheme")
+                    .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("TestScheme", op => { });
+                services.AddScoped(_ => testClaimsProvider);
             });
         });
     }

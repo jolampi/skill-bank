@@ -1,4 +1,5 @@
 using SkillBank.Entities;
+using SkillBank.IntegrationTests.Helpers;
 using SkillBank.Models;
 using SkillBank.Services;
 
