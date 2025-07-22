@@ -1,9 +1,6 @@
 namespace SkillBank.Models;
 
-public record ConsultantSearchParamsDto
-{
-    public List<UserSkillFilterDto> Skills { get; init; } = [];
-}
+public record ConsultantSearchParamsDto(List<UserSkillFilterDto> Skills);
 
 public record UserSkillFilterDto
 {

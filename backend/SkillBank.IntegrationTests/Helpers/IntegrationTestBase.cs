@@ -1,4 +1,6 @@
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SkillBank.Entities;
@@ -10,10 +12,18 @@ public abstract class IntegrationTestBase : IClassFixture<IntegrationTestApplica
     private readonly IntegrationTestApplicationFactory _factory;
     private readonly IServiceScope _scope;
 
+    protected TestDataFacade Facade { get; }
+    protected JsonSerializerOptions SerializerOptions { get; }
+
     public IntegrationTestBase(IntegrationTestApplicationFactory factory)
     {
         _factory = factory;
         _scope = factory.Services.CreateScope();
+
+        Facade = new TestDataFacade(GetService<ApplicationDbContext>());
+        SerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+        SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
         HandleMigrations();
     }
 
