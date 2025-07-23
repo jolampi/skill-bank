@@ -3,6 +3,12 @@ import LensOutlinedIcon from "@mui/icons-material/LensOutlined";
 import MuiRating from "@mui/material/Rating";
 import { styled } from "@mui/material/styles";
 
+const ReadOnlyRating = styled(MuiRating)(({ theme }) => ({
+  "& .MuiRating-iconFilled": {
+    color: theme.palette.primary.main,
+  },
+}));
+
 const StyledRating = styled(MuiRating)(({ theme }) => ({
   "& .MuiRating-iconFilled": {
     color: theme.palette.grey[700],
@@ -13,30 +19,39 @@ const StyledRating = styled(MuiRating)(({ theme }) => ({
 }));
 
 export interface RatingProps {
-  defaultValue?: number;
   disabled?: boolean;
+  readonly?: boolean;
+  size?: "small" | "medium" | "large";
   value: number | null;
-  onChange(newValue: number): void;
+  onChange?: (newValue: number) => void;
 }
 
 export default function Rating(props: RatingProps): React.ReactNode {
-  const { defaultValue, disabled, value, onChange } = props;
+  const { disabled, readonly, size, value, onChange } = props;
 
   function handleChange(_event: React.SyntheticEvent, newValue: number | null) {
     if (newValue === null) {
       return;
     }
-    onChange(newValue);
+    onChange?.(newValue);
   }
 
-  return (
+  return readonly ? (
+    <ReadOnlyRating
+      emptyIcon={<LensOutlinedIcon fontSize={size} />}
+      icon={<LensIcon fontSize={size} />}
+      readOnly
+      size={size}
+      value={value}
+    />
+  ) : (
     <StyledRating
-      defaultValue={defaultValue}
       disabled={disabled}
+      emptyIcon={<LensOutlinedIcon fontSize={size} />}
+      icon={<LensIcon fontSize={size} />}
+      size={size}
       value={value}
       onChange={handleChange}
-      icon={<LensIcon />}
-      emptyIcon={<LensOutlinedIcon />}
     />
   );
 }

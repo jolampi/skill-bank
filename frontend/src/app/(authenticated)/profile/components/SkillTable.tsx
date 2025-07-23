@@ -14,7 +14,7 @@ import SkillForm from "./SkillForm";
 
 import Modal from "@/components/Modal";
 import Rating from "@/components/forms/Rating";
-import { UserSkill } from "@/services/backend";
+import { UserSkill } from "@/services/backend/types";
 import theme from "@/theme";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({

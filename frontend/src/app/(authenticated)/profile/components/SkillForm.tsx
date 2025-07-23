@@ -7,7 +7,8 @@ import { FormEvent, useEffect, useState } from "react";
 import Autocomplete from "@/components/forms/Autocomplete";
 import NumberInput from "@/components/forms/NumberInput";
 import Rating from "@/components/forms/Rating";
-import { getAllSkills, UserSkill } from "@/services/backend";
+import { getAllSkills } from "@/services/backend";
+import { UserSkill } from "@/services/backend/types";
 
 const margin: SxProps<Theme> = {
   marginY: 2,
@@ -22,7 +23,7 @@ export interface SkillFormProps {
 export default function NewSkillForm(props: SkillFormProps): React.ReactNode {
   const { disabled, initialData, onSubmit } = props;
   const [label, setLabel] = useState("");
-  const [proficiency, setProficiency] = useState(0);
+  const [proficiency, setProficiency] = useState(3);
   const [experience, setExperience] = useState(0);
   const [skillSuggestions, setSkillSuggestions] = useState<string[]>([]);
   const [editMode, setEditMode] = useState(true);
@@ -47,7 +48,7 @@ export default function NewSkillForm(props: SkillFormProps): React.ReactNode {
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (label.length === 0 || skillSuggestions.includes(label)) {
+    if (label.length === 0) {
       return;
     }
     if (experience < 0) {
@@ -61,7 +62,7 @@ export default function NewSkillForm(props: SkillFormProps): React.ReactNode {
     };
     onSubmit(data);
     setLabel("");
-    setProficiency(0);
+    setProficiency(3);
     setExperience(0);
   }
 
@@ -77,7 +78,6 @@ export default function NewSkillForm(props: SkillFormProps): React.ReactNode {
         />
         <Typography sx={margin}>Proficiency</Typography>
         <Rating
-          defaultValue={3}
           disabled={disabled}
           value={proficiency}
           onChange={setProficiency}

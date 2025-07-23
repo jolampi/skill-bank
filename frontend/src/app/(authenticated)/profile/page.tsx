@@ -15,7 +15,8 @@ import SkillTable from "./components/SkillTable";
 
 import Modal from "@/components/Modal";
 import withAuthorization from "@/components/withAuthorization";
-import { getCurrentUserDetails, updateCurrentUserDetails, UserSkill } from "@/services/backend";
+import { getCurrentUserDetails, updateCurrentUserDetails } from "@/services/backend";
+import { UserSkill } from "@/services/backend/types";
 
 const spaceAround: SxProps<Theme> = {
   marginY: 3,
@@ -40,6 +41,9 @@ const ProfilePage: React.FC = () => {
   }, []);
 
   const handleAdd = (newSkill: UserSkill) => {
+    if (userSkills.some((x) => x.label === newSkill.label)) {
+      return;
+    }
     setUserSkills((prev) => [...prev, newSkill]);
     setModalOpen(false);
     setModified(true);

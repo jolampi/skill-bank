@@ -17,6 +17,14 @@ const Home: React.FC = () => {
           </li>
         </ul>
       </RoleOnly>
+      <RoleOnly role="Sales">
+        <h2>Management</h2>
+        <ul>
+          <li>
+            <Link href="/consultants">View consultants</Link>
+          </li>
+        </ul>
+      </RoleOnly>
     </div>
   );
 };
