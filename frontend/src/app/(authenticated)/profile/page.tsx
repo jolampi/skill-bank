@@ -16,7 +16,7 @@ import SkillTable from "./components/SkillTable";
 import Modal from "@/components/Modal";
 import withAuthorization from "@/components/withAuthorization";
 import { getCurrentUserDetails, updateCurrentUserDetails } from "@/services/backend";
-import { UserSkill } from "@/services/backend/types";
+import { UserSkill } from "@/types";
 
 const spaceAround: SxProps<Theme> = {
   marginY: 3,

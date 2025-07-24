@@ -1,6 +1,7 @@
-import { UserSkill, userSkillFromDto } from "./types";
+import { userSkillFromDto } from "./mappers";
 
 import { ConsultantListDto, postApiConsultants } from "@/generated/client";
+import { UserSkill } from "@/types";
 
 export interface SkillFilter {
   label: string;

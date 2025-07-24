@@ -1,11 +1,5 @@
-import { UserSkillDto } from "@/generated/client/types.gen";
-
-export interface UserSkill {
-  label: string;
-  proficiency: number;
-  experienceInYears: number;
-  hidden: boolean;
-}
+import { UserSkillDto } from "@/generated/client";
+import { UserSkill } from "@/types";
 
 export function userSkillFromDto(userSkill: UserSkillDto): UserSkill {
   return {

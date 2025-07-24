@@ -1,4 +1,4 @@
-import { UserSkill, userSkillFromDto } from "./types";
+import { userSkillFromDto } from "./mappers";
 
 import { Role } from "@/contexts/AuthContext";
 import {
@@ -10,6 +10,7 @@ import {
   putApiUsersCurrent,
   UserDetailsDto,
 } from "@/generated/client";
+import { UserSkill } from "@/types";
 
 export interface UserDetails {
   id: string;

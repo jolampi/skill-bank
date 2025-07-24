@@ -8,7 +8,7 @@ import Autocomplete from "@/components/forms/Autocomplete";
 import NumberInput from "@/components/forms/NumberInput";
 import Rating from "@/components/forms/Rating";
 import { getAllSkills } from "@/services/backend";
-import { UserSkill } from "@/services/backend/types";
+import { UserSkill } from "@/types";
 
 const margin: SxProps<Theme> = {
   marginY: 2,
@@ -77,11 +77,7 @@ export default function NewSkillForm(props: SkillFormProps): React.ReactNode {
           onChange={setLabel}
         />
         <Typography sx={margin}>Proficiency</Typography>
-        <Rating
-          disabled={disabled}
-          value={proficiency}
-          onChange={setProficiency}
-        />
+        <Rating disabled={disabled} value={proficiency} onChange={setProficiency} />
         <Typography sx={margin}>Experience (years)</Typography>
         <NumberInput
           disabled={disabled}

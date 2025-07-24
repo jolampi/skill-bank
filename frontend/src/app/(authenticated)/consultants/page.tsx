@@ -14,9 +14,7 @@ import { Consultant, findConsultants, SkillFilter } from "@/services/backend/con
 
 const ConsultantsPage: React.FC = () => {
   const [consultants, setConsultants] = useState<Consultant[]>([]);
-  const [filters, setFilters] = useState<SkillFilter[]>([
-    { label: "Rust", proficiency: 3, experienceInYears: 0 },
-  ]);
+  const [filters, setFilters] = useState<SkillFilter[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
