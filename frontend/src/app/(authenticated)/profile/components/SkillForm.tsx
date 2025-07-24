@@ -10,6 +10,8 @@ import Rating from "@/components/forms/Rating";
 import { getAllSkills } from "@/services/backend";
 import { UserSkill } from "@/types";
 
+const DEFAULT_PROFICIENCY = 3;
+
 const margin: SxProps<Theme> = {
   marginY: 2,
 };
@@ -23,7 +25,7 @@ export interface SkillFormProps {
 export default function NewSkillForm(props: SkillFormProps): React.ReactNode {
   const { disabled, initialData, onSubmit } = props;
   const [label, setLabel] = useState("");
-  const [proficiency, setProficiency] = useState(3);
+  const [proficiency, setProficiency] = useState(DEFAULT_PROFICIENCY);
   const [experience, setExperience] = useState(0);
   const [skillSuggestions, setSkillSuggestions] = useState<string[]>([]);
   const [editMode, setEditMode] = useState(true);
@@ -62,7 +64,7 @@ export default function NewSkillForm(props: SkillFormProps): React.ReactNode {
     };
     onSubmit(data);
     setLabel("");
-    setProficiency(3);
+    setProficiency(DEFAULT_PROFICIENCY);
     setExperience(0);
   }
 
