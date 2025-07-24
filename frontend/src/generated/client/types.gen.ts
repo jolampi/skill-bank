@@ -9,14 +9,18 @@ export type ConsultantDetailsDto = {
 export type ConsultantListDto = {
   id: string;
   name: string | null;
-  skills: number;
+  skills: Array<UserSkillDto> | null;
 };
 
 /**
  * Wrapper around a full list of results that will be aligned with paged responses.
  */
 export type ConsultantListDtoUnpaged = {
-  results: Array<ConsultantListDto> | null;
+  results?: Array<ConsultantListDto> | null;
+};
+
+export type ConsultantSearchParamsDto = {
+  skills?: Array<UserSkillFilterDto> | null;
 };
 
 export type CreateUserDto = {
@@ -43,7 +47,7 @@ export type SkillDto = {
  * Wrapper around a full list of results that will be aligned with paged responses.
  */
 export type SkillDtoUnpaged = {
-  results: Array<SkillDto> | null;
+  results?: Array<SkillDto> | null;
 };
 
 export type TokenDto = {
@@ -79,17 +83,23 @@ export type UserListDto = {
  * Wrapper around a full list of results that will be aligned with paged responses.
  */
 export type UserListDtoUnpaged = {
-  results: Array<UserListDto> | null;
+  results?: Array<UserListDto> | null;
 };
 
 export type UserSkillDto = {
   label: string | null;
+  experienceInYears: number;
+  hidden: boolean;
   /**
    * User's proficiency in the skill, expressed as a number between 1 and 5.
    */
   proficiency: number;
-  experienceInYears: number;
-  hidden: boolean;
+};
+
+export type UserSkillFilterDto = {
+  label: string | null;
+  minimumExperience?: number;
+  minimumProficiency?: number;
 };
 
 export type PostApiAuthLoginData = {
@@ -139,22 +149,22 @@ export type PostApiAuthRevokeResponses = {
   200: unknown;
 };
 
-export type GetApiConsultantsData = {
-  body?: never;
+export type PostApiConsultantsData = {
+  body?: ConsultantSearchParamsDto;
   path?: never;
   query?: never;
   url: "/api/Consultants";
 };
 
-export type GetApiConsultantsResponses = {
+export type PostApiConsultantsResponses = {
   /**
    * OK
    */
   200: ConsultantListDtoUnpaged;
 };
 
-export type GetApiConsultantsResponse =
-  GetApiConsultantsResponses[keyof GetApiConsultantsResponses];
+export type PostApiConsultantsResponse =
+  PostApiConsultantsResponses[keyof PostApiConsultantsResponses];
 
 export type GetApiConsultantsByIdData = {
   body?: never;

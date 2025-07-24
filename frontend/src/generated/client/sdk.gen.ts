@@ -8,8 +8,8 @@ import type {
   PostApiAuthRefreshResponses,
   PostApiAuthRevokeData,
   PostApiAuthRevokeResponses,
-  GetApiConsultantsData,
-  GetApiConsultantsResponses,
+  PostApiConsultantsData,
+  PostApiConsultantsResponses,
   GetApiConsultantsByIdData,
   GetApiConsultantsByIdResponses,
   GetApiSkillsData,
@@ -86,12 +86,20 @@ export const postApiAuthRevoke = <ThrowOnError extends boolean = false>(
   );
 };
 
-export const getApiConsultants = <ThrowOnError extends boolean = false>(
-  options?: Options<GetApiConsultantsData, ThrowOnError>,
+export const postApiConsultants = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiConsultantsData, ThrowOnError>,
 ) => {
-  return (options?.client ?? _heyApiClient).get<GetApiConsultantsResponses, unknown, ThrowOnError>({
+  return (options?.client ?? _heyApiClient).post<
+    PostApiConsultantsResponses,
+    unknown,
+    ThrowOnError
+  >({
     url: "/api/Consultants",
     ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
   });
 };
 

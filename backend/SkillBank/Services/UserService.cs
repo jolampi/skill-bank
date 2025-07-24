@@ -59,11 +59,19 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             ));
         }
         var results = await query
-            .Select(x => new ConsultantListDto()
+            .Select(user => new ConsultantListDto()
             {
-                Id = x.Id,
-                Name = x.Name,
-                Skills = x.UserSkills.Count
+                Id = user.Id,
+                Name = user.Name,
+                Skills = user.UserSkills
+                    .Select(userSkill => new UserSkillDto()
+                    {
+                        Label = userSkill.Skill.Label,
+                        Proficiency = userSkill.Proficiency,
+                        ExperienceInYears = userSkill.ExperienceInYears,
+                        Hidden = userSkill.Hidden,
+                    })
+                    .ToList()
             })
             .ToListAsync();
         return new Unpaged<ConsultantListDto>(results);
