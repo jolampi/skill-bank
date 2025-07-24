@@ -63,7 +63,14 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             {
                 Id = x.Id,
                 Name = x.Name,
-                Skills = x.UserSkills.Count
+                Skills = x.UserSkills.Select(userSkill => new UserSkillDto()
+                {
+                    Label = userSkill.Skill.Label,
+                    Proficiency = userSkill.Proficiency,
+                    ExperienceInYears = userSkill.ExperienceInYears,
+                    Hidden = userSkill.Hidden,
+                })
+                .ToList()
             })
             .ToListAsync();
         return new Unpaged<ConsultantListDto>(results);
