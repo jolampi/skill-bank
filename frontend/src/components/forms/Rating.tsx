@@ -13,14 +13,13 @@ const StyledRating = styled(MuiRating)(({ theme }) => ({
 }));
 
 export interface RatingProps {
-  defaultValue?: number;
   disabled?: boolean;
   value: number | null;
   onChange(newValue: number): void;
 }
 
 export default function Rating(props: RatingProps): React.ReactNode {
-  const { defaultValue, disabled, value, onChange } = props;
+  const { disabled, value, onChange } = props;
 
   function handleChange(_event: React.SyntheticEvent, newValue: number | null) {
     if (newValue === null) {
@@ -31,7 +30,6 @@ export default function Rating(props: RatingProps): React.ReactNode {
 
   return (
     <StyledRating
-      defaultValue={defaultValue}
       disabled={disabled}
       value={value}
       onChange={handleChange}

@@ -14,8 +14,8 @@ import SkillForm from "./SkillForm";
 
 import Modal from "@/components/Modal";
 import Rating from "@/components/forms/Rating";
-import { UserSkill } from "@/services/backend";
 import theme from "@/theme";
+import { UserSkill } from "@/types";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(even)": {

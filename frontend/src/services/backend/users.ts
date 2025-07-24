@@ -1,3 +1,5 @@
+import { userSkillFromDto } from "./mappers";
+
 import { Role } from "@/contexts/AuthContext";
 import {
   deleteApiUsersById,
@@ -6,37 +8,31 @@ import {
   getApiUsersCurrent,
   postApiUsers,
   putApiUsersCurrent,
+  UserDetailsDto,
 } from "@/generated/client";
+import { UserSkill } from "@/types";
 
 export interface UserDetails {
-  description: string;
-  name: string;
+  id: string;
   username: string;
+  name: string;
+  description: string;
   skills: UserSkill[];
 }
 
-export interface UserSkill {
-  label: string;
-  experienceInYears: number;
-  hidden: boolean;
-  proficiency: number;
+function userDetailsFromDto(userDetails: UserDetailsDto): UserDetails {
+  return {
+    id: userDetails.id,
+    username: userDetails.username!,
+    name: userDetails.name!,
+    description: userDetails.description!,
+    skills: userDetails.skills!.map(userSkillFromDto),
+  };
 }
 
 export async function getCurrentUserDetails(): Promise<UserDetails> {
   const response = await getApiUsersCurrent();
-  const data = response.data!;
-  const skills = data.skills!.map<UserSkill>((x) => ({
-    label: x.label!,
-    experienceInYears: x.experienceInYears,
-    hidden: x.hidden,
-    proficiency: x.proficiency,
-  }));
-  return {
-    description: data.description!,
-    name: data.name!,
-    username: data.username!,
-    skills,
-  };
+  return userDetailsFromDto(response.data!);
 }
 
 export interface UpdateUserDetails {
