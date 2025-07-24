@@ -50,7 +50,7 @@ export default function NewSkillForm(props: SkillFormProps): React.ReactNode {
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (label.length === 0 || skillSuggestions.includes(label)) {
+    if (label.length === 0) {
       return;
     }
     if (experience < 0) {
