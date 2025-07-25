@@ -3,6 +3,7 @@
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import LinearProgress from "@mui/material/LinearProgress";
+import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 
@@ -24,18 +25,13 @@ const ConsultantsPage: React.FC = () => {
       .finally(() => setLoading(false));
   }, [filters]);
 
-  function getResultText(results: number) {
-    if (results > 0) {
-      return `Found ${results} results:`;
-    } else {
-      return `No results with provided search terms.`;
-    }
-  }
-
   return (
     <div>
       <Container maxWidth="md">
-        <ConsultantFilters disabled={loading} value={filters} onChange={setFilters} />
+        <Typography variant="h5">Search for consultants</Typography>
+        <Paper variant="outlined" sx={{ padding: 2, marginY: 2 }}>
+          <ConsultantFilters disabled={loading} value={filters} onChange={setFilters} />
+        </Paper>
         <Divider variant="middle" sx={{ marginY: 3 }} />
         {loading ? (
           <LinearProgress />
@@ -53,3 +49,11 @@ const ConsultantsPage: React.FC = () => {
 };
 
 export default withAuthorization(ConsultantsPage);
+
+function getResultText(results: number) {
+  if (results > 0) {
+    return `Found ${results} results:`;
+  } else {
+    return `No results with provided search terms.`;
+  }
+}

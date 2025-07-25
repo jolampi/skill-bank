@@ -3,13 +3,14 @@ import { ChangeEvent } from "react";
 
 export interface NumberInputProps {
   disabled?: boolean;
+  fullWidth?: boolean;
   maxWidth?: number;
   value: number;
   onChange(newValue: number): void;
 }
 
 export default function NumberInput(props: NumberInputProps): React.ReactNode {
-  const { disabled, maxWidth, value, onChange } = props;
+  const { disabled, fullWidth, maxWidth, value, onChange } = props;
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const newValue = Number.parseInt(event.target.value);
@@ -22,6 +23,7 @@ export default function NumberInput(props: NumberInputProps): React.ReactNode {
   return (
     <TextField
       disabled={disabled}
+      fullWidth={fullWidth}
       inputMode="numeric"
       value={value}
       sx={{ maxWidth }}
