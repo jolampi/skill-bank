@@ -48,7 +48,7 @@ const ConsultantsPage: React.FC = () => {
           <div>
             <Typography>{getResultText(consultants.length)}</Typography>
             {consultants.map((x) => (
-              <ConsultantCard key={x.id} consultant={x} />
+              <ConsultantCard key={x.id} value={x} />
             ))}
           </div>
         )}

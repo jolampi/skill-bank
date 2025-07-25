@@ -27,22 +27,22 @@ const skillsStyle: SxProps<Theme> = {
 };
 
 export interface ConsultantCardProps {
-  consultant: Consultant;
+  value: Consultant;
 }
 
 export default function ConsultantCard(props: ConsultantCardProps): React.ReactNode {
-  const { consultant } = props;
+  const { value } = props;
 
   return (
     <Card variant="outlined" sx={cardStyle}>
       <CardHeader
         avatar={<AccountBoxIcon fontSize="large" />}
-        title={consultant.name}
+        title={value.name}
         subheader="Fullstack Developer"
         sx={{ flex: 3 }}
       />
       <CardContent sx={skillsStyle}>
-        {consultant.skills.slice(0, 4).map((skill) => (
+        {value.skills.slice(0, 4).map((skill) => (
           <Box key={skill.label} sx={{ display: "flex" }}>
             <Typography sx={{ flex: 1, fontSize: 14 }}>{skill.label}</Typography>
             <Rating readonly size="small" value={skill.proficiency} />
