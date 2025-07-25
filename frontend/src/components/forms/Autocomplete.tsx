@@ -1,12 +1,11 @@
 import MuiAutocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 
-export interface AutocompleteProps {
-  disabled?: boolean;
+import { ControlledProps } from "./types";
+
+export interface AutocompleteProps extends ControlledProps<string> {
   label: string;
   suggestions: string[];
-  value: string;
-  onChange(newValue: string): void;
 }
 
 export default function Autocomplete(props: AutocompleteProps): React.ReactNode {
@@ -16,7 +15,7 @@ export default function Autocomplete(props: AutocompleteProps): React.ReactNode 
     if (newValue === null) {
       return;
     }
-    onChange(newValue);
+    onChange?.(newValue);
   }
 
   return (

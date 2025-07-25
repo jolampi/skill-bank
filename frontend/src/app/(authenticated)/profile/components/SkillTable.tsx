@@ -14,6 +14,7 @@ import SkillForm from "./SkillForm";
 
 import Modal from "@/components/Modal";
 import Rating from "@/components/forms/Rating";
+import { ControlledProps } from "@/components/forms/types";
 import theme from "@/theme";
 import { UserSkill } from "@/types";
 
@@ -35,30 +36,33 @@ const mediumColumn: SxProps<Theme> = {
   },
 };
 
-export interface UserSkillTableProps {
-  disabled?: boolean;
-  skills: UserSkill[];
-  onChange(skill: UserSkill): void;
-  onRemove(label: string): void;
-}
+export type UserSkillTableProps = ControlledProps<Array<UserSkill>>;
 
 export default function UserSkillTable(props: UserSkillTableProps) {
-  const { disabled, skills, onChange, onRemove } = props;
+  const { disabled, value, onChange } = props;
   const [skillToEdit, setSkillToEdit] = useState<UserSkill | null>(null);
 
   function handleProficiencyChange(skill: UserSkill, proficiency: number) {
-    onChange({ ...skill, proficiency });
+    const newSkill: UserSkill = { ...skill, proficiency };
+    const newValue = value.map((x) => (x.label === skill.label ? newSkill : x));
+    onChange?.(newValue);
   }
 
   function handleSkillEdit(editedSkill: UserSkill) {
+    const newValue = value.map((x) => (x.label === editedSkill.label ? editedSkill : x));
+    onChange?.(newValue);
     setSkillToEdit(null);
-    onChange(editedSkill);
+  }
+
+  function handleRemove(skill: UserSkill) {
+    const skills = value.filter((x) => x.label !== skill.label);
+    onChange?.(skills);
   }
 
   return (
     <div>
       <TableContainer>
-        <Table size="small" role="presentation" aria-label="My skills">
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>Skill</TableCell>
@@ -72,7 +76,7 @@ export default function UserSkillTable(props: UserSkillTableProps) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {skills.map((skill) => (
+            {value.map((skill) => (
               <StyledTableRow key={skill.label}>
                 <TableCell>{skill.label}</TableCell>
                 <TableCell sx={mediumColumn}>
@@ -89,11 +93,7 @@ export default function UserSkillTable(props: UserSkillTableProps) {
                   <IconButton aria-label="edit" size="small" onClick={() => setSkillToEdit(skill)}>
                     <EditIcon />
                   </IconButton>
-                  <IconButton
-                    aria-label="delete"
-                    size="small"
-                    onClick={() => onRemove(skill.label!)}
-                  >
+                  <IconButton aria-label="delete" size="small" onClick={() => handleRemove(skill)}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>

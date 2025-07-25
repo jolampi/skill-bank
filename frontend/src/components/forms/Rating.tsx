@@ -3,6 +3,8 @@ import LensOutlinedIcon from "@mui/icons-material/LensOutlined";
 import MuiRating from "@mui/material/Rating";
 import { styled } from "@mui/material/styles";
 
+import { ControlledProps } from "./types";
+
 const ReadOnlyRating = styled(MuiRating)(({ theme }) => ({
   "& .MuiRating-iconFilled": {
     color: theme.palette.primary.main,
@@ -18,12 +20,9 @@ const StyledRating = styled(MuiRating)(({ theme }) => ({
   },
 }));
 
-export interface RatingProps {
-  disabled?: boolean;
+export interface RatingProps extends ControlledProps<number> {
   readonly?: boolean;
   size?: "small" | "medium" | "large";
-  value: number | null;
-  onChange?: (newValue: number) => void;
 }
 
 export default function Rating(props: RatingProps): React.ReactNode {

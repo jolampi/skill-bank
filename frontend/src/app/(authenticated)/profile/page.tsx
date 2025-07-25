@@ -59,15 +59,10 @@ const ProfilePage: React.FC = () => {
     setModified(true);
   };
 
-  const handleSkillChange = (skill: UserSkill) => {
-    setUserSkills((prev) => prev.map((x) => (x.label === skill.label ? skill : x)));
+  function handleSkillsChange(newSkills: UserSkill[]) {
+    setUserSkills(newSkills);
     setModified(true);
-  };
-
-  const handleRemove = (label: string) => {
-    setUserSkills((prev) => prev.filter((x) => x.label !== label));
-    setModified(true);
-  };
+  }
 
   const handleSave = async () => {
     setSaving(true);
@@ -103,12 +98,7 @@ const ProfilePage: React.FC = () => {
         <Typography component="p" sx={spaceAround}>
           Here you can add and modify your skills.
         </Typography>
-        <SkillTable
-          disabled={saving}
-          skills={userSkills}
-          onChange={handleSkillChange}
-          onRemove={handleRemove}
-        />
+        <SkillTable disabled={saving} value={userSkills} onChange={handleSkillsChange} />
         <Button fullWidth onClick={() => setModalOpen(true)}>
           Add New
         </Button>
