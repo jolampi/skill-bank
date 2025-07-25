@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 
 import ConsultantCard from "./components/ConsultantCard";
 import ConsultantFilters from "./components/ConsultantFilters";
+import NewFilterForm from "./components/NewFilterForm";
 
 import withAuthorization from "@/components/withAuthorization";
 import { Consultant, findConsultants, SkillFilter } from "@/services/backend/consultants";
@@ -25,13 +26,21 @@ const ConsultantsPage: React.FC = () => {
       .finally(() => setLoading(false));
   }, [filters]);
 
+  function handleAdd(newFilter: SkillFilter) {
+    const newFilters = filters.filter((x) => x.label !== newFilter.label);
+    newFilters.push(newFilter);
+    newFilters.sort((a, b) => a.label.localeCompare(b.label));
+    setFilters(newFilters);
+  }
+
   return (
     <div>
       <Container maxWidth="md">
         <Typography variant="h5">Search for consultants</Typography>
-        <Paper variant="outlined" sx={{ padding: 2, marginY: 2 }}>
-          <ConsultantFilters disabled={loading} value={filters} onChange={setFilters} />
+        <Paper variant="outlined" sx={{ padding: 2, maxWidth: 700, marginX: "auto", marginY: 3 }}>
+          <NewFilterForm disabled={loading} onSubmit={handleAdd} />
         </Paper>
+        <ConsultantFilters disabled={loading} value={filters} onChange={setFilters} />
         <Divider variant="middle" sx={{ marginY: 3 }} />
         {loading ? (
           <LinearProgress />
