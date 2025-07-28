@@ -1,21 +1,13 @@
 import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import TextField from "@mui/material/TextField";
-import { SxProps, Theme } from "@mui/material/styles";
+import Stack from "@mui/material/Stack";
 import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
 
+import Select from "@/components/forms/Select";
+import TextInput from "@/components/forms/TextInput";
 import { Role } from "@/contexts/AuthContext";
-import useInput from "@/hooks/useInput";
 import { NewUser } from "@/services/backend";
 
 const roles: Role[] = ["Admin", "Consultant", "Sales"];
-
-const margin: SxProps<Theme> = {
-  marginY: 1,
-};
 
 export interface NewUserFormRef {
   clear(): void;
@@ -28,9 +20,9 @@ export interface NewUserFormProps {
 
 const NewUserForm = forwardRef<NewUserFormRef, NewUserFormProps>(function NewUserForm(props, ref) {
   const { disabled, onSubmit } = props;
-  const [name, setName] = useInput("text");
-  const [username, setUsername] = useInput("text");
-  const [password, setPassword] = useInput("password");
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [role, setRole] = useState<Role | "">("");
 
   const clear = useCallback(() => {
@@ -51,58 +43,44 @@ const NewUserForm = forwardRef<NewUserFormRef, NewUserFormProps>(function NewUse
       return;
     }
     const data: NewUser = {
-      name: name.value,
-      username: username.value,
-      password: password.value,
+      name: name,
+      username: username,
+      password: password,
       role,
     };
     onSubmit(data);
   };
 
   return (
-    <form>
-      <TextField label="Name" required fullWidth disabled={disabled} {...name} sx={margin} />
-      <TextField
+    <Stack component="form" spacing={1}>
+      <TextInput label="Name" required disabled={disabled} value={name} onChange={setName} />
+      <TextInput
+        disabled={disabled}
         label="Username"
         required
-        fullWidth
-        disabled={disabled}
-        {...username}
-        sx={margin}
+        value={username}
+        onChange={setUsername}
       />
-      <TextField
+      <TextInput
+        disabled={disabled}
         label="Password"
         required
-        fullWidth
-        disabled={disabled}
-        {...password}
-        sx={margin}
+        type="password"
+        value={password}
+        onChange={setPassword}
       />
-      <FormControl required fullWidth disabled={disabled} sx={margin}>
-        <InputLabel id="select-new-user-role">Role</InputLabel>
-        <Select
-          label="Role"
-          labelId="select-new-user-role"
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-        >
-          {roles.map((role) => (
-            <MenuItem key={role} value={role}>
-              {role}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <Button
-        type="submit"
-        variant="contained"
+      <Select
         disabled={disabled}
-        onClick={handleSubmit}
-        sx={margin}
-      >
+        label="Role"
+        options={roles}
+        required
+        value={role}
+        onChange={setRole}
+      />
+      <Button type="submit" variant="contained" disabled={disabled} onClick={handleSubmit}>
         Submit
       </Button>
-    </form>
+    </Stack>
   );
 });
 
