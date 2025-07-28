@@ -23,7 +23,7 @@ export default function Select<T extends string>(props: SelectProps<T>): React.R
   return (
     <FormControl required={required} fullWidth disabled={disabled}>
       <InputLabel id={id}>{label}</InputLabel>
-      <MuiSelect label="Role" labelId="select-new-user-role" value={value} onChange={handleChange}>
+      <MuiSelect label={label} labelId={id} value={value} onChange={handleChange}>
         {options.map((option, i) => (
           <MenuItem key={i} value={option}>
             {option}
