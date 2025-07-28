@@ -48,10 +48,11 @@ public class UsersControllerIntegrationTest(IntegrationTestApplicationFactory fa
         // Act
         UserSkillDto dotnet2 = CreateSkillDto(".NET", 3, 1);
         UserSkillDto aspnet = CreateSkillDto("ASP.NET", 2, 1);
-        UpdateUserDto payload = new()
+        var payload = new UpdateUserDto()
         {
-            Description = "",
             Name = "John Doe",
+            Title = "Backend Developer",
+            Description = "",
             Skills = [
                 dotnet2,
                 aspnet,
