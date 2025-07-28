@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 import SkillTable from "./SkillTable";
 
@@ -21,20 +21,24 @@ export default function UserForm(props: UserFormProps): React.ReactNode {
   const { disabled, initialData, onSubmit } = props;
 
   const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [skills, setSkills] = useState<Array<UserSkill>>([]);
 
   useEffect(() => {
     setName(initialData.name);
+    setTitle(initialData.title);
     setDescription(initialData.description);
     setSkills(initialData.skills);
   }, [initialData]);
 
-  function handleSubmit() {
+  function handleSubmit(event: FormEvent) {
+    event.preventDefault();
     const user: UserDetails = {
       id: initialData.id,
       username: initialData.username,
       name,
+      title,
       description,
       skills,
     };
@@ -42,11 +46,20 @@ export default function UserForm(props: UserFormProps): React.ReactNode {
   }
 
   return (
-    <Stack component="form" spacing={4}>
+    <Stack component="form" spacing={4} onSubmit={handleSubmit}>
       <TextInput disabled={disabled} label="Name" required value={name} onChange={setName} />
+      <TextInput
+        disabled={disabled}
+        label="Title"
+        placeholder="Fullstack Developer"
+        required
+        value={title}
+        onChange={setTitle}
+      />
       <TextArea
         disabled={disabled}
-        label="Tell something about yourself"
+        label="Description"
+        placeholder="Tell something about yourself"
         value={description}
         onChange={setDescription}
       />
@@ -55,7 +68,7 @@ export default function UserForm(props: UserFormProps): React.ReactNode {
         <SkillTable disabled={disabled} value={skills} onChange={setSkills} />
       </Box>
       <Box>
-        <Button variant="contained" disabled={disabled} onClick={handleSubmit}>
+        <Button disabled={disabled} type="submit" variant="contained">
           Save
         </Button>
       </Box>

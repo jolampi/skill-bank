@@ -44,7 +44,9 @@ const ProfilePage: React.FC = () => {
 
   return (
     <Container maxWidth="md">
-      <Typography variant="h5" sx={{ marginBottom: 3 }}>Edit profile</Typography>
+      <Typography variant="h5" sx={{ marginBottom: 3 }}>
+        Edit profile
+      </Typography>
       <UserForm disabled={saving} initialData={user} onSubmit={handleSave} />
       <Snackbar
         open={showNotification}

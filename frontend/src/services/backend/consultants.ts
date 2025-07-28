@@ -10,6 +10,7 @@ export interface SkillFilter extends Required<UserSkillFilterDto> {
 export interface Consultant {
   id: string;
   name: string;
+  title: string;
   skills: UserSkill[];
 }
 
@@ -17,6 +18,7 @@ function consultantFromDto(consultant: ConsultantListDto): Consultant {
   return {
     id: consultant.id,
     name: consultant.name!,
+    title: consultant.title!,
     skills: consultant.skills!.map(userSkillFromDto),
   };
 }
