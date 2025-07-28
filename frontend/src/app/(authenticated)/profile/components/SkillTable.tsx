@@ -1,5 +1,6 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -40,6 +41,7 @@ export type UserSkillTableProps = ControlledProps<Array<UserSkill>>;
 
 export default function UserSkillTable(props: UserSkillTableProps) {
   const { disabled, value, onChange } = props;
+  const [showAddNew, setShowAddNew] = useState(false);
   const [skillToEdit, setSkillToEdit] = useState<UserSkill | null>(null);
 
   function handleProficiencyChange(skill: UserSkill, proficiency: number) {
@@ -48,7 +50,14 @@ export default function UserSkillTable(props: UserSkillTableProps) {
     onChange?.(newValue);
   }
 
-  function handleSkillEdit(editedSkill: UserSkill) {
+  function handleAdd(newSkill: UserSkill) {
+    const newValue = value.filter((x) => x.label !== newSkill.label);
+    newValue.push(newSkill);
+    onChange?.(newValue);
+    setShowAddNew(false);
+  }
+
+  function handleEdit(editedSkill: UserSkill) {
     const newValue = value.map((x) => (x.label === editedSkill.label ? editedSkill : x));
     onChange?.(newValue);
     setSkillToEdit(null);
@@ -101,10 +110,17 @@ export default function UserSkillTable(props: UserSkillTableProps) {
             ))}
           </TableBody>
         </Table>
+        <Button fullWidth onClick={() => setShowAddNew(true)}>
+          Add New
+        </Button>
       </TableContainer>
 
       <Modal open={!!skillToEdit} onClose={() => setSkillToEdit(null)}>
-        <SkillForm initialData={skillToEdit} onSubmit={handleSkillEdit} />
+        <SkillForm initialData={skillToEdit} onSubmit={handleEdit} />
+      </Modal>
+
+      <Modal open={showAddNew} onClose={() => setShowAddNew(false)}>
+        <SkillForm onSubmit={handleAdd} />
       </Modal>
     </div>
   );

@@ -1,110 +1,51 @@
 "use client";
 
 import Alert from "@mui/material/Alert";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
+import LinearProgress from "@mui/material/LinearProgress";
 import Snackbar from "@mui/material/Snackbar";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 
-import SkillForm from "./components/SkillForm";
-import SkillTable from "./components/SkillTable";
+import UserForm from "./components/UserForm";
 
-import Modal from "@/components/Modal";
-import TextArea from "@/components/forms/TextArea";
-import TextInput from "@/components/forms/TextInput";
 import withAuthorization from "@/components/withAuthorization";
-import { getCurrentUserDetails, updateCurrentUserDetails } from "@/services/backend";
-import { UserSkill } from "@/types";
+import { getCurrentUserDetails, updateCurrentUserDetails, UserDetails } from "@/services/backend";
 
 const ProfilePage: React.FC = () => {
-  const [description, setDescription] = useState("");
-  const [name, setName] = useState("");
-  const [userSkills, setUserSkills] = useState<Array<UserSkill>>([]);
-  const [modified, setModified] = useState(false);
+  const [user, setUser] = useState<UserDetails | null>(null);
   const [saving, setSaving] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    getCurrentUserDetails().then((details) => {
-      const skills = details.skills.sort((a, b) => a.label.localeCompare(b.label));
-      setDescription(details.description);
-      setName(details.name);
-      setUserSkills(skills);
+    getCurrentUserDetails().then((user) => {
+      user.skills.sort((a, b) => a.label.localeCompare(b.label));
+      setUser(user);
     });
   }, []);
 
-  const handleAdd = (newSkill: UserSkill) => {
-    if (userSkills.some((x) => x.label === newSkill.label)) {
-      return;
-    }
-    setUserSkills((prev) => [...prev, newSkill]);
-    setModalOpen(false);
-    setModified(true);
-  };
-
-  function handleNameChange(newName: string) {
-    setName(newName);
-    setModified(true);
-  }
-
-  function handleDescriptionChange(newName: string) {
-    setDescription(newName);
-    setModified(true);
-  }
-
-  function handleSkillsChange(newSkills: UserSkill[]) {
-    setUserSkills(newSkills);
-    setModified(true);
-  }
-
-  const handleSave = async () => {
+  async function handleSave(updated: UserDetails) {
     setSaving(true);
     try {
-      await updateCurrentUserDetails({ description, name, skills: userSkills });
+      await updateCurrentUserDetails(updated);
       setShowNotification(true);
-      setModified(false);
     } finally {
       setSaving(false);
     }
-  };
+  }
 
   const handleCloseNotification = () => {
     setShowNotification(false);
   };
 
+  if (!user) {
+    return <LinearProgress />;
+  }
+
   return (
     <Container maxWidth="md">
-      <Stack spacing={4}>
-        <Box>
-          <TextInput label="Name" value={name} onChange={handleNameChange} />
-        </Box>
-        <Box>
-          <TextArea
-            label="Tell something about yourself"
-            value={description}
-            onChange={handleDescriptionChange}
-          />
-        </Box>
-        <Typography component="p">Here you can add and modify your skills.</Typography>
-        <SkillTable disabled={saving} value={userSkills} onChange={handleSkillsChange} />
-        <Button fullWidth onClick={() => setModalOpen(true)}>
-          Add New
-        </Button>
-        <Box>
-          <Button variant="contained" loading={saving} disabled={!modified} onClick={handleSave}>
-            Save
-          </Button>
-        </Box>
-      </Stack>
-
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-        <SkillForm onSubmit={handleAdd} />
-      </Modal>
-
+      <Typography variant="h5" sx={{ marginBottom: 3 }}>Edit profile</Typography>
+      <UserForm disabled={saving} initialData={user} onSubmit={handleSave} />
       <Snackbar
         open={showNotification}
         autoHideDuration={5000}
