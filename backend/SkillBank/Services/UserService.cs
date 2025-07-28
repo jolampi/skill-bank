@@ -54,6 +54,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             {
                 Id = user.Id,
                 Name = user.Name,
+                Title = user.Title,
                 Skills = user.UserSkills
                     .Select(userSkill => new UserSkillDto()
                     {
@@ -96,6 +97,8 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         {
             Id = user.Id,
             Name = user.Name,
+            Title = user.Title,
+            Description = user.Description,
             Skills = skills,
         };
     }

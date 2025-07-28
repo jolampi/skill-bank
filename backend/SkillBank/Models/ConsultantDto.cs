@@ -13,6 +13,7 @@ public record ConsultantListDto
 {
     public required Guid Id { get; init; }
     public required string Name { get; init; }
+    public required string Title { get; init; }
     public required List<UserSkillDto> Skills { get; init; }
 }
 
@@ -20,5 +21,7 @@ public record ConsultantDetailsDto
 {
     public required Guid Id { get; init; }
     public required string Name { get; init; }
+    public required string Title { get; init; }
+    public required string Description { get; init; }
     public required List<UserSkillDto> Skills { get; init; }
 }
