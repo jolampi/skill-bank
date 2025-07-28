@@ -4,12 +4,15 @@ export type ConsultantDetailsDto = {
   id: string;
   name: string | null;
   skills: Array<UserSkillDto> | null;
+  title: string | null;
+  description: string | null;
 };
 
 export type ConsultantListDto = {
   id: string;
   name: string | null;
   skills: Array<UserSkillDto> | null;
+  title: string | null;
 };
 
 /**
