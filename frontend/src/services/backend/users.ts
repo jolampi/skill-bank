@@ -16,6 +16,7 @@ export interface UserDetails {
   id: string;
   username: string;
   name: string;
+  title: string;
   description: string;
   skills: UserSkill[];
 }
@@ -25,6 +26,7 @@ function userDetailsFromDto(userDetails: UserDetailsDto): UserDetails {
     id: userDetails.id,
     username: userDetails.username!,
     name: userDetails.name!,
+    title: userDetails.title!,
     description: userDetails.description!,
     skills: userDetails.skills!.map(userSkillFromDto),
   };
@@ -36,15 +38,16 @@ export async function getCurrentUserDetails(): Promise<UserDetails> {
 }
 
 export interface UpdateUserDetails {
-  description: string;
   name: string;
+  title: string;
+  description: string;
   skills: UserSkill[];
 }
 
 export async function updateCurrentUserDetails(
   data: UpdateUserDetails,
 ): Promise<UpdateUserDetails> {
-  await putApiUsersCurrent({ body: { ...data, title: "" } });
+  await putApiUsersCurrent({ body: data });
   return getCurrentUserDetails();
 }
 

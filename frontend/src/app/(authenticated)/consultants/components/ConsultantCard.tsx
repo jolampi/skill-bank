@@ -38,7 +38,7 @@ export default function ConsultantCard(props: ConsultantCardProps): React.ReactN
       <CardHeader
         avatar={<AccountBoxIcon fontSize="large" />}
         title={value.name}
-        subheader="Fullstack Developer"
+        subheader={value.title}
         sx={{ flex: 3 }}
       />
       <CardContent sx={skillsStyle}>
