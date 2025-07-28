@@ -5,22 +5,19 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Snackbar from "@mui/material/Snackbar";
-import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { type SxProps, type Theme } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 
 import SkillForm from "./components/SkillForm";
 import SkillTable from "./components/SkillTable";
 
 import Modal from "@/components/Modal";
+import TextArea from "@/components/forms/TextArea";
+import TextInput from "@/components/forms/TextInput";
 import withAuthorization from "@/components/withAuthorization";
 import { getCurrentUserDetails, updateCurrentUserDetails } from "@/services/backend";
 import { UserSkill } from "@/types";
-
-const spaceAround: SxProps<Theme> = {
-  marginY: 3,
-};
 
 const ProfilePage: React.FC = () => {
   const [description, setDescription] = useState("");
@@ -49,15 +46,15 @@ const ProfilePage: React.FC = () => {
     setModified(true);
   };
 
-  const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDescription(event.target.value);
+  function handleNameChange(newName: string) {
+    setName(newName);
     setModified(true);
-  };
+  }
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
+  function handleDescriptionChange(newName: string) {
+    setDescription(newName);
     setModified(true);
-  };
+  }
 
   function handleSkillsChange(newSkills: UserSkill[]) {
     setUserSkills(newSkills);
@@ -80,34 +77,29 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div>
-      <Container maxWidth="md">
-        <Box sx={spaceAround}>
-          <TextField label="Name" fullWidth value={name} onChange={handleNameChange} />
+    <Container maxWidth="md">
+      <Stack spacing={4}>
+        <Box>
+          <TextInput label="Name" value={name} onChange={handleNameChange} />
         </Box>
-        <Box sx={spaceAround}>
-          <TextField
+        <Box>
+          <TextArea
             label="Tell something about yourself"
-            fullWidth
-            multiline
-            minRows={5}
             value={description}
             onChange={handleDescriptionChange}
           />
         </Box>
-        <Typography component="p" sx={spaceAround}>
-          Here you can add and modify your skills.
-        </Typography>
+        <Typography component="p">Here you can add and modify your skills.</Typography>
         <SkillTable disabled={saving} value={userSkills} onChange={handleSkillsChange} />
         <Button fullWidth onClick={() => setModalOpen(true)}>
           Add New
         </Button>
-        <Box sx={spaceAround}>
+        <Box>
           <Button variant="contained" loading={saving} disabled={!modified} onClick={handleSave}>
             Save
           </Button>
         </Box>
-      </Container>
+      </Stack>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
         <SkillForm onSubmit={handleAdd} />
@@ -123,7 +115,7 @@ const ProfilePage: React.FC = () => {
           Changes saved!
         </Alert>
       </Snackbar>
-    </div>
+    </Container>
   );
 };
 

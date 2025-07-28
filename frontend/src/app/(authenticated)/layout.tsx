@@ -5,8 +5,12 @@ import Box from "@mui/material/Box";
 
 import Navigation from "@/components/Navigation";
 
-const headerMargin: SxProps<Theme> = {
+const headerStyle: SxProps<Theme> = {
   marginBottom: 5,
+};
+
+const footerStyle: SxProps<Theme> = {
+  minHeight: 150,
 };
 
 export interface AuthenticatedLayoutProps {
@@ -16,10 +20,11 @@ export interface AuthenticatedLayoutProps {
 export default function AuthenticatedLayout({ children }: Readonly<AuthenticatedLayoutProps>) {
   return (
     <div>
-      <Box component="header" sx={headerMargin}>
+      <Box component="header" sx={headerStyle}>
         <Navigation />
       </Box>
       <main>{children}</main>
+      <Box component="footer" sx={footerStyle} />
     </div>
   );
 }

@@ -1,14 +1,9 @@
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import { SxProps, Theme } from "@mui/material/styles";
-import { forwardRef, useCallback, useImperativeHandle } from "react";
+import Stack from "@mui/material/Stack";
+import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
 
+import TextInput from "@/components/forms/TextInput";
 import { Credentials } from "@/contexts/AuthContext";
-import useInput from "@/hooks/useInput";
-
-const margin: SxProps<Theme> = {
-  marginY: 1,
-};
 
 export interface LoginFormRef {
   clear(): void;
@@ -21,8 +16,8 @@ export interface LoginFormProps {
 
 const LoginForm = forwardRef<LoginFormRef, LoginFormProps>(function LoginForm(props, ref) {
   const { disabled, onSubmit } = props;
-  const [username, setUsername] = useInput("text");
-  const [password, setPassword] = useInput("password");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const clear = useCallback(() => {
     setUsername("");
@@ -36,29 +31,28 @@ const LoginForm = forwardRef<LoginFormRef, LoginFormProps>(function LoginForm(pr
   const handleSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();
     const data: Credentials = {
-      username: username.value,
-      password: password.value,
+      username,
+      password,
     };
     onSubmit(data);
   };
 
   return (
-    <form>
-      <TextField
+    <Stack component="form" spacing={2}>
+      <TextInput
+        disabled={disabled}
         label="Username"
         required
-        fullWidth
-        disabled={disabled}
-        {...username}
-        sx={margin}
+        value={username}
+        onChange={setUsername}
       />
-      <TextField
+      <TextInput
+        disabled={disabled}
         label="Password"
         required
-        fullWidth
-        disabled={disabled}
-        {...password}
-        sx={margin}
+        type="password"
+        value={password}
+        onChange={setPassword}
       />
       <Button
         type="submit"
@@ -66,11 +60,10 @@ const LoginForm = forwardRef<LoginFormRef, LoginFormProps>(function LoginForm(pr
         fullWidth
         disabled={disabled}
         onClick={handleSubmit}
-        sx={margin}
       >
         Submit
       </Button>
-    </form>
+    </Stack>
   );
 });
 
