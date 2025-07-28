@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SkillBank.Models;
 
 namespace SkillBank.Entities;
 
@@ -56,7 +55,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         {
             user = new User
             {
-                Description = "",
                 Name = seedUser.Name,
                 UserName = seedUser.Username,
                 Role = seedUser.Role

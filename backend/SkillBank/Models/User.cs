@@ -21,17 +21,20 @@ public record UserListDto
 public record UserDetailsDto
 {
     public required Guid Id { get; init; }
-    public required string Description { get; init; }
-    public required string Name { get; init; }
     public required string Username { get; init; }
+
+    public required string Name { get; init; }
+    public required string Title { get; init; }
+    public required string Description { get; init; }
     public required RoleDto Role { get; init; }
     public required List<UserSkillDto> Skills { get; init; }
 };
 
 public record UpdateUserDto
 {
-    public required string Description { get; set; }
     public required string Name { get; set; }
+    public required string Title { get; set; }
+    public required string Description { get; set; }
     public required List<UserSkillDto> Skills { get; init; }
 }
 

@@ -12,23 +12,14 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
     {
         var user = new User
         {
-            Description = "",
             Name = newUser.Name,
             UserName = newUser.Username,
             Role = RoleMapper.FromDto(newUser.Role),
         };
         user.PasswordHash = passwordHasher.HashPassword(user, newUser.Password);
-        context.Set<User>().Add(user);
+        context.Users.Add(user);
         await context.SaveChangesAsync();
-        return new UserDetailsDto
-        {
-            Id = user.Id,
-            Description = user.Description,
-            Name = user.Name,
-            Username = user.UserName,
-            Role = newUser.Role,
-            Skills = [],
-        };
+        return user.ToDto();
     }
 
     public async Task<Unpaged<UserListDto>> FindAllAsync()
@@ -87,16 +78,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         {
             return null;
         }
-        var skills = user.UserSkills.Select(x => x.ToDto()).ToList();
-        return new UserDetailsDto
-        {
-            Id = user.Id,
-            Description = user.Description,
-            Name = user.Name,
-            Username = user.UserName ?? "",
-            Role = RoleMapper.ToDto(user.Role),
-            Skills = skills,
-        };
+        return user.ToDto();
     }
 
     public async Task<ConsultantDetailsDto?> GetConsultantByIdAsync(Guid id)
@@ -124,8 +106,9 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             .Include(x => x.Skills)
             .Include(x => x.UserSkills)
             .FirstAsync(x => x.Id == id);
-        user.Description = update.Description;
         user.Name = update.Name;
+        user.Title = update.Title;
+        user.Description = update.Description;
 
         var skills = await GetOrCreateSkillsAsync(update.Skills);
         var skillUpdatesByLabel = update.Skills.ToDictionary(x => x.Label);
