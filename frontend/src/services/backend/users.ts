@@ -44,7 +44,7 @@ export interface UpdateUserDetails {
 export async function updateCurrentUserDetails(
   data: UpdateUserDetails,
 ): Promise<UpdateUserDetails> {
-  await putApiUsersCurrent({ body: data });
+  await putApiUsersCurrent({ body: { ...data, title: "" } });
   return getCurrentUserDetails();
 }
 

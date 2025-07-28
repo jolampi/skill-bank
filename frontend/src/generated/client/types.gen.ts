@@ -58,16 +58,18 @@ export type TokenDto = {
 };
 
 export type UpdateUserDto = {
-  description: string | null;
   name: string | null;
+  title: string | null;
+  description: string | null;
   skills: Array<UserSkillDto> | null;
 };
 
 export type UserDetailsDto = {
   id: string;
-  description: string | null;
-  name: string | null;
   username: string | null;
+  name: string | null;
+  title: string | null;
+  description: string | null;
   role: RoleDto;
   skills: Array<UserSkillDto> | null;
 };
