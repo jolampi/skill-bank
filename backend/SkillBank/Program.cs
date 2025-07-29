@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using SkillBank;
 using SkillBank.Entities;
 using SkillBank.Services;
 
@@ -37,7 +38,15 @@ builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddApiEndpoints();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Database")));
+    options
+        .UseNpgsql(builder.Configuration.GetConnectionString("Database"))
+        .UseSeeding((context, _) =>
+        {
+            var seeder = new DataSeeder(context);
+            var seedJson = Path.Combine(AppContext.BaseDirectory, "seed.json");
+            seeder.SeedData(seedJson);
+        })
+    );
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<AuthService>();
