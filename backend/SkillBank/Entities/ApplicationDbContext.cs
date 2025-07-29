@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -34,17 +36,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         => optionsBuilder
             .UseSeeding((context, _) =>
             {
-                // Test data for early development
-                EnsureUser(context, new SeedUser("Admin Admin", "admin", "admin", UserRole.Admin));
-                var consultant = EnsureUser(context, new SeedUser("John Doe", "consultant", "consultant", UserRole.Consultant));
-                EnsureUser(context, new SeedUser("Sales Guy", "sales", "sales", UserRole.Sales));
-
-                var dotnet = EnsureSkill(context, ".Net");
-                var react = EnsureSkill(context, "React");
-
-                EnsureUserSkill(context, consultant, dotnet);
-                EnsureUserSkill(context, consultant, react);
-
+                var jsonPath = Path.Combine(AppContext.BaseDirectory, "seed.json");
+                var content = File.ReadAllText(jsonPath);
+                var serializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+                serializerOptions.Converters.Add(new JsonStringEnumConverter());
+                var users = JsonSerializer.Deserialize<List<SeedUser>>(content, serializerOptions)!;
+                foreach (var user in users)
+                {
+                    EnsureUser(context, user);
+                }
                 context.SaveChanges();
             });
 
@@ -55,12 +55,18 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         {
             user = new User
             {
-                Name = seedUser.Name,
                 UserName = seedUser.Username,
-                Role = seedUser.Role
+                Role = seedUser.Role,
+                Name = seedUser.Name,
+                Title = seedUser.Title,
+                Description = seedUser.Description,
             };
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, seedUser.Password);
             context.Set<User>().Add(user);
+        }
+        foreach (var seedSkill in seedUser.Skills ?? [])
+        {
+            EnsureUserSkill(context, user, seedSkill);
         }
         return user;
     }
@@ -76,8 +82,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         return skill;
     }
 
-    private static UserSkill EnsureUserSkill(DbContext context, User user, Skill skill)
+    private static UserSkill EnsureUserSkill(DbContext context, User user, SeedSkill seedSkill)
     {
+        var skill = EnsureSkill(context, seedSkill.Label);
         var userSkill = context.Set<UserSkill>().FirstOrDefault(x => x.UserId == user.Id && x.SkillId == skill.Id);
         if (userSkill is null)
         {
@@ -85,9 +92,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             {
                 UserId = user.Id,
                 SkillId = skill.Id,
-                ExperienceInYears = 0,
+                Proficiency = seedSkill.Proficiency,
+                ExperienceInYears = (uint)seedSkill.ExperienceInYears,
                 Hidden = false,
-                Proficiency = 3,
             };
             context.Set<UserSkill>().Add(userSkill);
         }
@@ -95,4 +102,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     }
 }
 
-record SeedUser(string Name, string Username, string Password, UserRole Role);
+record SeedUser(
+    string Username,
+    string Password,
+    UserRole Role,
+    string Name,
+    List<SeedSkill> Skills,
+    string Title = "",
+    string Description = ""
+);
+
+record SeedSkill(string Label, int Proficiency, int ExperienceInYears);

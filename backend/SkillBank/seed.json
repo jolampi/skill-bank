@@ -1,0 +1,47 @@
+[
+  {
+    "id": "bfd4aad2-f567-4457-b899-584d67cda28b",
+    "username": "admin",
+    "password": "admin",
+    "name": "Admin",
+    "role": "Admin"
+  },
+  {
+    "id": "762f2208-bdc1-4dcd-bced-34c013b694a0",
+    "username": "sales",
+    "password": "sales",
+    "name": "Sales Guy",
+    "role": "Sales"
+  },
+  {
+    "id": "7fe6a851-46f4-425b-b225-d5c3179ebb45",
+    "username": "consultant",
+    "password": "consultant",
+    "name": "John Doe",
+    "title": "Fullstack Developer",
+    "description": "I'm an experienced full-stack developer with expertise in both frontend and backend areas. Using technologies like .NET and React, I build robust and scalable solutions that prioritize user experience. I'm very passionate about my work and always strive to deliver high-quality results.",
+    "role": "Consultant",
+    "skills": [
+      {
+        "label": ".NET",
+        "proficiency": 4,
+        "experienceInYears": 1
+      },
+      {
+        "label": "ASP.NET",
+        "proficiency": 3,
+        "experienceInYears": 1
+      },
+      {
+        "label": "React",
+        "proficiency": 5,
+        "experienceInYears": 4
+      },
+      {
+        "label": "JavaScript",
+        "proficiency": 5,
+        "experienceInYears": 5
+      }
+    ]
+  }
+]
