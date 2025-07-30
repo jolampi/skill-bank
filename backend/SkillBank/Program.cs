@@ -41,11 +41,26 @@ builder.Services.AddIdentityCore<User>()
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options
         .UseNpgsql(builder.Configuration.GetConnectionString("Database"))
-        .UseSeeding((context, _) =>
+        .UseAsyncSeeding(async (context, _, cancellationToken) =>
         {
-            if (builder.Environment.IsDevelopment())
+            // Development data omitted in async version.
+            if (builder.Environment.IsProduction())
             {
                 var seeder = new DataSeeder(context, context.GetService<IPasswordHasher<User>>());
+                var adminPassword = builder.Configuration.GetValue<string>("AdminPassword")!;
+                await seeder.SeedAdminAsync(adminPassword, cancellationToken);
+            }
+        })
+        .UseSeeding((context, _) =>
+        {
+            var seeder = new DataSeeder(context, context.GetService<IPasswordHasher<User>>());
+            if (builder.Environment.IsProduction() || builder.Environment.IsDevelopment())
+            {
+                var adminPassword = builder.Configuration.GetValue<string>("AdminPassword")!;
+                seeder.SeedAdmin(adminPassword);
+            }
+            if (builder.Environment.IsDevelopment())
+            {
                 var seedJson = Path.Combine(AppContext.BaseDirectory, "seed.json");
                 seeder.SeedData(seedJson);
             }

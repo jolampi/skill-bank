@@ -20,6 +20,42 @@ public class DataSeeder
         _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     }
 
+    public void SeedAdmin(string password)
+    {
+        var admin = _context.Set<User>().FirstOrDefault(x => x.UserName == "admin");
+        if (admin is null)
+        {
+            admin = new User
+            {
+                UserName = "admin",
+                Role = UserRole.Admin,
+                Name = "Admin",
+            };
+            _context.Set<User>().Add(admin);
+        }
+        admin.Role = UserRole.Admin;
+        admin.PasswordHash = _passwordHasher.HashPassword(admin, password);
+        _context.SaveChanges();
+    }
+
+    public async Task SeedAdminAsync(string password, CancellationToken cancellationToken)
+    {
+        var admin = await _context.Set<User>().FirstOrDefaultAsync(x => x.UserName == "admin", cancellationToken);
+        if (admin is null)
+        {
+            admin = new User
+            {
+                UserName = "admin",
+                Role = UserRole.Admin,
+                Name = "Admin",
+            };
+            await _context.Set<User>().AddAsync(admin, cancellationToken);
+        }
+        admin.Role = UserRole.Admin;
+        admin.PasswordHash = _passwordHasher.HashPassword(admin, password);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
     public void SeedData(string fileName)
     {
         var content = File.ReadAllText(fileName);
