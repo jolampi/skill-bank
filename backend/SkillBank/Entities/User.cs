@@ -6,12 +6,12 @@ namespace SkillBank.Entities;
 
 public class User : IdentityUser<Guid>
 {
+    public Guid? RefreshTokenId { get; set; }
+    public required UserRole Role { get; set; }
+
     public required string Name { get; set; }
     public string Title { get; set; } = "";
     public string Description { get; set; } = "";
-    public required UserRole Role { get; set; }
-
-    public Guid? RefreshTokenId { get; set; }
 
     public virtual ICollection<Skill> Skills { get; } = [];
     public virtual ICollection<UserSkill> UserSkills { get; } = [];
