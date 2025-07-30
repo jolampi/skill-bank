@@ -42,9 +42,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         .UseNpgsql(builder.Configuration.GetConnectionString("Database"))
         .UseSeeding((context, _) =>
         {
-            var seeder = new DataSeeder(context);
-            var seedJson = Path.Combine(AppContext.BaseDirectory, "seed.json");
-            seeder.SeedData(seedJson);
+            if (builder.Environment.IsDevelopment())
+            {
+                var seeder = new DataSeeder(context);
+                var seedJson = Path.Combine(AppContext.BaseDirectory, "seed.json");
+                seeder.SeedData(seedJson);
+            }
         })
     );
 
