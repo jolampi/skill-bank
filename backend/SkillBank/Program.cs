@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using SkillBank;
 using SkillBank.Entities;
@@ -44,7 +45,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         {
             if (builder.Environment.IsDevelopment())
             {
-                var seeder = new DataSeeder(context);
+                var seeder = new DataSeeder(context, context.GetService<IPasswordHasher<User>>());
                 var seedJson = Path.Combine(AppContext.BaseDirectory, "seed.json");
                 seeder.SeedData(seedJson);
             }

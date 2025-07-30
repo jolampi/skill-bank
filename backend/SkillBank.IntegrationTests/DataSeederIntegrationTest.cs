@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using SkillBank.Entities;
 using SkillBank.IntegrationTests.Helpers;
 
@@ -16,13 +17,13 @@ public class DataSeederIntegrationTest : IntegrationTestBase
     public void SeedData_IsValid()
     {
         // Arrange
-        var seeder = new DataSeeder(_context);
+        var seeder = new DataSeeder(_context, GetService<IPasswordHasher<User>>());
 
         // Act
         var seedJson = Path.Combine(AppContext.BaseDirectory, "seed.json");
         seeder.SeedData(seedJson);
 
         // Assert
-        Assert.Equal(3, _context.Users.Count());
+        Assert.Equal(5, _context.Users.Count());
     }
 }

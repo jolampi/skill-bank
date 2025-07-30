@@ -9,12 +9,13 @@ namespace SkillBank;
 public class DataSeeder
 {
     private readonly DbContext _context;
-    private readonly PasswordHasher<User> _passwordHasher = new();
+    private readonly IPasswordHasher<User> _passwordHasher;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    public DataSeeder(DbContext context)
+    public DataSeeder(DbContext context, IPasswordHasher<User> passwordHasher)
     {
         _context = context;
+        _passwordHasher = passwordHasher;
         _jsonSerializerOptions = new(JsonSerializerDefaults.Web);
         _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     }
@@ -23,14 +24,35 @@ public class DataSeeder
     {
         var content = File.ReadAllText(fileName);
         var users = JsonSerializer.Deserialize<List<SeedUser>>(content, _jsonSerializerOptions)!;
-        foreach (var user in users)
+        var skillsByLabel = EnsureSkills(users);
+        foreach (var seedUser in users)
         {
-            EnsureUser(user);
+            EnsureUser(seedUser, skillsByLabel);
         }
         _context.SaveChanges();
     }
 
-    private void EnsureUser(SeedUser seedUser)
+    private Dictionary<string, Skill> EnsureSkills(List<SeedUser> users)
+    {
+        var skillLabels = users
+            .SelectMany(x => x.Skills)
+            .Select(x => x.Label)
+            .ToHashSet();
+        Dictionary<string, Skill> result = [];
+        foreach (var label in skillLabels)
+        {
+            var skill = _context.Set<Skill>().FirstOrDefault(x => x.Label == label);
+            if (skill is null)
+            {
+                skill = new Skill { Label = label };
+                _context.Set<Skill>().Add(skill);
+            }
+            result[label] = skill;
+        }
+        return result;
+    }
+
+    private void EnsureUser(SeedUser seedUser, Dictionary<string, Skill> skillsByLabel)
     {
         var user = _context.Set<User>().FirstOrDefault(x => x.UserName == seedUser.Username);
         if (user is null)
@@ -46,16 +68,16 @@ public class DataSeeder
             user.PasswordHash = _passwordHasher.HashPassword(user, seedUser.Password);
             _context.Set<User>().Add(user);
         }
-        foreach (var seedSkill in seedUser.Skills ?? [])
+        foreach (var seedSkill in seedUser.Skills)
         {
-            EnsureUserSkill(user, seedSkill);
+            EnsureUserSkill(user, skillsByLabel[seedSkill.Label], seedSkill);
         }
     }
 
-    private void EnsureUserSkill(User user, SeedSkill seedSkill)
+    private void EnsureUserSkill(User user, Skill skill, SeedSkill seedSkill)
     {
-        var skill = EnsureSkill(seedSkill.Label);
-        var userSkill = _context.Set<UserSkill>().FirstOrDefault(x => x.UserId == user.Id && x.SkillId == skill.Id);
+        var userSkill = _context.Set<UserSkill>()
+            .FirstOrDefault(x => x.UserId == user.Id && x.SkillId == skill.Id);
         if (userSkill is null)
         {
             userSkill = new UserSkill
@@ -68,17 +90,6 @@ public class DataSeeder
             };
             _context.Set<UserSkill>().Add(userSkill);
         }
-    }
-
-    private Skill EnsureSkill(string label)
-    {
-        var skill = _context.Set<Skill>().FirstOrDefault(x => x.Label == label);
-        if (skill is null)
-        {
-            skill = new Skill { Label = label };
-            _context.Set<Skill>().Add(skill);
-        }
-        return skill;
     }
 }
 

@@ -1,26 +1,23 @@
 [
   {
-    "id": "bfd4aad2-f567-4457-b899-584d67cda28b",
     "username": "admin",
     "password": "admin",
-    "name": "Admin",
-    "role": "Admin"
+    "role": "Admin",
+    "name": "Admin"
   },
   {
-    "id": "762f2208-bdc1-4dcd-bced-34c013b694a0",
     "username": "sales",
     "password": "sales",
-    "name": "Sales Guy",
-    "role": "Sales"
+    "role": "Sales",
+    "name": "Sales Guy"
   },
   {
-    "id": "7fe6a851-46f4-425b-b225-d5c3179ebb45",
     "username": "consultant",
     "password": "consultant",
+    "role": "Consultant",
     "name": "John Doe",
     "title": "Fullstack Developer",
     "description": "I'm an experienced full-stack developer with expertise in both frontend and backend areas. Using technologies like .NET and React, I build robust and scalable solutions that prioritize user experience. I'm very passionate about my work and always strive to deliver high-quality results.",
-    "role": "Consultant",
     "skills": [
       {
         "label": ".NET",
@@ -41,6 +38,61 @@
         "label": "JavaScript",
         "proficiency": 5,
         "experienceInYears": 5
+      }
+    ]
+  },
+  {
+    "username": "embedder",
+    "password": "embedder",
+    "role": "Consultant",
+    "name": "Jane Embedded",
+    "title": "Senior Embedded Systems Specialist",
+    "description": "I specialize in creating programs for dedicated devices. With expertise in C, C++, and Assembly, I craft firmware for everything from smartphones to medical equipment. My designs are always optimized for performance and provide robust security.",
+    "skills": [
+      {
+        "label": "Assembly x86",
+        "proficiency": 4,
+        "experienceInYears": 3
+      },
+      {
+        "label": "C",
+        "proficiency": 5,
+        "experienceInYears": 10
+      },
+      {
+        "label": "C++",
+        "proficiency": 5,
+        "experienceInYears": 8
+      },
+      {
+        "label": "FreeRTOS",
+        "proficiency": 5,
+        "experienceInYears": 6
+      }
+    ]
+  },
+  {
+    "username": "junior",
+    "password": "junior",
+    "role": "Consultant",
+    "name": "Jun Doe",
+    "title": "Junior Developer",
+    "description": "Hello! I recently graduated with a degree in Computer Science and am eager to start my career. I have a strong foundation in web development, with experience in Python and Django. I'm also passionate about data analysis and lately have been exploring C++ through a personal game project.",
+    "skills": [
+      {
+        "label": "C++",
+        "proficiency": 2,
+        "experienceInYears": 0
+      },
+      {
+        "label": "Python",
+        "proficiency": 4,
+        "experienceInYears": 3
+      },
+      {
+        "label": "Django",
+        "proficiency": 3,
+        "experienceInYears": 2
       }
     ]
   }
