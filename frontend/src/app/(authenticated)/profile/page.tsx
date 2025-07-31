@@ -7,7 +7,7 @@ import Snackbar from "@mui/material/Snackbar";
 import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 
-import UserForm from "./components/UserForm";
+import UserEditor from "./components/UserEditor";
 
 import withAuthorization from "@/components/withAuthorization";
 import { getCurrentUserDetails, updateCurrentUserDetails, UserDetails } from "@/services/backend";
@@ -47,7 +47,7 @@ const ProfilePage: React.FC = () => {
       <Typography variant="h5" sx={{ marginBottom: 3 }}>
         Edit profile
       </Typography>
-      <UserForm disabled={saving} initialData={user} onSubmit={handleSave} />
+      <UserEditor disabled={saving} initialData={user} onSubmit={handleSave} />
       <Snackbar
         open={showNotification}
         autoHideDuration={5000}
