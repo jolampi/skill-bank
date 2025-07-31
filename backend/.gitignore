@@ -1,3 +1,5 @@
 # Dotnet
 bin/
 obj/
+out/
+efbundle*

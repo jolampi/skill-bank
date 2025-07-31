@@ -20,6 +20,14 @@ services:
           path: ./backend
           target: /app
 
+  migrate:
+    scale: 0
+    build:
+      context: backend
+      target: migrate
+    depends_on:
+      - database
+
   frontend:
     build:
       context: frontend
