@@ -32,7 +32,7 @@ export default function UserForm(props: UserFormProps): React.ReactNode {
     setSkills(initialData.skills);
   }, [initialData]);
 
-  function handleSubmit(event: FormEvent) {
+  function handleSave(event: FormEvent) {
     event.preventDefault();
     const user: UserDetails = {
       id: initialData.id,
@@ -46,7 +46,7 @@ export default function UserForm(props: UserFormProps): React.ReactNode {
   }
 
   return (
-    <Stack component="form" spacing={4} onSubmit={handleSubmit}>
+    <Stack spacing={4}>
       <TextInput disabled={disabled} label="Name" required value={name} onChange={setName} />
       <TextInput
         disabled={disabled}
@@ -68,7 +68,7 @@ export default function UserForm(props: UserFormProps): React.ReactNode {
         <SkillTable disabled={disabled} value={skills} onChange={setSkills} />
       </Box>
       <Box>
-        <Button disabled={disabled} type="submit" variant="contained">
+        <Button disabled={disabled} variant="contained" onClick={handleSave}>
           Save
         </Button>
       </Box>
