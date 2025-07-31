@@ -14,22 +14,15 @@ services:
       - 5268:5268
     depends_on:
       - database
-    develop:
-      watch:
-        - action: sync
-          path: ./backend
-          target: /app
+    # environment:
+    #   # Intentionally public; for local production build
+    #   - ADMIN_PASSWORD: admin
 
   frontend:
     build:
       context: frontend
-      target: develop
+      target: production
     ports:
       - 3000:3000
-    develop:
-      watch:
-        - action: sync
-          path: ./frontend
-          target: /app
     environment:
       NEXT_TELEMETRY_DISABLED: 1
