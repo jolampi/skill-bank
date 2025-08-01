@@ -36,7 +36,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         return new Unpaged<UserListDto>(users);
     }
 
-    public async Task<Unpaged<ConsultantListDto>> FindConsultantsAsync(ConsultantSearchParamsDto searchParams)
+    public async Task<Unpaged<ConsultantDto>> FindConsultantsAsync(ConsultantSearchParamsDto searchParams)
     {
         var query = context.Users
             .Where(user => user.Role == UserRole.Consultant)
@@ -50,11 +50,12 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             ));
         }
         var results = await query
-            .Select(user => new ConsultantListDto()
+            .Select(user => new ConsultantDto()
             {
                 Id = user.Id,
                 Name = user.Name,
                 Title = user.Title,
+                Description = user.Description,
                 Skills = user.UserSkills
                     .Select(userSkill => new UserSkillDto()
                     {
@@ -66,7 +67,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
                     .ToList()
             })
             .ToListAsync();
-        return new Unpaged<ConsultantListDto>(results);
+        return new Unpaged<ConsultantDto>(results);
     }
 
     public async Task<UserDetailsDto?> GetByIdAsync(Guid id)
@@ -82,7 +83,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
         return user.ToDto();
     }
 
-    public async Task<ConsultantDetailsDto?> GetConsultantByIdAsync(Guid id)
+    public async Task<ConsultantDto?> GetConsultantByIdAsync(Guid id)
     {
         var user = await context.Users
             .Include(x => x.UserSkills)
@@ -93,7 +94,7 @@ public class UserService(ApplicationDbContext context, IPasswordHasher<User> pas
             return null;
         }
         var skills = user.UserSkills.Select(x => x.ToDto()).ToList();
-        return new ConsultantDetailsDto
+        return new ConsultantDto
         {
             Id = user.Id,
             Name = user.Name,
