@@ -4,5 +4,5 @@ Example project using React and .NET.
 
 ## Development
 
-1. Start the development environment with `docker compose up --build --watch`
-2. Run migrations with `./migrate.sh`
+1. Start the development environment with `./skillbank.sh start develop`
+2. Run migrations with `./skillbank.sh migrate`
