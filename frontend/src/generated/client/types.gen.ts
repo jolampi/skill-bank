@@ -3,16 +3,16 @@
 export type ConsultantDetailsDto = {
   id: string;
   name: string | null;
-  skills: Array<UserSkillDto> | null;
   title: string | null;
   description: string | null;
+  skills: Array<UserSkillDto> | null;
 };
 
 export type ConsultantListDto = {
   id: string;
   name: string | null;
-  skills: Array<UserSkillDto> | null;
   title: string | null;
+  skills: Array<UserSkillDto> | null;
 };
 
 /**
