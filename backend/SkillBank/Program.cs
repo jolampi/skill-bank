@@ -68,6 +68,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     );
 
 builder.Services.AddControllers();
+builder.Services.AddExceptionHandler<ExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<SkillService>();
 builder.Services.AddScoped<UserService>();
@@ -84,9 +87,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.MapControllers();
+app.UseExceptionHandler();
+app.UseHttpsRedirection();
 
 app.Run();
 
