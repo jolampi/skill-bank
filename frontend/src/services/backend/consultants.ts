@@ -1,6 +1,6 @@
 import { userSkillFromDto } from "./mappers";
 
-import { ConsultantListDto, postApiConsultants, UserSkillFilterDto } from "@/generated/client";
+import { ConsultantDto, postApiConsultants, UserSkillFilterDto } from "@/generated/client";
 import { UserSkill } from "@/types";
 
 export interface SkillFilter extends Required<UserSkillFilterDto> {
@@ -14,7 +14,7 @@ export interface Consultant {
   skills: UserSkill[];
 }
 
-function consultantFromDto(consultant: ConsultantListDto): Consultant {
+function consultantFromDto(consultant: ConsultantDto): Consultant {
   return {
     id: consultant.id,
     name: consultant.name!,

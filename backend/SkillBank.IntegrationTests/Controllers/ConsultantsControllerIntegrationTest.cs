@@ -56,13 +56,13 @@ public class ConsultantsControllerIntegrationTest(IntegrationTestApplicationFact
         Assert.Equal("Ben B", response4.Single().Name);
     }
 
-    private static async Task<List<ConsultantListDto>> DoConsultantSearch(
+    private static async Task<List<ConsultantDto>> DoConsultantSearch(
         HttpClient client,
         List<UserSkillFilterDto> searchParams)
     {
         var payload = new ConsultantSearchParamsDto(searchParams);
         var response = await client.PostAsJsonAsync("/api/Consultants", payload);
-        var body = await response.Content.ReadFromJsonAsync<Unpaged<ConsultantListDto>>();
+        var body = await response.Content.ReadFromJsonAsync<Unpaged<ConsultantDto>>();
         return [.. body!.Results];
     }
 }
