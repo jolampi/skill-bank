@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -20,9 +21,17 @@ public class IntegrationTestApplicationFactory : WebApplicationFactory<Program>,
         .WithPassword("password")
         .Build();
 
+    private readonly Dictionary<string, string?> _testAuthConfiguration = new()
+    {
+        { "Authorization:Audience", "Audience" },
+        { "Authorization:Issuer", "Issuer" },
+        { "Authorization:Token", "TestOnlyIntentionallyPublic111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111" },
+    };
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
+        builder.ConfigureAppConfiguration(a => a.AddInMemoryCollection(_testAuthConfiguration));
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll<DbContextOptions<ApplicationDbContext>>();

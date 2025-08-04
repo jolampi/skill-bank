@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using SkillBank;
+using SkillBank.Configuration;
 using SkillBank.Entities;
 using SkillBank.Services;
 
@@ -23,16 +24,17 @@ builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var authConfig = builder.Configuration.GetSection("Authorization");
+        var authConfig = builder.Configuration.GetSection("Authorization").Get<AuthConfiguration>()
+            ?? throw new Exception("Missing Authorization configuration.");
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = authConfig.GetValue<string>("Issuer"),
+            ValidIssuer = authConfig.Issuer,
             ValidateAudience = true,
-            ValidAudience = authConfig.GetValue<string>("Audience"),
+            ValidAudience = authConfig.Audience,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authConfig.GetValue<string>("Token")!)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authConfig.Token)),
         };
     });
 builder.Services.AddIdentityCore<User>()

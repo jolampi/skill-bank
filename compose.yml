@@ -20,8 +20,11 @@ services:
           path: ./backend
           target: /app
     environment:
-      # Intentionally public; this file is for LOCAL production build
+      # Intentionally public; this file is for LOCAL builds only.
       AdminPassword: admin
+      Authorization__Audience: "Audience"
+      Authorization__Issuer: "Issuer"
+      Authorization__Token: "TestOnlyIntentionallyPublic111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
       ConnectionStrings__Database: Host=database;Username=postgres;Password=password;Database=postgres
 
   migrate:
