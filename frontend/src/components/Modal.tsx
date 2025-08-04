@@ -3,8 +3,6 @@ import MuiModal from "@mui/material/Modal";
 import Paper from "@mui/material/Paper";
 import { SxProps, Theme } from "@mui/material/styles";
 
-import theme from "@/theme";
-
 const containerStyle: SxProps<Theme> = {
   position: "absolute",
   top: "50%",
@@ -12,28 +10,40 @@ const containerStyle: SxProps<Theme> = {
   transform: "translate(-50%, -50%)",
 };
 
-const paperStyle: SxProps<Theme> = {
-  paddingTop: 4,
-  paddingX: 2,
-  width: 300,
-
-  [theme.breakpoints.up("sm")]: {
-    width: 500,
-  },
-};
-
 export interface ModalProps {
+  fullWidth?: boolean;
   open: boolean;
   onClose(): void;
 }
 
 export default function Modal(props: React.PropsWithChildren<ModalProps>): React.ReactNode {
-  const { children, open, onClose } = props;
+  const { children, fullWidth, open, onClose } = props;
 
   return (
     <MuiModal open={open} onClose={onClose}>
       <Box sx={containerStyle}>
-        <Paper sx={paperStyle}>{children}</Paper>
+        <Paper
+          sx={[
+            (theme) => ({
+              paddingTop: 4,
+              paddingX: 2,
+              width: 300,
+
+              [theme.breakpoints.up("sm")]: {
+                width: theme.breakpoints.values.sm,
+              },
+            }),
+            fullWidth
+              ? (theme) => ({
+                  [theme.breakpoints.up("md")]: {
+                    width: theme.breakpoints.values.md,
+                  },
+                })
+              : {},
+          ]}
+        >
+          {children}
+        </Paper>
       </Box>
     </MuiModal>
   );

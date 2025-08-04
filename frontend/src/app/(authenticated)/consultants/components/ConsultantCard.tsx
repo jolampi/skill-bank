@@ -28,10 +28,11 @@ const skillsStyle: SxProps<Theme> = {
 
 export interface ConsultantCardProps {
   value: Consultant;
+  onClick(): void;
 }
 
 export default function ConsultantCard(props: ConsultantCardProps): React.ReactNode {
-  const { value } = props;
+  const { value, onClick } = props;
 
   return (
     <Card variant="outlined" sx={cardStyle}>
@@ -50,7 +51,7 @@ export default function ConsultantCard(props: ConsultantCardProps): React.ReactN
         ))}
       </CardContent>
       <CardActions sx={{ flex: 1, justifyContent: "right" }}>
-        <Button>View</Button>
+        <Button onClick={onClick}>View</Button>
       </CardActions>
     </Card>
   );

@@ -11,11 +11,13 @@ import ConsultantCard from "./components/ConsultantCard";
 import ConsultantFilters from "./components/ConsultantFilters";
 import NewFilterForm from "./components/NewFilterForm";
 
+import Modal from "@/components/Modal";
 import withAuthorization from "@/components/withAuthorization";
 import { Consultant, findConsultants, SkillFilter } from "@/services/backend/consultants";
 
 const ConsultantsPage: React.FC = () => {
   const [consultants, setConsultants] = useState<Consultant[]>([]);
+  const [consultantToView, setConsultantToView] = useState<Consultant | null>(null);
   const [filters, setFilters] = useState<SkillFilter[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -47,12 +49,20 @@ const ConsultantsPage: React.FC = () => {
         ) : (
           <div>
             <Typography>{getResultText(consultants.length)}</Typography>
-            {consultants.map((x) => (
-              <ConsultantCard key={x.id} value={x} />
+            {consultants.map((consultant) => (
+              <ConsultantCard
+                key={consultant.id}
+                value={consultant}
+                onClick={() => setConsultantToView(consultant)}
+              />
             ))}
           </div>
         )}
       </Container>
+
+      <Modal fullWidth open={!!consultantToView} onClose={() => setConsultantToView(null)}>
+        <pre>{JSON.stringify(consultantToView, undefined, 2)}</pre>
+      </Modal>
     </div>
   );
 };
