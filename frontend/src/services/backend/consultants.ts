@@ -11,6 +11,7 @@ export interface Consultant {
   id: string;
   name: string;
   title: string;
+  description: string;
   skills: UserSkill[];
 }
 
@@ -19,6 +20,7 @@ function consultantFromDto(consultant: ConsultantDto): Consultant {
     id: consultant.id,
     name: consultant.name!,
     title: consultant.title!,
+    description: consultant.description!,
     skills: consultant.skills!.map(userSkillFromDto),
   };
 }

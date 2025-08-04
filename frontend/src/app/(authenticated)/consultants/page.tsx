@@ -1,5 +1,7 @@
 "use client";
 
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -9,20 +11,26 @@ import { useEffect, useState } from "react";
 
 import ConsultantCard from "./components/ConsultantCard";
 import ConsultantFilters from "./components/ConsultantFilters";
+import ConsultantProfile from "./components/ConsultantProfile";
 import NewFilterForm from "./components/NewFilterForm";
 
+import Modal from "@/components/Modal";
 import withAuthorization from "@/components/withAuthorization";
 import { Consultant, findConsultants, SkillFilter } from "@/services/backend/consultants";
 
 const ConsultantsPage: React.FC = () => {
   const [consultants, setConsultants] = useState<Consultant[]>([]);
+  const [consultantToView, setConsultantToView] = useState<Consultant | null>(null);
   const [filters, setFilters] = useState<SkillFilter[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     findConsultants(filters)
-      .then(setConsultants)
+      .then((res) => {
+        res.forEach((x) => x.skills.sort((a, b) => a.label.localeCompare(b.label)));
+        setConsultants(res);
+      })
       .finally(() => setLoading(false));
   }, [filters]);
 
@@ -31,6 +39,10 @@ const ConsultantsPage: React.FC = () => {
     newFilters.push(newFilter);
     newFilters.sort((a, b) => a.label.localeCompare(b.label));
     setFilters(newFilters);
+  }
+
+  function handleCloseProfile() {
+    setConsultantToView(null);
   }
 
   return (
@@ -47,12 +59,25 @@ const ConsultantsPage: React.FC = () => {
         ) : (
           <div>
             <Typography>{getResultText(consultants.length)}</Typography>
-            {consultants.map((x) => (
-              <ConsultantCard key={x.id} value={x} />
+            {consultants.map((consultant) => (
+              <ConsultantCard
+                key={consultant.id}
+                value={consultant}
+                onClick={() => setConsultantToView(consultant)}
+              />
             ))}
           </div>
         )}
       </Container>
+
+      <Modal fullWidth open={!!consultantToView} onClose={handleCloseProfile}>
+        <Box sx={{ padding: 4 }}>
+          <ConsultantProfile value={consultantToView!} />
+          <Box textAlign="right">
+            <Button onClick={handleCloseProfile}>Close</Button>
+          </Box>
+        </Box>
+      </Modal>
     </div>
   );
 };
