@@ -25,10 +25,7 @@ export default function Modal(props: React.PropsWithChildren<ModalProps>): React
         <Paper
           sx={[
             (theme) => ({
-              paddingTop: 4,
-              paddingX: 2,
               width: 300,
-
               [theme.breakpoints.up("sm")]: {
                 width: theme.breakpoints.values.sm,
               },

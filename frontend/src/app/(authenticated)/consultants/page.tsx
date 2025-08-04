@@ -1,5 +1,7 @@
 "use client";
 
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -9,6 +11,7 @@ import { useEffect, useState } from "react";
 
 import ConsultantCard from "./components/ConsultantCard";
 import ConsultantFilters from "./components/ConsultantFilters";
+import ConsultantProfile from "./components/ConsultantProfile";
 import NewFilterForm from "./components/NewFilterForm";
 
 import Modal from "@/components/Modal";
@@ -24,7 +27,10 @@ const ConsultantsPage: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     findConsultants(filters)
-      .then(setConsultants)
+      .then((res) => {
+        res.forEach((x) => x.skills.sort((a, b) => a.label.localeCompare(b.label)));
+        setConsultants(res);
+      })
       .finally(() => setLoading(false));
   }, [filters]);
 
@@ -33,6 +39,10 @@ const ConsultantsPage: React.FC = () => {
     newFilters.push(newFilter);
     newFilters.sort((a, b) => a.label.localeCompare(b.label));
     setFilters(newFilters);
+  }
+
+  function handleCloseProfile() {
+    setConsultantToView(null);
   }
 
   return (
@@ -60,8 +70,13 @@ const ConsultantsPage: React.FC = () => {
         )}
       </Container>
 
-      <Modal fullWidth open={!!consultantToView} onClose={() => setConsultantToView(null)}>
-        <pre>{JSON.stringify(consultantToView, undefined, 2)}</pre>
+      <Modal fullWidth open={!!consultantToView} onClose={handleCloseProfile}>
+        <Box sx={{ padding: 4 }}>
+          <ConsultantProfile value={consultantToView!} />
+          <Box textAlign="right">
+            <Button onClick={handleCloseProfile}>Close</Button>
+          </Box>
+        </Box>
       </Modal>
     </div>
   );
