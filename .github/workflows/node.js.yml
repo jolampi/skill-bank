@@ -70,9 +70,8 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Container Apps
-        uses: azure/container-apps-deploy-action@v1
+      - name: Deploy
+        uses: azure/webapps-deploy@v2
         with:
-          imageToDeploy: ${{ secrets.REGISTRY_LOGIN_SERVER }}/skillbank-frontend:${{ github.sha }}
-          resourceGroup: ${{ secrets.RESOURCE_GROUP }}
-          containerAppName: skillbank
+          app-name: skillbank
+          images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/skillbank-frontend:${{ github.sha }}
