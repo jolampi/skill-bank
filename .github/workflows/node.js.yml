@@ -57,7 +57,7 @@ jobs:
       - name: Build and publish
         uses: docker/build-push-action@v6
         with:
-          file: frontend/Dockerfile
+          context: frontend
           push: true
           tags: ${{ secrets.REGISTRY_LOGIN_SERVER }}/skillbank-frontend:${{ github.sha }}
           target: production
