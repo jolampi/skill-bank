@@ -21,7 +21,6 @@ services:
           target: /app
     environment:
       # Intentionally public; this file is for LOCAL builds only.
-      AdminPassword: admin
       Authorization__Audience: "Audience"
       Authorization__Issuer: "Issuer"
       Authorization__Token: "TestOnlyIntentionallyPublic111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
@@ -34,6 +33,10 @@ services:
       target: migrate
     depends_on:
       - database
+    environment:
+      # Intentionally public; this file is for LOCAL builds only.
+      AdminPassword: admin
+      ConnectionStrings__Database: Host=database;Username=postgres;Password=password;Database=postgres
 
   frontend:
     build:
