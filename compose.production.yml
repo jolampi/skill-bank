@@ -3,6 +3,11 @@ services:
     build:
       target: production
 
+  migrate:
+    environment:
+      # Change to Production to only seed admin
+      DOTNET_ENVIRONMENT: Development
+
   frontend:
     build:
       target: production
