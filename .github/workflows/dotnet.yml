@@ -54,6 +54,6 @@ jobs:
       - name: Run migrations
         run: ./efbundle
         env:
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          AdminPassword: ${{ secrets.ADMIN_PASSWORD }}
           DOTNET_ENVIRONMENT: Production
           ConnectionStrings__Database: ${{ secrets.DB_CONNECTION_STRING }}
