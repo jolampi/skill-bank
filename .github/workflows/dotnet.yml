@@ -34,16 +34,16 @@ jobs:
     needs: build
     defaults:
       run:
-        working-directory: ./backend/SkillBank
+        working-directory: ./backend
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Build migrations
         run: |
+          dotnet restore
           dotnet tool install --global dotnet-ef
-          pwd
-          dotnet ef migrations bundle
+          dotnet ef migrations bundle --project SkillBank
 
       - name: Run migrations
         run: ./efbundle
