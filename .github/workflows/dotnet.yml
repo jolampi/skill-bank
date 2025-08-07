@@ -34,7 +34,7 @@ jobs:
     needs: build
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: ./backend/Skillbank
 
     steps:
       - uses: actions/checkout@v4
