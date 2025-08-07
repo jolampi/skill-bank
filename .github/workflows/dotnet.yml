@@ -32,6 +32,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: build
+    defaults:
+      run:
+        working-directory: ./backend
 
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +42,6 @@ jobs:
       - name: Build migrations
         run: |
           dotnet tool install --global dotnet-ef
-          cd backend/Skillbank
           dotnet ef migrations bundle
 
       - name: Run migrations
