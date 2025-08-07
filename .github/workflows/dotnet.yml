@@ -42,6 +42,7 @@ jobs:
       - name: Build migrations
         run: |
           dotnet tool install --global dotnet-ef
+          pwd
           dotnet ef migrations bundle
 
       - name: Run migrations
