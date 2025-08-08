@@ -60,10 +60,10 @@ jobs:
       - name: Build and publish
         uses: docker/build-push-action@v6
         with:
+          build-args: |
+            "NEXT_PUBLIC_BASE_URL=${{ secrets.BACKEND_URL }}"
           context: ./frontend
           push: true
-          secret-envs: |
-            "NEXT_PUBLIC_BASE_URL=${{ secrets.BACKEND_URL }}"
           tags: ${{ secrets.REGISTRY_LOGIN_SERVER }}/skillbank-frontend:${{ github.sha }}
           target: production
 
