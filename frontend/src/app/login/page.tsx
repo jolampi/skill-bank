@@ -38,7 +38,7 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const asd = process.env.NEXT_PUBLIC_BASE_URL
+  const asd = process.env.NEXT_PUBLIC_BASE_URL;
 
   return (
     <main>
