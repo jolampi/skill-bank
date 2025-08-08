@@ -20,6 +20,8 @@ RUN npm run build
 
 FROM base AS production
 WORKDIR /app
+ARG NEXT_PUBLIC_BASE_URL
+ENV NEXT_PUBLIC_BASE_URL ${NEXT_PUBLIC_BASE_URL}
 ENV NODE_ENV=production
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
