@@ -38,9 +38,12 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const asd = process.env.NEXT_PUBLIC_BASE_URL
+
   return (
     <main>
       <Container maxWidth="sm" sx={margin}>
+        {asd}
         <LoginForm onSubmit={handleLogin} disabled={disabled} />
         {submitting && <LinearProgress />}
       </Container>
