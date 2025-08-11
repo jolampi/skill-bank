@@ -17,13 +17,7 @@ import SkillForm from "./SkillForm";
 import Modal from "@/components/Modal";
 import Rating from "@/components/forms/Rating";
 import { ControlledProps } from "@/components/forms/types";
-import theme from "@/theme";
 import { UserSkill } from "@/types";
-
-const ModalBox = styled(Box)({
-  marginTop: 4,
-  marginX: 2,
-});
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(even)": {
@@ -35,12 +29,17 @@ const actionsColumn: SxProps<Theme> = {
   minWidth: 70,
 };
 
-const mediumColumn: SxProps<Theme> = {
+const mediumColumn: SxProps<Theme> = (theme) => ({
   display: "none",
 
   [theme.breakpoints.up("sm")]: {
     display: "table-cell",
   },
+});
+
+const modalStyle: SxProps<Theme> = {
+  paddingTop: 4,
+  paddingX: 2,
 };
 
 export type UserSkillTableProps = ControlledProps<Array<UserSkill>>;
@@ -122,15 +121,15 @@ export default function UserSkillTable(props: UserSkillTableProps) {
       </TableContainer>
 
       <Modal open={!!skillToEdit} onClose={() => setSkillToEdit(null)}>
-        <ModalBox>
+        <Box sx={modalStyle}>
           <SkillForm initialData={skillToEdit} onSubmit={handleEdit} />
-        </ModalBox>
+        </Box>
       </Modal>
 
       <Modal open={showAddNew} onClose={() => setShowAddNew(false)}>
-        <ModalBox>
+        <Box sx={modalStyle}>
           <SkillForm onSubmit={handleAdd} />
-        </ModalBox>
+        </Box>
       </Modal>
     </div>
   );
