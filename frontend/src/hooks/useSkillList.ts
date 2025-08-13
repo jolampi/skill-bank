@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { getAllSkills } from "@/services/backend/users";
+import { getAllSkills } from "@/services/backend/skills";
 
 export default function useSkillList(fetch: boolean): string[] {
   const [skills, setSkills] = useState<string[]>([]);
