@@ -25,9 +25,7 @@ export default function RootLayout({
     <html lang="en" className={roboto.variable}>
       <body>
         <AppRouterCacheProvider>
-          <ThemeProvider theme={theme}>
-            {children}
-          </ThemeProvider>
+          <ThemeProvider theme={theme}>{children}</ThemeProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

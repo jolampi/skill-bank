@@ -9,7 +9,11 @@ import React, { useEffect, useState } from "react";
 
 import UserEditor from "./components/UserEditor";
 
-import { getCurrentUserDetails, updateCurrentUserDetails, UserDetails } from "@/services/backend/users";
+import {
+  getCurrentUserDetails,
+  updateCurrentUserDetails,
+  UserDetails,
+} from "@/services/backend/users";
 
 export default function ProfilePage(): React.ReactNode {
   const [user, setUser] = useState<UserDetails | null>(null);
@@ -59,4 +63,4 @@ export default function ProfilePage(): React.ReactNode {
       </Snackbar>
     </Container>
   );
-};
+}

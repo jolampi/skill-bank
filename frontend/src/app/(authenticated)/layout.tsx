@@ -17,7 +17,9 @@ export interface AuthenticatedLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function AuthenticatedLayout(props: React.PropsWithChildren): Promise<React.ReactNode> {
+export default async function AuthenticatedLayout(
+  props: React.PropsWithChildren,
+): Promise<React.ReactNode> {
   const { children } = props;
 
   const authenticated = await isAuthenticated();

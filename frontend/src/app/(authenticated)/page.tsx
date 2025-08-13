@@ -27,4 +27,4 @@ export default async function HomePage(): Promise<React.ReactNode> {
       </ShowConditionally>
     </div>
   );
-};
+}

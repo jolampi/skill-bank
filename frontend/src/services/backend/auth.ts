@@ -3,7 +3,11 @@
 import { cookies } from "next/headers";
 
 import { client } from "@/generated/client/client.gen";
-import { postApiAuthLogin, postApiAuthRefresh, postApiAuthRevoke } from "@/generated/client/sdk.gen";
+import {
+  postApiAuthLogin,
+  postApiAuthRefresh,
+  postApiAuthRevoke,
+} from "@/generated/client/sdk.gen";
 import { PostApiAuthRefreshData, TokenDto } from "@/generated/client/types.gen";
 
 const REFRESH_ENDPOINT: PostApiAuthRefreshData["url"] = "/api/Auth/refresh";
@@ -30,7 +34,7 @@ export interface Credentials {
 }
 
 export interface Authentication {
-  role: Role
+  role: Role;
 }
 
 export type Role = "Admin" | "Consultant" | "Sales";
@@ -73,14 +77,22 @@ export async function refresh(): Promise<Authentication | null> {
 
 async function handleTokenResponse(response: TokenDto): Promise<Authentication> {
   const cookiesProvider = await cookies();
-  const asd = new Date(Date.now() + 60 * 1000);
-  cookiesProvider.set(ACCESS_TOKEN_COOKIE, response.accessToken!, { httpOnly: true, expires: asd });
-  const efg = new Date(Date.now() + 600 * 1000);
-  cookiesProvider.set(REFRESH_TOKEN_COOKIE, response.refreshToken!, { httpOnly: true, expires: efg });
+  cookiesProvider.set(ACCESS_TOKEN_COOKIE, response.accessToken!, {
+    httpOnly: true,
+    expires: minutesFromNow(10),
+  });
+  cookiesProvider.set(REFRESH_TOKEN_COOKIE, response.refreshToken!, {
+    httpOnly: true,
+    expires: minutesFromNow(60 * 24),
+  });
   cookiesProvider.set(ROLE_TOKEN, response.role);
   return {
     role: response.role,
   };
+}
+
+function minutesFromNow(minutes: number): Date {
+  return new Date(Date.now() + minutes * 1000);
 }
 
 export async function deauthenticate() {

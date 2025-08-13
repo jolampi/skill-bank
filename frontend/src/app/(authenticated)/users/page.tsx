@@ -112,4 +112,4 @@ export default function UsersPage(): React.ReactNode {
       </Dialog>
     </div>
   );
-};
+}

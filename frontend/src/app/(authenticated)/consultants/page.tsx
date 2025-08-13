@@ -79,7 +79,7 @@ export default function ConsultantsPage() {
       </Modal>
     </div>
   );
-};
+}
 
 function getResultText(results: number) {
   if (results > 0) {
