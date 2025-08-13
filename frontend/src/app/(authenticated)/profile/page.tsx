@@ -9,14 +9,13 @@ import React, { useEffect, useState } from "react";
 
 import UserEditor from "./components/UserEditor";
 
-import withAuthorization from "@/components/withAuthorization";
 import {
   getCurrentUserDetails,
   updateCurrentUserDetails,
   UserDetails,
 } from "@/services/backend/users";
 
-const ProfilePage: React.FC = () => {
+export default function ProfilePage(): React.ReactNode {
   const [user, setUser] = useState<UserDetails | null>(null);
   const [saving, setSaving] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
@@ -64,6 +63,4 @@ const ProfilePage: React.FC = () => {
       </Snackbar>
     </Container>
   );
-};
-
-export default withAuthorization(ProfilePage);
+}

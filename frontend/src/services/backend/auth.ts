@@ -1,83 +1,104 @@
-import Cookies from "universal-cookie";
+"use server";
 
-import { Credentials, Role } from "@/contexts/AuthContext";
+import { cookies } from "next/headers";
+
 import {
   postApiAuthLogin,
   postApiAuthRefresh,
   PostApiAuthRefreshData,
-  postApiAuthRevoke,
   TokenDto,
+  postApiAuthRevoke,
 } from "@/generated/client";
 import { client } from "@/generated/client/client.gen";
 
 const REFRESH_ENDPOINT: PostApiAuthRefreshData["url"] = "/api/Auth/refresh";
+
+const ACCESS_TOKEN_COOKIE = "access_token";
 const REFRESH_TOKEN_COOKIE = "refresh_token";
+const ROLE_COOKIE = "role";
+
+client.interceptors.request.use(async (options) => {
+  const cookieStore = await cookies();
+  const cookieName = options.url.endsWith(REFRESH_ENDPOINT)
+    ? REFRESH_TOKEN_COOKIE
+    : ACCESS_TOKEN_COOKIE;
+  const token = cookieStore.get(cookieName)?.value;
+  if (token) {
+    //@ts-expect-error: Wrong type
+    options.headers.set("Authorization", `Bearer ${token}`);
+  }
+});
+
+export interface Credentials {
+  username: string;
+  password: string;
+}
 
 export interface Authentication {
   role: Role;
 }
 
-let authentication: (Authentication & { accessToken: string }) | null = null;
+export type Role = "Admin" | "Consultant" | "Sales";
 
-const cookies = new Cookies();
-client.interceptors.request.use((options) => {
-  let token: string | undefined;
-  if (options.url.endsWith(REFRESH_ENDPOINT)) {
-    token = cookies.get(REFRESH_TOKEN_COOKIE);
-  } else {
-    token = authentication?.accessToken;
-  }
-  if (token) {
-    options.headers.set("Authorization", `Bearer ${token}`);
-  }
-  return options;
-});
-
-export async function authenticate(credentials: Credentials): Promise<Authentication | null> {
+export async function authenticate(credentials: Credentials): Promise<boolean> {
   const response = await postApiAuthLogin({ body: credentials });
   if (!response.data) {
-    return null;
+    return false;
   }
-  return handleTokenResponse(response.data);
+  await handleTokenResponse(response.data);
+  return true;
 }
 
-export async function refresh(): Promise<Authentication | null> {
-  if (!cookies.get(REFRESH_TOKEN_COOKIE)) {
-    return null;
+export async function refresh(): Promise<boolean> {
+  const cookieStore = await cookies();
+  if (!cookieStore.get(REFRESH_TOKEN_COOKIE)) {
+    return false;
   }
   const response = await postApiAuthRefresh();
   if (!response.data) {
-    authentication = null;
-    cookies.remove(REFRESH_TOKEN_COOKIE);
+    cookieStore.delete(REFRESH_TOKEN_COOKIE);
+    return false;
+  }
+  await handleTokenResponse(response.data);
+  return true;
+}
+
+async function handleTokenResponse(response: TokenDto): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(ACCESS_TOKEN_COOKIE, response.accessToken!, {
+    expires: minutesFromNow(10),
+    httpOnly: true,
+  });
+  cookieStore.set(REFRESH_TOKEN_COOKIE, response.refreshToken!, {
+    expires: minutesFromNow(60 * 24),
+    httpOnly: true,
+  });
+  cookieStore.set(ROLE_COOKIE, response.role);
+}
+
+function minutesFromNow(minutes: number): Date {
+  return new Date(Date.now() + minutes * 60000);
+}
+
+export async function isAuthenticated(): Promise<boolean> {
+  const cookieStore = await cookies();
+  return cookieStore.has(ACCESS_TOKEN_COOKIE);
+}
+
+export async function getRole(): Promise<Role | null> {
+  const cookieStore = await cookies();
+  const role = cookieStore.get(ROLE_COOKIE);
+  if (role) {
+    return role.value as Role;
+  } else {
     return null;
   }
-  return handleTokenResponse(response.data);
-}
-
-function handleTokenResponse(response: TokenDto): Authentication {
-  authentication = {
-    accessToken: response.accessToken!,
-    role: response.role,
-  };
-  // TODO: HTTP Only
-  cookies.set(REFRESH_TOKEN_COOKIE, response.refreshToken);
-  return {
-    role: authentication.role,
-  };
-}
-
-export async function getAuthentication(): Promise<Authentication | null> {
-  if (authentication === null) {
-    await refresh();
-  }
-  if (authentication !== null) {
-    return { role: authentication.role };
-  }
-  return null;
 }
 
 export async function deauthenticate() {
   await postApiAuthRevoke();
-  authentication = null;
-  cookies.remove(REFRESH_TOKEN_COOKIE);
+  const cookieStore = await cookies();
+  cookieStore.delete(ACCESS_TOKEN_COOKIE);
+  cookieStore.delete(REFRESH_TOKEN_COOKIE);
+  cookieStore.delete(ROLE_COOKIE);
 }

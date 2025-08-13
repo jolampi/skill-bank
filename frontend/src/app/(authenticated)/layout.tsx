@@ -1,9 +1,9 @@
-"use client";
-
 import { SxProps, Theme } from "@mui/material";
 import Box from "@mui/material/Box";
+import { redirect } from "next/navigation";
 
 import Navigation from "@/components/Navigation";
+import { isAuthenticated } from "@/services/backend/auth";
 
 const headerStyle: SxProps<Theme> = {
   marginBottom: 5,
@@ -17,7 +17,16 @@ export interface AuthenticatedLayoutProps {
   children: React.ReactNode;
 }
 
-export default function AuthenticatedLayout({ children }: Readonly<AuthenticatedLayoutProps>) {
+export default async function AuthenticatedLayout(
+  props: React.PropsWithChildren,
+): Promise<React.ReactNode> {
+  const { children } = props;
+
+  const authenticated = await isAuthenticated();
+  if (!authenticated) {
+    redirect("/login");
+  }
+
   return (
     <div>
       <Box component="header" sx={headerStyle}>

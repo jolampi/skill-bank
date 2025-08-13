@@ -1,17 +1,20 @@
+"use client";
+
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
-import { useContext } from "react";
+import { useRouter } from "next/navigation";
 
-import AuthContext from "@/contexts/AuthContext";
+import { deauthenticate } from "@/services/backend/auth";
 
 export default function Navigation(): React.ReactNode {
-  const authContext = useContext(AuthContext);
+  const router = useRouter();
 
-  const handleLogout = async () => {
-    await authContext.deauthenticate();
-  };
+  async function handleLogout() {
+    await deauthenticate();
+    router.push("/login");
+  }
 
   return (
     <Box component="nav" sx={{ flexGrow: 1 }}>

@@ -4,7 +4,7 @@ import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
 
 import Select from "@/components/forms/Select";
 import TextInput from "@/components/forms/TextInput";
-import { Role } from "@/contexts/AuthContext";
+import { Role } from "@/services/backend/auth";
 import { NewUser } from "@/services/backend/users";
 
 const roles: Role[] = ["Admin", "Consultant", "Sales"];
