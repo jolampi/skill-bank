@@ -20,10 +20,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import NewUserForm, { NewUserFormRef } from "./components/NewUserForm";
 
-import withAuthorization from "@/components/withAuthorization";
-import { createUser, deleteUser, getAllUsers, NewUser, User } from "@/services/backend";
+import { createUser, deleteUser, getAllUsers, NewUser, User } from "@/services/backend/users";
 
-const UsersPage: React.FC = () => {
+export default function UsersPage(): React.ReactNode {
   const [users, setUsers] = useState<User[]>([]);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const newUserFormRef = useRef<NewUserFormRef>(null);
@@ -114,5 +113,3 @@ const UsersPage: React.FC = () => {
     </div>
   );
 };
-
-export default withAuthorization(UsersPage, "Admin");

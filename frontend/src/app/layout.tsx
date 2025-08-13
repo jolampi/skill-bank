@@ -3,7 +3,6 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 
-import BackendAuthProvider from "@/services/BackendAuthProvider";
 import theme from "@/theme";
 
 export const metadata: Metadata = {
@@ -27,7 +26,7 @@ export default function RootLayout({
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <BackendAuthProvider>{children}</BackendAuthProvider>
+            {children}
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

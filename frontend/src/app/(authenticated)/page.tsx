@@ -1,32 +1,30 @@
-"use client";
-
 import Link from "next/link";
 
-import RoleOnly from "@/components/RoleOnly";
-import withAuthorization from "@/components/withAuthorization";
+import { ShowConditionally } from "@/components/ShowConditionally";
+import { getRole } from "@/services/backend/auth";
 
-const Home: React.FC = () => {
+export default async function HomePage(): Promise<React.ReactNode> {
+  const role = await getRole();
+
   return (
     <div>
       <h1>Welcome!</h1>
-      <RoleOnly role="Admin">
+      <ShowConditionally condition={role === "Admin"}>
         <h2>Management</h2>
         <ul>
           <li>
             <Link href="/users">Manage users</Link>
           </li>
         </ul>
-      </RoleOnly>
-      <RoleOnly role="Sales">
+      </ShowConditionally>
+      <ShowConditionally condition={role === "Sales"}>
         <h2>Management</h2>
         <ul>
           <li>
             <Link href="/consultants">View consultants</Link>
           </li>
         </ul>
-      </RoleOnly>
+      </ShowConditionally>
     </div>
   );
 };
-
-export default withAuthorization(Home);

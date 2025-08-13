@@ -1,3 +1,5 @@
+"use server";
+
 import { userSkillFromDto } from "./mappers";
 
 import { ConsultantDto, postApiConsultants, UserSkillFilterDto } from "@/generated/client";

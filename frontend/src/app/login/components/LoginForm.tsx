@@ -1,9 +1,11 @@
+"use client";
+
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
 
 import TextInput from "@/components/forms/TextInput";
-import { Credentials } from "@/contexts/AuthContext";
+import { Credentials } from "@/services/backend/auth";
 
 export interface LoginFormRef {
   clear(): void;

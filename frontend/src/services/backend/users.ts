@@ -1,6 +1,8 @@
+"use server";
+
+import { Role } from "./auth";
 import { userSkillFromDto } from "./mappers";
 
-import { Role } from "@/contexts/AuthContext";
 import {
   deleteApiUsersById,
   getApiSkills,

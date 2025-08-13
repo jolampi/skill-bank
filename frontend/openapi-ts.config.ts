@@ -9,7 +9,7 @@ export default defineConfig({
   },
   plugins: [
     {
-      name: "@hey-api/client-fetch",
+      name: "@hey-api/client-next",
       runtimeConfigPath: "./src/hey-api.ts",
     },
   ],

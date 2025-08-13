@@ -7,7 +7,7 @@ import { FormEvent, useEffect, useState } from "react";
 import Autocomplete from "@/components/forms/Autocomplete";
 import NumberInput from "@/components/forms/NumberInput";
 import Rating from "@/components/forms/Rating";
-import { getAllSkills } from "@/services/backend";
+import { getAllSkills } from "@/services/backend/users";
 import { UserSkill } from "@/types";
 
 const DEFAULT_PROFICIENCY = 3;

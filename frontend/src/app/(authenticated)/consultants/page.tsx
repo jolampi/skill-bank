@@ -15,10 +15,9 @@ import ConsultantProfile from "./components/ConsultantProfile";
 import NewFilterForm from "./components/NewFilterForm";
 
 import Modal from "@/components/Modal";
-import withAuthorization from "@/components/withAuthorization";
 import { Consultant, findConsultants, SkillFilter } from "@/services/backend/consultants";
 
-const ConsultantsPage: React.FC = () => {
+export default function ConsultantsPage() {
   const [consultants, setConsultants] = useState<Consultant[]>([]);
   const [consultantToView, setConsultantToView] = useState<Consultant | null>(null);
   const [filters, setFilters] = useState<SkillFilter[]>([]);
@@ -81,8 +80,6 @@ const ConsultantsPage: React.FC = () => {
     </div>
   );
 };
-
-export default withAuthorization(ConsultantsPage);
 
 function getResultText(results: number) {
   if (results > 0) {

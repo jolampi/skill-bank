@@ -2,15 +2,12 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
-import { useContext } from "react";
 
-import AuthContext from "@/contexts/AuthContext";
+import { deauthenticate } from "@/services/backend/auth";
 
 export default function Navigation(): React.ReactNode {
-  const authContext = useContext(AuthContext);
-
   const handleLogout = async () => {
-    await authContext.deauthenticate();
+    await deauthenticate();
   };
 
   return (
