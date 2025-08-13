@@ -15,7 +15,7 @@ const REFRESH_ENDPOINT: PostApiAuthRefreshData["url"] = "/api/Auth/refresh";
 
 const ACCESS_TOKEN_COOKIE = "access_token";
 const REFRESH_TOKEN_COOKIE = "refresh_token";
-const ROLE_TOKEN = "role";
+const ROLE_COOKIE = "role";
 
 client.interceptors.request.use(async (options) => {
   const cookieStore = await cookies();
@@ -73,7 +73,7 @@ async function handleTokenResponse(response: TokenDto): Promise<void> {
     expires: minutesFromNow(60 * 24),
     httpOnly: true,
   });
-  cookieStore.set(ROLE_TOKEN, response.role);
+  cookieStore.set(ROLE_COOKIE, response.role);
 }
 
 function minutesFromNow(minutes: number): Date {
@@ -87,7 +87,7 @@ export async function isAuthenticated(): Promise<boolean> {
 
 export async function getRole(): Promise<Role | null> {
   const cookieStore = await cookies();
-  const role = cookieStore.get(ROLE_TOKEN);
+  const role = cookieStore.get(ROLE_COOKIE);
   if (role) {
     return role.value as Role;
   } else {
@@ -100,5 +100,5 @@ export async function deauthenticate() {
   const cookieStore = await cookies();
   cookieStore.delete(ACCESS_TOKEN_COOKIE);
   cookieStore.delete(REFRESH_TOKEN_COOKIE);
-  cookieStore.delete(ROLE_TOKEN);
+  cookieStore.delete(ROLE_COOKIE);
 }
