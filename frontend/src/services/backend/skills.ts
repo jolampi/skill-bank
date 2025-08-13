@@ -1,4 +1,6 @@
-import { getApiSkills } from "@/generated/client/sdk.gen";
+"use server";
+
+import { getApiSkills } from "@/generated/client";
 
 export async function getAllSkills(): Promise<string[]> {
   const response = await getApiSkills();

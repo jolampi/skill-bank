@@ -2,13 +2,14 @@
 
 import { cookies } from "next/headers";
 
-import { client } from "@/generated/client/client.gen";
 import {
   postApiAuthLogin,
   postApiAuthRefresh,
+  PostApiAuthRefreshData,
+  TokenDto,
   postApiAuthRevoke,
-} from "@/generated/client/sdk.gen";
-import { PostApiAuthRefreshData, TokenDto } from "@/generated/client/types.gen";
+} from "@/generated/client";
+import { client } from "@/generated/client/client.gen";
 
 const REFRESH_ENDPOINT: PostApiAuthRefreshData["url"] = "/api/Auth/refresh";
 
@@ -17,11 +18,11 @@ const REFRESH_TOKEN_COOKIE = "refresh_token";
 const ROLE_TOKEN = "role";
 
 client.interceptors.request.use(async (options) => {
-  const cookiesProvider = await cookies();
+  const cookieStore = await cookies();
   const cookieName = options.url.endsWith(REFRESH_ENDPOINT)
     ? REFRESH_TOKEN_COOKIE
     : ACCESS_TOKEN_COOKIE;
-  const token = cookiesProvider.get(cookieName)?.value;
+  const token = cookieStore.get(cookieName)?.value;
   if (token) {
     //@ts-expect-error: Wrong type
     options.headers.set("Authorization", `Bearer ${token}`);
@@ -39,22 +40,54 @@ export interface Authentication {
 
 export type Role = "Admin" | "Consultant" | "Sales";
 
-export async function authenticate(credentials: Credentials): Promise<Authentication | null> {
+export async function authenticate(credentials: Credentials): Promise<boolean> {
   const response = await postApiAuthLogin({ body: credentials });
   if (!response.data) {
-    return null;
+    return false;
   }
-  return handleTokenResponse(response.data);
+  await handleTokenResponse(response.data);
+  return true;
+}
+
+export async function refresh(): Promise<boolean> {
+  const cookieStore = await cookies();
+  if (!cookieStore.get(REFRESH_TOKEN_COOKIE)) {
+    return false;
+  }
+  const response = await postApiAuthRefresh();
+  if (!response.data) {
+    cookieStore.delete(REFRESH_TOKEN_COOKIE);
+    return false;
+  }
+  await handleTokenResponse(response.data);
+  return true;
+}
+
+async function handleTokenResponse(response: TokenDto): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(ACCESS_TOKEN_COOKIE, response.accessToken!, {
+    expires: minutesFromNow(10),
+    httpOnly: true,
+  });
+  cookieStore.set(REFRESH_TOKEN_COOKIE, response.refreshToken!, {
+    expires: minutesFromNow(60 * 24),
+    httpOnly: true,
+  });
+  cookieStore.set(ROLE_TOKEN, response.role);
+}
+
+function minutesFromNow(minutes: number): Date {
+  return new Date(Date.now() + minutes * 1000);
 }
 
 export async function isAuthenticated(): Promise<boolean> {
-  const cookiesProvider = await cookies();
-  return cookiesProvider.has(ACCESS_TOKEN_COOKIE);
+  const cookieStore = await cookies();
+  return cookieStore.has(ACCESS_TOKEN_COOKIE);
 }
 
 export async function getRole(): Promise<Role | null> {
-  const cookiesProvider = await cookies();
-  const role = cookiesProvider.get(ROLE_TOKEN);
+  const cookieStore = await cookies();
+  const role = cookieStore.get(ROLE_TOKEN);
   if (role) {
     return role.value as Role;
   } else {
@@ -62,43 +95,10 @@ export async function getRole(): Promise<Role | null> {
   }
 }
 
-export async function refresh(): Promise<Authentication | null> {
-  const cookiesProvider = await cookies();
-  if (!cookiesProvider.get(REFRESH_TOKEN_COOKIE)) {
-    return null;
-  }
-  const response = await postApiAuthRefresh();
-  if (!response.data) {
-    cookiesProvider.delete(REFRESH_TOKEN_COOKIE);
-    return null;
-  }
-  return handleTokenResponse(response.data);
-}
-
-async function handleTokenResponse(response: TokenDto): Promise<Authentication> {
-  const cookiesProvider = await cookies();
-  cookiesProvider.set(ACCESS_TOKEN_COOKIE, response.accessToken!, {
-    httpOnly: true,
-    expires: minutesFromNow(10),
-  });
-  cookiesProvider.set(REFRESH_TOKEN_COOKIE, response.refreshToken!, {
-    httpOnly: true,
-    expires: minutesFromNow(60 * 24),
-  });
-  cookiesProvider.set(ROLE_TOKEN, response.role);
-  return {
-    role: response.role,
-  };
-}
-
-function minutesFromNow(minutes: number): Date {
-  return new Date(Date.now() + minutes * 1000);
-}
-
 export async function deauthenticate() {
   await postApiAuthRevoke();
-  const cookiesProvider = await cookies();
-  cookiesProvider.delete(ACCESS_TOKEN_COOKIE);
-  cookiesProvider.delete(REFRESH_TOKEN_COOKIE);
-  cookiesProvider.delete(ROLE_TOKEN);
+  const cookieStore = await cookies();
+  cookieStore.delete(ACCESS_TOKEN_COOKIE);
+  cookieStore.delete(REFRESH_TOKEN_COOKIE);
+  cookieStore.delete(ROLE_TOKEN);
 }
