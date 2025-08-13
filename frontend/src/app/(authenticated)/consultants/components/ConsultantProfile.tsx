@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 
 import { SkillChip } from "./SkillChip";
 
-import { Consultant } from "@/services/backend";
+import { Consultant } from "@/services/backend/consultants";
 
 export interface ConsultantprofileProps {
   value: Consultant;

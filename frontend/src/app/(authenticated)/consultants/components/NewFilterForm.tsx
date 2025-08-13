@@ -8,7 +8,7 @@ import Autocomplete from "@/components/forms/Autocomplete";
 import NumberInput from "@/components/forms/NumberInput";
 import Rating from "@/components/forms/Rating";
 import useSkillList from "@/hooks/useSkillList";
-import { SkillFilter } from "@/services/backend";
+import { SkillFilter } from "@/services/backend/consultants";
 
 export interface NewFilterFormProps {
   disabled?: boolean;

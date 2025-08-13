@@ -3,7 +3,6 @@ import { userSkillFromDto } from "./mappers";
 import { Role } from "@/contexts/AuthContext";
 import {
   deleteApiUsersById,
-  getApiSkills,
   getApiUsers,
   getApiUsersCurrent,
   postApiUsers,
@@ -49,11 +48,6 @@ export async function updateCurrentUserDetails(
 ): Promise<UpdateUserDetails> {
   await putApiUsersCurrent({ body: data });
   return getCurrentUserDetails();
-}
-
-export async function getAllSkills(): Promise<string[]> {
-  const response = await getApiSkills();
-  return response.data?.results?.map((x) => x.label ?? "N/A") ?? [];
 }
 
 export interface User {

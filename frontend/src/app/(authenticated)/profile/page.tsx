@@ -10,7 +10,11 @@ import React, { useEffect, useState } from "react";
 import UserEditor from "./components/UserEditor";
 
 import withAuthorization from "@/components/withAuthorization";
-import { getCurrentUserDetails, updateCurrentUserDetails, UserDetails } from "@/services/backend";
+import {
+  getCurrentUserDetails,
+  updateCurrentUserDetails,
+  UserDetails,
+} from "@/services/backend/users";
 
 const ProfilePage: React.FC = () => {
   const [user, setUser] = useState<UserDetails | null>(null);

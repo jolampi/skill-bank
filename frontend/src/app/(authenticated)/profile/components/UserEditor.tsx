@@ -8,7 +8,7 @@ import SkillTable from "./SkillTable";
 
 import TextArea from "@/components/forms/TextArea";
 import TextInput from "@/components/forms/TextInput";
-import { UserDetails } from "@/services/backend";
+import { UserDetails } from "@/services/backend/users";
 import { UserSkill } from "@/types";
 
 export interface UserFormProps {

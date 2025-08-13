@@ -21,7 +21,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import NewUserForm, { NewUserFormRef } from "./components/NewUserForm";
 
 import withAuthorization from "@/components/withAuthorization";
-import { createUser, deleteUser, getAllUsers, NewUser, User } from "@/services/backend";
+import { createUser, deleteUser, getAllUsers, NewUser, User } from "@/services/backend/users";
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
