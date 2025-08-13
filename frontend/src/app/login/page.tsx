@@ -35,11 +35,9 @@ export default function LoginPage(): React.ReactNode {
   };
 
   return (
-    <main>
-      <Container maxWidth="sm" sx={margin}>
-        <LoginForm onSubmit={handleLogin} disabled={submitting} />
-        {submitting && <LinearProgress />}
-      </Container>
-    </main>
+    <Container maxWidth="sm" sx={margin}>
+      <LoginForm onSubmit={handleLogin} disabled={submitting} />
+      {submitting && <LinearProgress />}
+    </Container>
   );
 }
