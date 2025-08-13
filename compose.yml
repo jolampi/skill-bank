@@ -50,4 +50,5 @@ services:
           path: ./frontend
           target: /app
     environment:
+      NEXT_PUBLIC_BASE_URL: http://host.docker.internal:5268
       NEXT_TELEMETRY_DISABLED: 1

@@ -77,7 +77,7 @@ async function handleTokenResponse(response: TokenDto): Promise<void> {
 }
 
 function minutesFromNow(minutes: number): Date {
-  return new Date(Date.now() + minutes * 1000);
+  return new Date(Date.now() + minutes * 60000);
 }
 
 export async function isAuthenticated(): Promise<boolean> {

@@ -1,13 +1,19 @@
+"use client";
+
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
+import { useRouter } from "next/navigation";
 
 import { deauthenticate } from "@/services/backend/auth";
 
 export default function Navigation(): React.ReactNode {
-  const handleLogout = async () => {
+  const router = useRouter();
+
+  async function handleLogout() {
     await deauthenticate();
+    router.push("/login")
   };
 
   return (
