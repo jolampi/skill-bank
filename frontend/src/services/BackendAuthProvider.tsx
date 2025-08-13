@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import { authenticate, deauthenticate, getAuthentication } from "./backend";
+import { authenticate, deauthenticate, getAuthentication } from "./backend/auth";
 
 import AuthContext, { AuthContextProps, AuthStates } from "@/contexts/AuthContext";
 
