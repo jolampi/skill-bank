@@ -16,7 +16,7 @@ const margin: SxProps<Theme> = (theme) => ({
   },
 });
 
-const LoginPage: React.FC = () => {
+export default function LoginPage(): React.ReactNode {
   const loginFormRef = useRef<LoginFormRef>(null);
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
@@ -42,6 +42,4 @@ const LoginPage: React.FC = () => {
       </Container>
     </main>
   );
-};
-
-export default LoginPage;
+}

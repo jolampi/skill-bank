@@ -2,7 +2,7 @@
 
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
+import { FormEvent, forwardRef, useCallback, useImperativeHandle, useState } from "react";
 
 import TextInput from "@/components/forms/TextInput";
 import { Credentials } from "@/services/backend/auth";
@@ -30,14 +30,14 @@ const LoginForm = forwardRef<LoginFormRef, LoginFormProps>(function LoginForm(pr
     return { clear };
   }, [clear]);
 
-  const handleSubmit: React.FormEventHandler = (event) => {
+  function handleSubmit(event: FormEvent<Element>) {
     event.preventDefault();
     const data: Credentials = {
       username,
       password,
     };
     onSubmit(data);
-  };
+  }
 
   return (
     <Stack component="form" spacing={2}>

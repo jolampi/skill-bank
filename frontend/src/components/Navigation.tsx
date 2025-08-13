@@ -13,8 +13,8 @@ export default function Navigation(): React.ReactNode {
 
   async function handleLogout() {
     await deauthenticate();
-    router.push("/login")
-  };
+    router.push("/login");
+  }
 
   return (
     <Box component="nav" sx={{ flexGrow: 1 }}>
