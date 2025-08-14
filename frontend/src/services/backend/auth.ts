@@ -5,13 +5,12 @@ import { cookies } from "next/headers";
 import {
   postApiAuthLogin,
   postApiAuthRefresh,
-  PostApiAuthRefreshData,
   TokenDto,
   postApiAuthRevoke,
 } from "@/generated/client";
+import { createClient, createConfig } from "@/generated/client/client";
 import { client } from "@/generated/client/client.gen";
-
-const REFRESH_ENDPOINT: PostApiAuthRefreshData["url"] = "/api/Auth/refresh";
+import { createClientConfig } from "@/hey-api";
 
 const ACCESS_TOKEN_COOKIE = "access_token";
 const REFRESH_TOKEN_COOKIE = "refresh_token";
@@ -19,10 +18,10 @@ const ROLE_COOKIE = "role";
 
 client.interceptors.request.use(async (options) => {
   const cookieStore = await cookies();
-  const cookieName = options.url.endsWith(REFRESH_ENDPOINT)
-    ? REFRESH_TOKEN_COOKIE
-    : ACCESS_TOKEN_COOKIE;
-  const token = cookieStore.get(cookieName)?.value;
+  if (!cookieStore.has(ACCESS_TOKEN_COOKIE)) {
+    await refresh();
+  }
+  const token = cookieStore.get(ACCESS_TOKEN_COOKIE)?.value;
   if (token) {
     //@ts-expect-error: Wrong type
     options.headers.set("Authorization", `Bearer ${token}`);
@@ -49,12 +48,18 @@ export async function authenticate(credentials: Credentials): Promise<boolean> {
   return true;
 }
 
+const refreshClient = createClient(createClientConfig(createConfig()));
+
 export async function refresh(): Promise<boolean> {
   const cookieStore = await cookies();
-  if (!cookieStore.get(REFRESH_TOKEN_COOKIE)) {
+  const refreshToken = cookieStore.get(REFRESH_TOKEN_COOKIE)?.value;
+  if (!refreshToken) {
     return false;
   }
-  const response = await postApiAuthRefresh();
+  const response = await postApiAuthRefresh({
+    client: refreshClient,
+    headers: { Authorization: `Bearer ${refreshToken}` },
+  });
   if (!response.data) {
     cookieStore.delete(REFRESH_TOKEN_COOKIE);
     return false;
