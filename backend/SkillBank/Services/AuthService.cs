@@ -4,22 +4,36 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using SkillBank.Configuration;
 using SkillBank.Entities;
 using SkillBank.Mappers;
 using SkillBank.Models;
 
 namespace SkillBank.Services;
 
-public class AuthService(ApplicationDbContext context, IConfiguration configuration, IPasswordHasher<User> passwordhasher)
+public class AuthService
 {
+    private readonly AuthConfiguration _configuration;
+    private readonly ApplicationDbContext _context;
+    private readonly IPasswordHasher<User> _passwordhasher;
+
+    public AuthService(ApplicationDbContext context, IConfiguration configuration, IPasswordHasher<User> passwordhasher)
+    {
+        var authConfig = configuration.GetSection("Authorization").Get<AuthConfiguration>()
+            ?? throw new Exception("Missing Authorization configuration.");
+        _configuration = authConfig;
+        _context = context;
+        _passwordhasher = passwordhasher;
+    }
+
     public async Task<TokenDto?> LoginAsync(CredentialsDto credentials)
     {
-        var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == credentials.Username);
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == credentials.Username);
         if (user is null || user.PasswordHash is null)
         {
             return null;
         }
-        var result = passwordhasher.VerifyHashedPassword(user, user.PasswordHash, credentials.Password);
+        var result = _passwordhasher.VerifyHashedPassword(user, user.PasswordHash, credentials.Password);
         if (result == PasswordVerificationResult.Failed)
         {
             return null;
@@ -30,7 +44,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
 
     public async Task<TokenDto?> RefreshAsync(Guid userId, Guid refreshTokenId)
     {
-        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
         if (user is null || user.RefreshTokenId is null || user.RefreshTokenId != refreshTokenId)
         {
             return null;
@@ -44,7 +58,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
         var accessToken = CreateAccessToken(user);
         user.RefreshTokenId = Guid.CreateVersion7();
         var refreshToken = CreateRefreshToken(user);
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         return new TokenDto
         {
             AccessToken = accessToken,
@@ -78,13 +92,12 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
 
     private string CreateToken(Dictionary<string, object> claims, DateTime expires)
     {
-        var authorizationToken = configuration.GetValue<string>("Authorization:Token")!;
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authorizationToken));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Token));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Issuer = configuration.GetValue<string>("Authorization:Issuer"),
-            Audience = configuration.GetValue<string>("Authorization:Audience"),
+            Issuer = _configuration.Issuer,
+            Audience = _configuration.Audience,
             Claims = claims,
             IssuedAt = DateTime.UtcNow,
             NotBefore = null,
@@ -101,13 +114,13 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
 
     public async Task<bool> RevokeAsync(Guid userId)
     {
-        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
         if (user is null)
         {
             return false;
         }
         user.RefreshTokenId = null;
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         return true;
     }
 }
