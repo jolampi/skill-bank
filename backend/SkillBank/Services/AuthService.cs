@@ -62,7 +62,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
             [ClaimTypes.NameIdentifier] = user.Id,
             [ClaimTypes.Role] = user.Role.ToString(),
         };
-        return CreateToken(claims, DateTime.UtcNow.AddMinutes(10));
+        return CreateToken(claims, DateTime.UtcNow.AddMinutes(15));
     }
 
     private string CreateRefreshToken(User user)
