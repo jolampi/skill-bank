@@ -2,13 +2,12 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { SxProps, Theme } from "@mui/material/styles";
-import { useQuery } from "@tanstack/react-query";
 import { FormEvent, useEffect, useState } from "react";
 
 import Autocomplete from "@/components/forms/Autocomplete";
 import NumberInput from "@/components/forms/NumberInput";
 import Rating from "@/components/forms/Rating";
-import { getAllSkills } from "@/services/backend/skills";
+import { useSkills } from "@/hooks/useSkills";
 import { UserSkill } from "@/types";
 
 const DEFAULT_PROFICIENCY = 3;
@@ -29,12 +28,7 @@ export default function NewSkillForm(props: SkillFormProps): React.ReactNode {
   const [proficiency, setProficiency] = useState(DEFAULT_PROFICIENCY);
   const [experience, setExperience] = useState(0);
   const [editMode, setEditMode] = useState(true);
-  const skillSuggestions = useQuery({
-    queryKey: ["skills"],
-    queryFn: getAllSkills,
-    enabled: !editMode,
-    initialData: [],
-  });
+  const skillSuggestions = useSkills({ enabled: !editMode });
 
   useEffect(() => {
     setEditMode(!!initialData);
@@ -72,7 +66,7 @@ export default function NewSkillForm(props: SkillFormProps): React.ReactNode {
         <Autocomplete
           disabled={disabled || editMode}
           label="Skill"
-          suggestions={skillSuggestions.data}
+          suggestions={skillSuggestions}
           value={label}
           onChange={setLabel}
         />

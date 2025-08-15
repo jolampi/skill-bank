@@ -2,14 +2,13 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { useQuery } from "@tanstack/react-query";
 import { FormEvent, useState } from "react";
 
 import Autocomplete from "@/components/forms/Autocomplete";
 import NumberInput from "@/components/forms/NumberInput";
 import Rating from "@/components/forms/Rating";
+import { useSkills } from "@/hooks/useSkills";
 import { SkillFilter } from "@/services/backend/consultants";
-import { getAllSkills } from "@/services/backend/skills";
 
 export interface NewFilterFormProps {
   disabled?: boolean;
@@ -18,11 +17,7 @@ export interface NewFilterFormProps {
 
 export default function NewFilterForm(props: NewFilterFormProps): React.ReactNode {
   const { disabled, onSubmit } = props;
-  const skillSuggestions = useQuery({
-    queryKey: ["skills"],
-    queryFn: getAllSkills,
-    initialData: [],
-  });
+  const skillSuggestions = useSkills();
   const [label, setLabel] = useState("");
   const [minimumProficiency, setMinimumProficiency] = useState(1);
   const [minimumExperience, setMinimumExperience] = useState(0);
@@ -56,7 +51,7 @@ export default function NewFilterForm(props: NewFilterFormProps): React.ReactNod
             label="Filter by skill"
             value={label}
             onChange={setLabel}
-            suggestions={skillSuggestions.data}
+            suggestions={skillSuggestions}
           />
         </Grid>
         <Grid size={6}>
