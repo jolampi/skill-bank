@@ -1,4 +1,5 @@
 import { FlatCompat } from "@eslint/eslintrc";
+import pluginQuery from "@tanstack/eslint-plugin-query";
 import { defineConfig, globalIgnores } from "eslint/config";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -12,6 +13,7 @@ const compat = new FlatCompat({
 
 const eslintConfig = defineConfig([
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...pluginQuery.configs["flat/recommended"],
   globalIgnores(["src/generated"]),
   {
     rules: {

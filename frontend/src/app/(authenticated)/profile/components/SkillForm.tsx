@@ -7,7 +7,7 @@ import { FormEvent, useEffect, useState } from "react";
 import Autocomplete from "@/components/forms/Autocomplete";
 import NumberInput from "@/components/forms/NumberInput";
 import Rating from "@/components/forms/Rating";
-import { getAllSkills } from "@/services/backend/skills";
+import { useSkills } from "@/hooks/useSkills";
 import { UserSkill } from "@/types";
 
 const DEFAULT_PROFICIENCY = 3;
@@ -27,16 +27,8 @@ export default function NewSkillForm(props: SkillFormProps): React.ReactNode {
   const [label, setLabel] = useState("");
   const [proficiency, setProficiency] = useState(DEFAULT_PROFICIENCY);
   const [experience, setExperience] = useState(0);
-  const [skillSuggestions, setSkillSuggestions] = useState<string[]>([]);
   const [editMode, setEditMode] = useState(true);
-
-  useEffect(() => {
-    if (editMode) {
-      setSkillSuggestions([]);
-    } else {
-      getAllSkills().then(setSkillSuggestions);
-    }
-  }, [editMode]);
+  const skillSuggestions = useSkills({ enabled: !editMode });
 
   useEffect(() => {
     setEditMode(!!initialData);

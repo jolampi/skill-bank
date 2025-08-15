@@ -3,6 +3,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 
+import QueryClientProvider from "@/components/QueryClientProvider";
 import theme from "@/theme";
 
 export const metadata: Metadata = {
@@ -23,7 +24,9 @@ export default function RootLayout(props: React.PropsWithChildren): React.ReactN
     <html lang="en" className={roboto.variable}>
       <body>
         <AppRouterCacheProvider>
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          <QueryClientProvider>
+            <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          </QueryClientProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

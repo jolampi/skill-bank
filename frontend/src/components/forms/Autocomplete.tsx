@@ -5,7 +5,7 @@ import { ControlledProps } from "./types";
 
 export interface AutocompleteProps extends ControlledProps<string> {
   label: string;
-  suggestions: string[];
+  suggestions: ReadonlyArray<string>;
 }
 
 export default function Autocomplete(props: AutocompleteProps): React.ReactNode {
