@@ -50,7 +50,7 @@ export default function UsersPage(): React.ReactNode {
       return;
     }
     await deleteMutation.mutateAsync(userToDelete.id);
-  };
+  }
 
   const disabled = createMutation.isPending || deleteMutation.isPending;
 
