@@ -48,7 +48,7 @@ export default function ConsultantsPage() {
         </Paper>
         <ConsultantFilters disabled={loading} value={filters} onChange={setFilters} />
         <Divider variant="middle" sx={{ marginY: 3 }} />
-        {consultantQuery.isLoading && <LinearProgress />}
+        {loading && <LinearProgress />}
         {consultantQuery.isSuccess && (
           <div>
             <Typography>{getResultText(consultantQuery.data.length)}</Typography>

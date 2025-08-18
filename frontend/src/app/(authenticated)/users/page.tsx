@@ -24,10 +24,10 @@ import NewUserForm, { NewUserFormRef } from "./components/NewUserForm";
 import { createUser, deleteUser, getAllUsers, User } from "@/services/backend/users";
 
 export default function UsersPage(): React.ReactNode {
-  const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const newUserFormRef = useRef<NewUserFormRef>(null);
   const queryClient = useQueryClient();
   const userQuery = useQuery({ queryKey: ["users"], queryFn: getAllUsers });
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   const createMutation = useMutation({
     mutationFn: createUser,
@@ -45,7 +45,7 @@ export default function UsersPage(): React.ReactNode {
     },
   });
 
-  const handleDelete = async () => {
+  async function handleDelete() {
     if (!userToDelete) {
       return;
     }

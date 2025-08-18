@@ -24,10 +24,10 @@ export interface SkillFormProps {
 
 export default function NewSkillForm(props: SkillFormProps): React.ReactNode {
   const { disabled, initialData, onSubmit } = props;
+  const [editMode, setEditMode] = useState(true);
+  const [experience, setExperience] = useState(0);
   const [label, setLabel] = useState("");
   const [proficiency, setProficiency] = useState(DEFAULT_PROFICIENCY);
-  const [experience, setExperience] = useState(0);
-  const [editMode, setEditMode] = useState(true);
   const skillSuggestions = useSkills({ enabled: !editMode });
 
   useEffect(() => {

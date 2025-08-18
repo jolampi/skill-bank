@@ -17,8 +17,8 @@ import {
 } from "@/services/backend/users";
 
 export default function ProfilePage(): React.ReactNode {
-  const [showNotification, setShowNotification] = useState(false);
   const queryClient = useQueryClient();
+  const [showNotification, setShowNotification] = useState(false);
   const userQuery = useQuery({ queryKey: ["current-user"], queryFn: findAndPrepareUser });
 
   const updateUser = useMutation({
