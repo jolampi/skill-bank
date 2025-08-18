@@ -26,8 +26,6 @@ export default function ConsultantsPage() {
     queryFn: () => findAndPrepareConsultants(filters),
   });
 
-  const loading = consultantQuery.isLoading;
-
   function handleAdd(newFilter: SkillFilter) {
     const newFilters = filters.filter((x) => x.label !== newFilter.label);
     newFilters.push(newFilter);
@@ -38,6 +36,8 @@ export default function ConsultantsPage() {
   function handleCloseProfile() {
     setConsultantToView(null);
   }
+
+  const loading = consultantQuery.isLoading;
 
   return (
     <div>
