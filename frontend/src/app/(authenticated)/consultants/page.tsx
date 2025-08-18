@@ -7,7 +7,8 @@ import Divider from "@mui/material/Divider";
 import LinearProgress from "@mui/material/LinearProgress";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 import ConsultantCard from "./components/ConsultantCard";
 import ConsultantFilters from "./components/ConsultantFilters";
@@ -18,20 +19,14 @@ import Modal from "@/components/Modal";
 import { Consultant, findConsultants, SkillFilter } from "@/services/backend/consultants";
 
 export default function ConsultantsPage() {
-  const [consultants, setConsultants] = useState<Consultant[]>([]);
   const [consultantToView, setConsultantToView] = useState<Consultant | null>(null);
   const [filters, setFilters] = useState<SkillFilter[]>([]);
-  const [loading, setLoading] = useState(false);
+  const consultantQuery = useQuery({
+    queryKey: ["consultants", filters],
+    queryFn: () => findAndPrepareConsultants(filters),
+  });
 
-  useEffect(() => {
-    setLoading(true);
-    findConsultants(filters)
-      .then((res) => {
-        res.forEach((x) => x.skills.sort((a, b) => a.label.localeCompare(b.label)));
-        setConsultants(res);
-      })
-      .finally(() => setLoading(false));
-  }, [filters]);
+  const loading = consultantQuery.isLoading;
 
   function handleAdd(newFilter: SkillFilter) {
     const newFilters = filters.filter((x) => x.label !== newFilter.label);
@@ -53,12 +48,11 @@ export default function ConsultantsPage() {
         </Paper>
         <ConsultantFilters disabled={loading} value={filters} onChange={setFilters} />
         <Divider variant="middle" sx={{ marginY: 3 }} />
-        {loading ? (
-          <LinearProgress />
-        ) : (
+        {consultantQuery.isLoading && <LinearProgress />}
+        {consultantQuery.isSuccess && (
           <div>
-            <Typography>{getResultText(consultants.length)}</Typography>
-            {consultants.map((consultant) => (
+            <Typography>{getResultText(consultantQuery.data.length)}</Typography>
+            {consultantQuery.data.map((consultant) => (
               <ConsultantCard
                 key={consultant.id}
                 value={consultant}
@@ -79,6 +73,16 @@ export default function ConsultantsPage() {
       </Modal>
     </div>
   );
+}
+
+async function findAndPrepareConsultants(
+  filters: SkillFilter[],
+): Promise<ReadonlyArray<Consultant>> {
+  const results = await findConsultants(filters);
+  results.forEach((consultant) => {
+    consultant.skills.sort((a, b) => a.label.localeCompare(b.label));
+  });
+  return results;
 }
 
 function getResultText(results: number) {

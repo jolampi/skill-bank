@@ -16,46 +16,43 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRef, useState } from "react";
 
 import NewUserForm, { NewUserFormRef } from "./components/NewUserForm";
 
-import { createUser, deleteUser, getAllUsers, NewUser, User } from "@/services/backend/users";
+import { createUser, deleteUser, getAllUsers, User } from "@/services/backend/users";
 
 export default function UsersPage(): React.ReactNode {
-  const [users, setUsers] = useState<User[]>([]);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const newUserFormRef = useRef<NewUserFormRef>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const queryClient = useQueryClient();
+  const userQuery = useQuery({ queryKey: ["users"], queryFn: getAllUsers });
 
-  const fetchUsers = useCallback(async () => {
-    const users = await getAllUsers();
-    setUsers(users);
-  }, []);
-
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
-
-  const handleCreate = async (data: NewUser) => {
-    setSubmitting(true);
-    try {
-      await createUser(data);
+  const createMutation = useMutation({
+    mutationFn: createUser,
+    onSuccess: () => {
       newUserFormRef.current?.clear();
-      await fetchUsers();
-    } finally {
-      setSubmitting(false);
-    }
-  };
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      setUserToDelete(null);
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
 
   const handleDelete = async () => {
     if (!userToDelete) {
       return;
     }
-    await deleteUser(userToDelete.id);
-    setUserToDelete(null);
-    await fetchUsers();
+    await deleteMutation.mutateAsync(userToDelete.id);
   };
+
+  const disabled = createMutation.isPending || deleteMutation.isPending;
 
   return (
     <div>
@@ -71,7 +68,7 @@ export default function UsersPage(): React.ReactNode {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((user) => (
+              {userQuery.data?.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.username}</TableCell>
                   <TableCell>{user.name}</TableCell>
@@ -93,7 +90,7 @@ export default function UsersPage(): React.ReactNode {
 
         <Box sx={{ marginTop: 12, maxWidth: 500 }}>
           <Typography variant="h5">Add new</Typography>
-          <NewUserForm ref={newUserFormRef} onSubmit={handleCreate} disabled={submitting} />
+          <NewUserForm ref={newUserFormRef} onSubmit={createMutation.mutate} disabled={disabled} />
         </Box>
       </Container>
 

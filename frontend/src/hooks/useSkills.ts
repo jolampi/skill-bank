@@ -16,5 +16,5 @@ export function useSkills(options?: UseSkillsOptions): ReadonlyArray<string> {
     staleTime: ONE_MINUTE,
   });
 
-  return skills.data ?? []
+  return skills.data ?? [];
 }
