@@ -5,7 +5,8 @@ import Container from "@mui/material/Container";
 import LinearProgress from "@mui/material/LinearProgress";
 import Snackbar from "@mui/material/Snackbar";
 import Typography from "@mui/material/Typography";
-import React, { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { useState } from "react";
 
 import UserEditor from "./components/UserEditor";
 
@@ -16,41 +17,37 @@ import {
 } from "@/services/backend/users";
 
 export default function ProfilePage(): React.ReactNode {
-  const [user, setUser] = useState<UserDetails | null>(null);
-  const [saving, setSaving] = useState(false);
+  const queryClient = useQueryClient();
   const [showNotification, setShowNotification] = useState(false);
+  const userQuery = useQuery({ queryKey: ["current-user"], queryFn: findAndPrepareUser });
 
-  useEffect(() => {
-    getCurrentUserDetails().then((user) => {
-      user.skills.sort((a, b) => a.label.localeCompare(b.label));
-      setUser(user);
-    });
-  }, []);
-
-  async function handleSave(updated: UserDetails) {
-    setSaving(true);
-    try {
-      await updateCurrentUserDetails(updated);
+  const updateUser = useMutation({
+    mutationFn: updateCurrentUserDetails,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["current-user"] });
       setShowNotification(true);
-    } finally {
-      setSaving(false);
-    }
-  }
+    },
+  });
 
   const handleCloseNotification = () => {
     setShowNotification(false);
   };
-
-  if (!user) {
-    return <LinearProgress />;
-  }
 
   return (
     <Container maxWidth="md">
       <Typography variant="h5" sx={{ marginBottom: 3 }}>
         Edit profile
       </Typography>
-      <UserEditor disabled={saving} initialData={user} onSubmit={handleSave} />
+      {userQuery.isLoading && <LinearProgress />}
+      {userQuery.isError && <p>Failed to obtain user details.</p>}
+      {userQuery.isSuccess && (
+        <UserEditor
+          disabled={updateUser.isPending}
+          initialData={userQuery.data}
+          onSubmit={updateUser.mutate}
+        />
+      )}
+
       <Snackbar
         open={showNotification}
         autoHideDuration={5000}
@@ -63,4 +60,10 @@ export default function ProfilePage(): React.ReactNode {
       </Snackbar>
     </Container>
   );
+}
+
+async function findAndPrepareUser(): Promise<UserDetails> {
+  const result = await getCurrentUserDetails();
+  result.skills.sort((a, b) => a.label.localeCompare(b.label));
+  return result;
 }

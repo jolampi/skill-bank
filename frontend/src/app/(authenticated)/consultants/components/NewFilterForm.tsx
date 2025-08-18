@@ -7,7 +7,7 @@ import { FormEvent, useState } from "react";
 import Autocomplete from "@/components/forms/Autocomplete";
 import NumberInput from "@/components/forms/NumberInput";
 import Rating from "@/components/forms/Rating";
-import useSkillList from "@/hooks/useSkillList";
+import { useSkills } from "@/hooks/useSkills";
 import { SkillFilter } from "@/services/backend/consultants";
 
 export interface NewFilterFormProps {
@@ -17,7 +17,7 @@ export interface NewFilterFormProps {
 
 export default function NewFilterForm(props: NewFilterFormProps): React.ReactNode {
   const { disabled, onSubmit } = props;
-  const skillSuggestions = useSkillList(true);
+  const skillSuggestions = useSkills();
   const [label, setLabel] = useState("");
   const [minimumProficiency, setMinimumProficiency] = useState(1);
   const [minimumExperience, setMinimumExperience] = useState(0);
